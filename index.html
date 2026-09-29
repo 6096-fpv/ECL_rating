@@ -11,7 +11,6 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 Arial,Helvetica,sans-serif}
 .top{background:#1f3a68;color:#fff;padding:12px 16px;font-size:14px}
-.top b{letter-spacing:.3px}
 .wrap{max-width:760px;margin:0 auto;padding:16px 16px 40px}
 h1{font-size:20px;margin:6px 0 4px;font-weight:700}
 .intro{margin:0 0 4px;color:var(--mut)}
@@ -22,7 +21,7 @@ input,select,textarea{width:100%;padding:8px;border:1px solid var(--bd);border-r
 button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;background:var(--ac);color:#fff}
 :root:not([data-theme="light"]) button{color:#111}
 .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 180px}
-.stars{display:inline-flex;gap:0}
+.stars{display:inline-flex}
 .stars span{font-size:24px;color:var(--bd);cursor:pointer;user-select:none;padding-right:2px}
 .stars span.on{color:var(--star)}
 .t{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
@@ -35,6 +34,7 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
 #splash .by{margin:22px 0 24px;font-size:14px;color:#c9d3e6}
 #splash button{background:#fff;color:#1f3a68;padding:9px 26px}
 .hide{display:none!important}
+.warn{background:#fff3cd;color:#7a5b00;border:1px solid #f0d67a;padding:10px 12px;font-size:13px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -48,7 +48,9 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
 <div class="top"><b>Escola Comércio Lisboa</b> · Avaliação de professores</div>
 <div class="wrap">
   <h1>Avalie os seus professores</h1>
-  <p class="intro">Página para os alunos da <a href="https://escolacomerciolisboa.pt/" target="_blank" rel="noopener">Escola Comércio Lisboa</a>. Seja respeitador. Feito pelo aluno 6096.</p>
+  <p class="intro">Página para os alunos da <a href="https://escolacomerciolisboa.pt/" target="_blank" rel="noopener">Escola Comércio Lisboa</a>. Seja respeitador. Feito pelo aluno 6096. As avaliações são visíveis para todos.</p>
+
+  <div id="cfgWarn" class="warn hide">A base de dados ainda não está configurada — ver comentário CONFIG no início do ficheiro. Sem isso, as avaliações não são partilhadas.</div>
 
   <div class="card">
     <h2>Adicionar professor</h2>
@@ -71,22 +73,29 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
   </div>
 
   <input id="q" placeholder="Pesquisar professor ou função" style="margin-top:16px">
-  <div id="list"></div>
+  <div id="list"><div class="card mut">A carregar…</div></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+/* ====== CONFIG ======
+   1) Crie um projeto grátis em https://supabase.com
+   2) Execute o ficheiro supabase-setup.sql em SQL Editor
+   3) Vá a Settings → API e cole aqui a Project URL e a anon public key
+*/
+var SUPABASE_URL = "https://qsnncbwoybwkhwyepaai.supabase.co";
+var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
+/* ==================== */
+
 (function(){
-  var KEY="prof6096", data=[], cur={c:0,a:0,j:0};
-  try{data=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){data=[]}
-  if(!Array.isArray(data))data=[];
-  var SEED=("Helga Duarte|Coord. Técnico de Comércio;Maria Hormigo|Coord. Vendas e Marketing;Marco Rodrigues|Coord. Informática e Visual Merchandising;Valéria Fernandes|Coord. Organização de Eventos;Paula Fernandes|Coord. Receção Hoteleira e Comunicação;Sandra Rebelo|Coord. Turismo;Rosa Almeida|Coord. Cozinha-Pastelaria;Rosa Bule|Coord. Restaurante-Bar;Carlos Cristo Fernandes|Formador;"+
-  "Ana Costa|Docente;Ana Coelho|Docente;Ana Cristina Carvalho|Docente;Carla Nunes|Formadora;Carlos Rodrigues|Formador;Carlos Vieira|Formador;Chinnu Roshan|Formadora;Cláudia Santos|Docente;Carlota Falcão|Formadora;Cláudia Pinto|Docente;Dália Santos|Formadora;Daniela Pacheco|Formadora;Eleonora Pellejero|Formadora;Elisabete Oliveira|Formadora;Francisco Toscano|Formador;Gabriela d'Almeida|Formadora;Gonçalo Costa|Formador;Fátima Vasconcelos|Formadora;Graça Fialho|Docente;Helena Cardoso|Formadora;Hugo Soares|Formador;Inês Ataíde|Formadora;Inês Santos Silva|Formadora;Isabel Parreira|Formadora;Jéssica Conceição|Formadora;João Carvalho|Formador;João Coelho|Formador;João Matos|Formador;João Moreira|Formador;João Maciel Filipe|Formador;João Quintino|Formador;José Cruz|Docente;José Almeida|Formador;José Coelho|Formador;Luís Marques|Formador;Marcelo Domingues|Formador;Márcia Ferreira|Formadora;Margarida Agostinho|Formadora;Marina Moreira|Docente;Mateus Freire|Docente;Patrícia Lima|Docente;Patrícia Luíz|Formadora;Paula Almeida|Formadora;Pedro Barragão|Formador;Pedro Lucas|Docente;Rita Alves|Formadora;Raquel Clemente|Formadora;Raquel Ratado|Formadora;Renato Pernadas|Docente (Informática);Raúl Torcato|Formador;Rui Coelho|Docente;Rosário Leote|Docente;Sónia Freire|Docente;Sónia Alcaso|Docente;Susana Mendes|Docente;Teresa Vale|Formadora;Tiago Chiote|Formador;Tiago Rito|Docente").split(";");
-  SEED.forEach(function(s){var p=s.split("|");
-    if(!data.some(function(t){return t.n.toLowerCase()===p[0].toLowerCase()}))data.push({n:p[0],d:p[1],r:[]});});
-  data.sort(function(a,b){return a.n.localeCompare(b.n,"pt")});
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
-  function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
   var $=function(i){return document.getElementById(i)};
+  var cur={c:0,a:0,j:0};
+  var teachers=[], ratings=[];
+  var configured = SUPABASE_URL.indexOf("http")===0 && SUPABASE_KEY.length>20;
+  var sb = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  if(!configured) $("cfgWarn").classList.remove("hide");
+
+  function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
 
   $("enter").onclick=function(){$("splash").classList.add("hide")};
 
@@ -99,37 +108,66 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
   });
   function paint(box,n){box.querySelectorAll("span").forEach(function(s,i){s.classList.toggle("on",i<n)})}
 
-  function avg(r,k){if(!r.length)return 0;return r.reduce(function(a,x){return a+x[k]},0)/r.length}
+  function avg(list,k){if(!list.length)return 0;return list.reduce(function(a,x){return a+x[k]},0)/list.length}
+
   function render(){
     var sel=$("sel"),v=sel.value;
-    sel.innerHTML='<option value="">— Escolha um professor —</option>'+data.map(function(t,i){return '<option value="'+i+'">'+esc(t.n)+' ('+esc(t.d)+')</option>'}).join("");
+    sel.innerHTML='<option value="">— Escolha um professor —</option>'+teachers.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+' ('+esc(t.subject)+')</option>'}).join("");
     sel.value=v;
     var q=$("q").value.toLowerCase(),out="";
-    data.forEach(function(t,i){
-      if((t.n+" "+t.d).toLowerCase().indexOf(q)<0)return;
-      var tot=(avg(t.r,"c")+avg(t.r,"a")+avg(t.r,"j"))/3;
-      out+='<div class="card"><div class="t"><div><strong>'+esc(t.n)+'</strong><div class="mut">'+esc(t.d)+' · '+t.r.length+' avaliaç'+(t.r.length===1?'ão':'ões')+'</div></div>'+
-      '<div class="avg">'+(t.r.length?"★ "+tot.toFixed(1):"—")+'</div></div>'+
-      (t.r.length?'<div class="mut">Clareza '+avg(t.r,"c").toFixed(1)+' · Apoio '+avg(t.r,"a").toFixed(1)+' · Justiça '+avg(t.r,"j").toFixed(1)+'</div>':'')+
-      t.r.filter(function(x){return x.m}).slice(-5).reverse().map(function(x){return '<div class="cm">“'+esc(x.m)+'”</div>'}).join("")+'</div>';
+    teachers.forEach(function(t){
+      if((t.name+" "+t.subject).toLowerCase().indexOf(q)<0)return;
+      var r=ratings.filter(function(x){return x.teacher_id===t.id});
+      var tot=(avg(r,"clareza")+avg(r,"apoio")+avg(r,"justica"))/3;
+      out+='<div class="card"><div class="t"><div><strong>'+esc(t.name)+'</strong><div class="mut">'+esc(t.subject)+' · '+r.length+' avaliaç'+(r.length===1?'ão':'ões')+'</div></div>'+
+      '<div class="avg">'+(r.length?"★ "+tot.toFixed(1):"—")+'</div></div>'+
+      (r.length?'<div class="mut">Clareza '+avg(r,"clareza").toFixed(1)+' · Apoio '+avg(r,"apoio").toFixed(1)+' · Justiça '+avg(r,"justica").toFixed(1)+'</div>':'')+
+      r.filter(function(x){return x.comment}).slice(-5).reverse().map(function(x){return '<div class="cm">"'+esc(x.comment)+'"</div>'}).join("")+'</div>';
     });
-    $("list").innerHTML=out||'<div class="card mut">Ainda não há professores. Adicione o primeiro acima.</div>';
+    $("list").innerHTML=out||'<div class="card mut">Ainda não há professores.</div>';
   }
   $("q").oninput=render;
+
+  function loadAll(){
+    if(!configured){$("list").innerHTML='<div class="card mut">Configure a base de dados para ver e enviar avaliações partilhadas.</div>';return}
+    Promise.all([
+      sb.from("teachers").select("*").order("name"),
+      sb.from("ratings").select("*")
+    ]).then(function(res){
+      if(res[0].error||res[1].error){$("msg").textContent="Erro a carregar dados.";console.error(res[0].error,res[1].error);return}
+      teachers=res[0].data; ratings=res[1].data; render();
+    });
+  }
+
   $("addT").onclick=function(){
+    if(!configured)return;
     var n=$("nn").value.trim(),d=$("nd").value.trim();
     if(!n||!d)return;
-    data.push({n:n,d:d,r:[]});save();$("nn").value=$("nd").value="";render();
+    sb.from("teachers").insert({name:n,subject:d}).then(function(r){
+      if(r.error){$("msg").textContent="Já existe ou erro ao adicionar.";return}
+      $("nn").value=$("nd").value="";loadAll();
+    });
   };
+
   $("send").onclick=function(){
-    var i=$("sel").value,m=$("msg");
-    if(i===""){m.textContent="Escolha um professor.";return}
+    if(!configured)return;
+    var id=$("sel").value,m=$("msg");
+    if(!id){m.textContent="Escolha um professor.";return}
     if(!cur.c||!cur.a||!cur.j){m.textContent="Dê uma nota em todos os critérios.";return}
-    data[i].r.push({c:cur.c,a:cur.a,j:cur.j,m:$("cm").value.trim()});save();
-    cur={c:0,a:0,j:0};document.querySelectorAll(".stars").forEach(function(b){paint(b,0)});
-    $("cm").value="";m.textContent="Obrigado pela sua avaliação!";render();
+    sb.from("ratings").insert({teacher_id:Number(id),clareza:cur.c,apoio:cur.a,justica:cur.j,comment:$("cm").value.trim()}).then(function(r){
+      if(r.error){m.textContent="Erro ao enviar.";console.error(r.error);return}
+      cur={c:0,a:0,j:0};document.querySelectorAll(".stars").forEach(function(b){paint(b,0)});
+      $("cm").value="";m.textContent="Obrigado pela sua avaliação!";loadAll();
+    });
   };
-  render();
+
+  loadAll();
+  if(configured){
+    sb.channel("public:changes")
+      .on("postgres_changes",{event:"*",schema:"public",table:"ratings"},loadAll)
+      .on("postgres_changes",{event:"*",schema:"public",table:"teachers"},loadAll)
+      .subscribe();
+  }
 })();
 </script>
 </body>

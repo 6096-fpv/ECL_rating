@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Avaliação de Professores – Escola Comércio Lisboa</title>
+<style>
+:root{--bg:#f1f1ef;--card:#fff;--tx:#222;--mut:#6b6b6b;--ac:#1f3a68;--bd:#d4d4d0;--star:#c98a00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171717;--card:#212121;--tx:#e8e8e6;--mut:#a0a0a0;--ac:#8fb0e8;--bd:#3a3a3a;--star:#e0a526}}
+:root[data-theme="dark"]{--bg:#171717;--card:#212121;--tx:#e8e8e6;--mut:#a0a0a0;--ac:#8fb0e8;--bd:#3a3a3a;--star:#e0a526}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 Arial,Helvetica,sans-serif}
+.top{background:#1f3a68;color:#fff;padding:12px 16px;font-size:14px}
+.top b{letter-spacing:.3px}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:20px;margin:6px 0 4px;font-weight:700}
+.intro{margin:0 0 4px;color:var(--mut)}
+a{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:2px;padding:12px 14px;margin-top:12px}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin:0 0 10px;font-weight:700}
+input,select,textarea{width:100%;padding:8px;border:1px solid var(--bd);border-radius:2px;background:var(--card);color:var(--tx);font:inherit;margin-bottom:8px}
+button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;background:var(--ac);color:#fff}
+:root:not([data-theme="light"]) button{color:#111}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 180px}
+.stars{display:inline-flex;gap:0}
+.stars span{font-size:24px;color:var(--bd);cursor:pointer;user-select:none;padding-right:2px}
+.stars span.on{color:var(--star)}
+.t{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.avg{font-size:17px;font-weight:700;white-space:nowrap}
+.mut{color:var(--mut);font-size:13px}
+.cm{border-top:1px solid var(--bd);padding:6px 0 0;margin-top:6px;font-size:14px}
+#splash{position:fixed;inset:0;background:#1f3a68;color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;z-index:10}
+#splash h1{font-size:26px;margin:0 0 6px}
+#splash .mut{color:#c9d3e6}
+#splash .by{margin:22px 0 24px;font-size:14px;color:#c9d3e6}
+#splash button{background:#fff;color:#1f3a68;padding:9px 26px}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div id="splash">
+  <h1>Avaliação de Professores</h1>
+  <div class="mut">Escola Comércio Lisboa</div>
+  <div class="by">Feito pelo aluno 6096</div>
+  <button id="enter">Entrar</button>
+</div>
+
+<div class="top"><b>Escola Comércio Lisboa</b> · Avaliação de professores</div>
+<div class="wrap">
+  <h1>Avalie os seus professores</h1>
+  <p class="intro">Página para os alunos da <a href="https://escolacomerciolisboa.pt/" target="_blank" rel="noopener">Escola Comércio Lisboa</a>. Seja respeitador. Feito pelo aluno 6096.</p>
+
+  <div class="card">
+    <h2>Adicionar professor</h2>
+    <div class="row">
+      <input id="nn" placeholder="Nome do professor" maxlength="60">
+      <input id="nd" placeholder="Disciplina / função" maxlength="60">
+    </div>
+    <button id="addT">Adicionar</button>
+  </div>
+
+  <div class="card">
+    <h2>Deixar uma avaliação</h2>
+    <select id="sel"><option value="">— Escolha um professor —</option></select>
+    <div class="mut">Clareza nas explicações</div><div class="stars" data-k="c"></div>
+    <div class="mut" style="margin-top:6px">Apoio aos alunos</div><div class="stars" data-k="a"></div>
+    <div class="mut" style="margin-top:6px">Justiça na avaliação</div><div class="stars" data-k="j"></div>
+    <textarea id="cm" rows="3" maxlength="400" placeholder="Comentário (opcional)" style="margin-top:10px"></textarea>
+    <button id="send">Enviar avaliação</button>
+    <span id="msg" class="mut"></span>
+  </div>
+
+  <input id="q" placeholder="Pesquisar professor ou função" style="margin-top:16px">
+  <div id="list"></div>
+</div>
+
+<script>
+(function(){
+  var KEY="prof6096", data=[], cur={c:0,a:0,j:0};
+  try{data=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){data=[]}
+  if(!Array.isArray(data))data=[];
+  var SEED=("Helga Duarte|Coord. Técnico de Comércio;Maria Hormigo|Coord. Vendas e Marketing;Marco Rodrigues|Coord. Informática e Visual Merchandising;Valéria Fernandes|Coord. Organização de Eventos;Paula Fernandes|Coord. Receção Hoteleira e Comunicação;Sandra Rebelo|Coord. Turismo;Rosa Almeida|Coord. Cozinha-Pastelaria;Rosa Bule|Coord. Restaurante-Bar;Carlos Cristo Fernandes|Formador;"+
+  "Ana Costa|Docente;Ana Coelho|Docente;Ana Cristina Carvalho|Docente;Carla Nunes|Formadora;Carlos Rodrigues|Formador;Carlos Vieira|Formador;Chinnu Roshan|Formadora;Cláudia Santos|Docente;Carlota Falcão|Formadora;Cláudia Pinto|Docente;Dália Santos|Formadora;Daniela Pacheco|Formadora;Eleonora Pellejero|Formadora;Elisabete Oliveira|Formadora;Francisco Toscano|Formador;Gabriela d'Almeida|Formadora;Gonçalo Costa|Formador;Fátima Vasconcelos|Formadora;Graça Fialho|Docente;Helena Cardoso|Formadora;Hugo Soares|Formador;Inês Ataíde|Formadora;Inês Santos Silva|Formadora;Isabel Parreira|Formadora;Jéssica Conceição|Formadora;João Carvalho|Formador;João Coelho|Formador;João Matos|Formador;João Moreira|Formador;João Maciel Filipe|Formador;João Quintino|Formador;José Cruz|Docente;José Almeida|Formador;José Coelho|Formador;Luís Marques|Formador;Marcelo Domingues|Formador;Márcia Ferreira|Formadora;Margarida Agostinho|Formadora;Marina Moreira|Docente;Mateus Freire|Docente;Patrícia Lima|Docente;Patrícia Luíz|Formadora;Paula Almeida|Formadora;Pedro Barragão|Formador;Pedro Lucas|Docente;Rita Alves|Formadora;Raquel Clemente|Formadora;Raquel Ratado|Formadora;Renato Pernadas|Docente (Informática);Raúl Torcato|Formador;Rui Coelho|Docente;Rosário Leote|Docente;Sónia Freire|Docente;Sónia Alcaso|Docente;Susana Mendes|Docente;Teresa Vale|Formadora;Tiago Chiote|Formador;Tiago Rito|Docente").split(";");
+  SEED.forEach(function(s){var p=s.split("|");
+    if(!data.some(function(t){return t.n.toLowerCase()===p[0].toLowerCase()}))data.push({n:p[0],d:p[1],r:[]});});
+  data.sort(function(a,b){return a.n.localeCompare(b.n,"pt")});
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+  function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+  var $=function(i){return document.getElementById(i)};
+
+  $("enter").onclick=function(){$("splash").classList.add("hide")};
+
+  document.querySelectorAll(".stars").forEach(function(box){
+    var k=box.dataset.k;
+    for(var i=1;i<=5;i++){(function(i){
+      var s=document.createElement("span");s.textContent="★";
+      s.onclick=function(){cur[k]=i;paint(box,i)};box.appendChild(s);
+    })(i)}
+  });
+  function paint(box,n){box.querySelectorAll("span").forEach(function(s,i){s.classList.toggle("on",i<n)})}
+
+  function avg(r,k){if(!r.length)return 0;return r.reduce(function(a,x){return a+x[k]},0)/r.length}
+  function render(){
+    var sel=$("sel"),v=sel.value;
+    sel.innerHTML='<option value="">— Escolha um professor —</option>'+data.map(function(t,i){return '<option value="'+i+'">'+esc(t.n)+' ('+esc(t.d)+')</option>'}).join("");
+    sel.value=v;
+    var q=$("q").value.toLowerCase(),out="";
+    data.forEach(function(t,i){
+      if((t.n+" "+t.d).toLowerCase().indexOf(q)<0)return;
+      var tot=(avg(t.r,"c")+avg(t.r,"a")+avg(t.r,"j"))/3;
+      out+='<div class="card"><div class="t"><div><strong>'+esc(t.n)+'</strong><div class="mut">'+esc(t.d)+' · '+t.r.length+' avaliaç'+(t.r.length===1?'ão':'ões')+'</div></div>'+
+      '<div class="avg">'+(t.r.length?"★ "+tot.toFixed(1):"—")+'</div></div>'+
+      (t.r.length?'<div class="mut">Clareza '+avg(t.r,"c").toFixed(1)+' · Apoio '+avg(t.r,"a").toFixed(1)+' · Justiça '+avg(t.r,"j").toFixed(1)+'</div>':'')+
+      t.r.filter(function(x){return x.m}).slice(-5).reverse().map(function(x){return '<div class="cm">“'+esc(x.m)+'”</div>'}).join("")+'</div>';
+    });
+    $("list").innerHTML=out||'<div class="card mut">Ainda não há professores. Adicione o primeiro acima.</div>';
+  }
+  $("q").oninput=render;
+  $("addT").onclick=function(){
+    var n=$("nn").value.trim(),d=$("nd").value.trim();
+    if(!n||!d)return;
+    data.push({n:n,d:d,r:[]});save();$("nn").value=$("nd").value="";render();
+  };
+  $("send").onclick=function(){
+    var i=$("sel").value,m=$("msg");
+    if(i===""){m.textContent="Escolha um professor.";return}
+    if(!cur.c||!cur.a||!cur.j){m.textContent="Dê uma nota em todos os critérios.";return}
+    data[i].r.push({c:cur.c,a:cur.a,j:cur.j,m:$("cm").value.trim()});save();
+    cur={c:0,a:0,j:0};document.querySelectorAll(".stars").forEach(function(b){paint(b,0)});
+    $("cm").value="";m.textContent="Obrigado pela sua avaliação!";render();
+  };
+  render();
+})();
+</script>
+</body>
+</html>

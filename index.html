@@ -273,19 +273,13 @@ button{
 
     <div class="stars" data-k="c"></div>
 
-    <div
-      class="mut"
-      style="margin-top:6px"
-    >
+    <div class="mut" style="margin-top:6px">
       Apoio aos alunos
     </div>
 
     <div class="stars" data-k="a"></div>
 
-    <div
-      class="mut"
-      style="margin-top:6px"
-    >
+    <div class="mut" style="margin-top:6px">
       Justiça na avaliação
     </div>
 
@@ -329,7 +323,7 @@ var SUPABASE_URL =
 "https://qsnncbwoybwkhwyepaai.supabase.co";
 
 var SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwiaWF0IjoxNzkwNjY1MTIxLCJleHAiOjIxMDYyNDExMjF9.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
 
 (function(){
 
@@ -368,13 +362,10 @@ function esc(s){
   d.textContent = s;
 
   return d.innerHTML;
-
 }
 
 $("enter").onclick=function(){
-
   $("splash").classList.add("hide");
-
 };
 
 document.querySelectorAll(".stars").forEach(function(box){
@@ -425,7 +416,7 @@ function avg(list,k){
 
   return list.reduce(function(a,x){
 
-    return a + x[k];
+    return a + Number(x[k]);
 
   },0) / list.length;
 
@@ -468,7 +459,7 @@ function render(){
 
     var r = ratings.filter(function(x){
 
-      return x.teacher_id === t.id;
+      return Number(x.teacher_id) === Number(t.id);
 
     });
 
@@ -562,7 +553,6 @@ function loadAll(){
       '</div>';
 
     return;
-
   }
 
   Promise.all([
@@ -584,12 +574,16 @@ function loadAll(){
         "Erro a carregar dados.";
 
       console.error(
-        res[0].error,
+        "TEACHERS:",
+        res[0].error
+      );
+
+      console.error(
+        "RATINGS:",
         res[1].error
       );
 
       return;
-
     }
 
     teachers = res[0].data || [];

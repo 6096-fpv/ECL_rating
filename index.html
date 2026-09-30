@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Avaliação de Professores – Escola Comércio Lisboa</title>
+
 <style>
 :root{--bg:#f1f1ef;--card:#fff;--tx:#222;--mut:#6b6b6b;--ac:#1f3a68;--bd:#d4d4d0;--star:#c98a00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171717;--card:#212121;--tx:#e8e8e6;--mut:#a0a0a0;--ac:#8fb0e8;--bd:#3a3a3a;--star:#e0a526}}
@@ -35,9 +36,19 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
 #splash button{background:#fff;color:#1f3a68;padding:9px 26px}
 .hide{display:none!important}
 .warn{background:#fff3cd;color:#7a5b00;border:1px solid #f0d67a;padding:10px 12px;font-size:13px;margin-top:12px}
+
+.admin-btn{background:#555;margin-top:10px}
+.admin-comment{border-top:1px solid var(--bd);padding:10px 0}
+.admin-comment:first-child{border-top:0}
+.admin-actions{display:flex;gap:6px;margin-top:6px}
+.admin-actions button{padding:6px 10px}
+.delete-btn{background:#a83232}
+.edit-btn{background:#1f3a68}
 </style>
 </head>
+
 <body>
+
 <div id="splash">
   <h1>Avaliação de Professores</h1>
   <div class="mut">Escola Comércio Lisboa</div>
@@ -45,130 +56,651 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
   <button id="enter">Entrar</button>
 </div>
 
-<div class="top"><b>Escola Comércio Lisboa</b> · Avaliação de professores</div>
-<div class="wrap">
-  <h1>Avalie os seus professores</h1>
-  <p class="intro">Página para os alunos da <a href="https://escolacomerciolisboa.pt/" target="_blank" rel="noopener">Escola Comércio Lisboa</a>. Seja respeitador. Feito pelo aluno 6096. As avaliações são visíveis para todos.</p>
+<div class="top">
+  <b>Escola Comércio Lisboa</b> · Avaliação de professores
+</div>
 
-  <div id="cfgWarn" class="warn hide">A base de dados ainda não está configurada — ver comentário CONFIG no início do ficheiro. Sem isso, as avaliações não são partilhadas.</div>
+<div class="wrap">
+
+  <h1>Avalie os seus professores</h1>
+
+  <p class="intro">
+    Página para os alunos da
+    <a href="https://escolacomerciolisboa.pt/" target="_blank" rel="noopener">
+      Escola Comércio Lisboa
+    </a>.
+    Seja respeitador. Feito pelo aluno 6096.
+    As avaliações são visíveis para todos.
+  </p>
+
+  <button id="adminOpen" class="admin-btn">Menu Admin</button>
+
+  <div id="adminLogin" class="card hide">
+    <h2>Acesso Admin</h2>
+
+    <input id="adminKey" type="password" placeholder="Chave de acesso">
+
+    <button id="adminEnter">Entrar</button>
+
+    <span id="adminMsg" class="mut"></span>
+  </div>
+
+  <div id="adminPanel" class="card hide">
+
+    <h2>Menu Admin</h2>
+
+    <button id="adminExit" class="admin-btn">Sair</button>
+
+    <div id="adminComments" class="admin-panel">
+      A carregar comentários...
+    </div>
+
+  </div>
+
+  <div id="cfgWarn" class="warn hide">
+    A base de dados ainda não está configurada.
+  </div>
 
   <div class="card">
     <h2>Adicionar professor</h2>
+
     <div class="row">
       <input id="nn" placeholder="Nome do professor" maxlength="60">
       <input id="nd" placeholder="Disciplina / função" maxlength="60">
     </div>
+
     <button id="addT">Adicionar</button>
   </div>
 
   <div class="card">
+
     <h2>Deixar uma avaliação</h2>
-    <select id="sel"><option value="">— Escolha um professor —</option></select>
-    <div class="mut">Clareza nas explicações</div><div class="stars" data-k="c"></div>
-    <div class="mut" style="margin-top:6px">Apoio aos alunos</div><div class="stars" data-k="a"></div>
-    <div class="mut" style="margin-top:6px">Justiça na avaliação</div><div class="stars" data-k="j"></div>
-    <textarea id="cm" rows="3" maxlength="400" placeholder="Comentário (opcional)" style="margin-top:10px"></textarea>
+
+    <select id="sel">
+      <option value="">— Escolha um professor —</option>
+    </select>
+
+    <div class="mut">Clareza nas explicações</div>
+    <div class="stars" data-k="c"></div>
+
+    <div class="mut" style="margin-top:6px">
+      Apoio aos alunos
+    </div>
+    <div class="stars" data-k="a"></div>
+
+    <div class="mut" style="margin-top:6px">
+      Justiça na avaliação
+    </div>
+    <div class="stars" data-k="j"></div>
+
+    <textarea
+      id="cm"
+      rows="3"
+      maxlength="400"
+      placeholder="Comentário (opcional)"
+      style="margin-top:10px">
+    </textarea>
+
     <button id="send">Enviar avaliação</button>
+
     <span id="msg" class="mut"></span>
+
   </div>
 
-  <input id="q" placeholder="Pesquisar professor ou função" style="margin-top:16px">
-  <div id="list"><div class="card mut">A carregar…</div></div>
+  <input
+    id="q"
+    placeholder="Pesquisar professor ou função"
+    style="margin-top:16px"
+  >
+
+  <div id="list">
+    <div class="card mut">A carregar…</div>
+  </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
 <script>
-/* ====== CONFIG ======
-   1) Crie um projeto grátis em https://supabase.com
-   2) Execute o ficheiro supabase-setup.sql em SQL Editor
-   3) Vá a Settings → API e cole aqui a Project URL e a anon public key
-*/
-var SUPABASE_URL = "https://qsnncbwoybwkhwyepaai.supabase.co";
-var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
-/* ==================== */
+
+var SUPABASE_URL =
+"https://qsnncbwoybwkhwyepaai.supabase.co";
+
+var SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
+
+var ADMIN_KEY = "1M178_Jdh";
 
 (function(){
-  var $=function(i){return document.getElementById(i)};
-  var cur={c:0,a:0,j:0};
-  var teachers=[], ratings=[];
-  var configured = SUPABASE_URL.indexOf("http")===0 && SUPABASE_KEY.length>20;
-  var sb = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-  if(!configured) $("cfgWarn").classList.remove("hide");
 
-  function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+var $ = function(i){
+  return document.getElementById(i);
+};
 
-  $("enter").onclick=function(){$("splash").classList.add("hide")};
+var cur = {
+  c:0,
+  a:0,
+  j:0
+};
 
-  document.querySelectorAll(".stars").forEach(function(box){
-    var k=box.dataset.k;
-    for(var i=1;i<=5;i++){(function(i){
-      var s=document.createElement("span");s.textContent="★";
-      s.onclick=function(){cur[k]=i;paint(box,i)};box.appendChild(s);
-    })(i)}
+var teachers = [];
+var ratings = [];
+
+var configured =
+  SUPABASE_URL.indexOf("http") === 0 &&
+  SUPABASE_KEY.length > 20;
+
+var sb = configured
+  ? window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+  : null;
+
+if(!configured){
+  $("cfgWarn").classList.remove("hide");
+}
+
+function esc(s){
+  var d=document.createElement("div");
+  d.textContent=s;
+  return d.innerHTML;
+}
+
+$("enter").onclick=function(){
+  $("splash").classList.add("hide");
+};
+
+document.querySelectorAll(".stars").forEach(function(box){
+
+  var k=box.dataset.k;
+
+  for(var i=1;i<=5;i++){
+
+    (function(i){
+
+      var s=document.createElement("span");
+
+      s.textContent="★";
+
+      s.onclick=function(){
+        cur[k]=i;
+        paint(box,i);
+      };
+
+      box.appendChild(s);
+
+    })(i);
+  }
+});
+
+function paint(box,n){
+
+  box.querySelectorAll("span").forEach(function(s,i){
+    s.classList.toggle("on",i<n);
   });
-  function paint(box,n){box.querySelectorAll("span").forEach(function(s,i){s.classList.toggle("on",i<n)})}
 
-  function avg(list,k){if(!list.length)return 0;return list.reduce(function(a,x){return a+x[k]},0)/list.length}
+}
 
-  function render(){
-    var sel=$("sel"),v=sel.value;
-    sel.innerHTML='<option value="">— Escolha um professor —</option>'+teachers.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+' ('+esc(t.subject)+')</option>'}).join("");
-    sel.value=v;
-    var q=$("q").value.toLowerCase(),out="";
-    teachers.forEach(function(t){
-      if((t.name+" "+t.subject).toLowerCase().indexOf(q)<0)return;
-      var r=ratings.filter(function(x){return x.teacher_id===t.id});
-      var tot=(avg(r,"clareza")+avg(r,"apoio")+avg(r,"justica"))/3;
-      out+='<div class="card"><div class="t"><div><strong>'+esc(t.name)+'</strong><div class="mut">'+esc(t.subject)+' · '+r.length+' avaliaç'+(r.length===1?'ão':'ões')+'</div></div>'+
-      '<div class="avg">'+(r.length?"★ "+tot.toFixed(1):"—")+'</div></div>'+
-      (r.length?'<div class="mut">Clareza '+avg(r,"clareza").toFixed(1)+' · Apoio '+avg(r,"apoio").toFixed(1)+' · Justiça '+avg(r,"justica").toFixed(1)+'</div>':'')+
-      r.filter(function(x){return x.comment}).slice(-5).reverse().map(function(x){return '<div class="cm">"'+esc(x.comment)+'"</div>'}).join("")+'</div>';
+function avg(list,k){
+
+  if(!list.length)
+    return 0;
+
+  return list.reduce(function(a,x){
+    return a+x[k];
+  },0)/list.length;
+
+}
+
+function render(){
+
+  var sel=$("sel");
+  var v=sel.value;
+
+  sel.innerHTML=
+    '<option value="">— Escolha um professor —</option>'+
+    teachers.map(function(t){
+
+      return '<option value="'+t.id+'">'+
+        esc(t.name)+
+        ' ('+
+        esc(t.subject)+
+        ')</option>';
+
+    }).join("");
+
+  sel.value=v;
+
+  var q=$("q").value.toLowerCase();
+  var out="";
+
+  teachers.forEach(function(t){
+
+    if(
+      (t.name+" "+t.subject)
+      .toLowerCase()
+      .indexOf(q)<0
+    )
+      return;
+
+    var r=ratings.filter(function(x){
+      return x.teacher_id===t.id;
     });
-    $("list").innerHTML=out||'<div class="card mut">Ainda não há professores.</div>';
+
+    var tot=
+      (avg(r,"clareza")+
+       avg(r,"apoio")+
+       avg(r,"justica"))/3;
+
+    out+=
+      '<div class="card">'+
+      '<div class="t">'+
+      '<div>'+
+      '<strong>'+esc(t.name)+'</strong>'+
+      '<div class="mut">'+
+      esc(t.subject)+
+      ' · '+
+      r.length+
+      ' avaliaç'+
+      (r.length===1?'ão':'ões')+
+      '</div>'+
+      '</div>'+
+      '<div class="avg">'+
+      (r.length?"★ "+tot.toFixed(1):"—")+
+      '</div>'+
+      '</div>'+
+
+      (r.length?
+        '<div class="mut">'+
+        'Clareza '+avg(r,"clareza").toFixed(1)+
+        ' · Apoio '+avg(r,"apoio").toFixed(1)+
+        ' · Justiça '+avg(r,"justica").toFixed(1)+
+        '</div>'
+        :"")+
+
+      r
+      .filter(function(x){
+        return x.comment;
+      })
+      .slice(-5)
+      .reverse()
+      .map(function(x){
+        return '<div class="cm">"'+
+        esc(x.comment)+
+        '"</div>';
+      })
+      .join("")+
+
+      '</div>';
+
+  });
+
+  $("list").innerHTML=
+    out ||
+    '<div class="card mut">Ainda não há professores.</div>';
+
+}
+
+$("q").oninput=render;
+
+function loadAll(){
+
+  if(!configured){
+
+    $("list").innerHTML=
+      '<div class="card mut">'+
+      'Configure a base de dados para ver e enviar avaliações partilhadas.'+
+      '</div>';
+
+    return;
   }
-  $("q").oninput=render;
 
-  function loadAll(){
-    if(!configured){$("list").innerHTML='<div class="card mut">Configure a base de dados para ver e enviar avaliações partilhadas.</div>';return}
-    Promise.all([
-      sb.from("teachers").select("*").order("name"),
-      sb.from("ratings").select("*")
-    ]).then(function(res){
-      if(res[0].error||res[1].error){$("msg").textContent="Erro a carregar dados.";console.error(res[0].error,res[1].error);return}
-      teachers=res[0].data; ratings=res[1].data; render();
+  Promise.all([
+
+    sb.from("teachers").select("*").order("name"),
+
+    sb.from("ratings").select("*")
+
+  ]).then(function(res){
+
+    if(res[0].error||res[1].error){
+
+      $("msg").textContent="Erro a carregar dados.";
+
+      console.error(
+        res[0].error,
+        res[1].error
+      );
+
+      return;
+    }
+
+    teachers=res[0].data;
+    ratings=res[1].data;
+
+    render();
+
+    if(!$("adminPanel").classList.contains("hide")){
+      renderAdmin();
+    }
+
+  });
+
+}
+
+$("addT").onclick=function(){
+
+  if(!configured)
+    return;
+
+  var n=$("nn").value.trim();
+  var d=$("nd").value.trim();
+
+  if(!n||!d)
+    return;
+
+  sb.from("teachers")
+    .insert({
+      name:n,
+      subject:d
+    })
+    .then(function(r){
+
+      if(r.error){
+
+        $("msg").textContent=
+          "Já existe ou erro ao adicionar.";
+
+        return;
+      }
+
+      $("nn").value="";
+      $("nd").value="";
+
+      loadAll();
+
     });
+
+};
+
+$("send").onclick=function(){
+
+  if(!configured)
+    return;
+
+  var id=$("sel").value;
+  var m=$("msg");
+
+  if(!id){
+
+    m.textContent=
+      "Escolha um professor.";
+
+    return;
   }
 
-  $("addT").onclick=function(){
-    if(!configured)return;
-    var n=$("nn").value.trim(),d=$("nd").value.trim();
-    if(!n||!d)return;
-    sb.from("teachers").insert({name:n,subject:d}).then(function(r){
-      if(r.error){$("msg").textContent="Já existe ou erro ao adicionar.";return}
-      $("nn").value=$("nd").value="";loadAll();
-    });
-  };
+  if(!cur.c||!cur.a||!cur.j){
 
-  $("send").onclick=function(){
-    if(!configured)return;
-    var id=$("sel").value,m=$("msg");
-    if(!id){m.textContent="Escolha um professor.";return}
-    if(!cur.c||!cur.a||!cur.j){m.textContent="Dê uma nota em todos os critérios.";return}
-    sb.from("ratings").insert({teacher_id:Number(id),clareza:cur.c,apoio:cur.a,justica:cur.j,comment:$("cm").value.trim()}).then(function(r){
-      if(r.error){m.textContent="Erro ao enviar.";console.error(r.error);return}
-      cur={c:0,a:0,j:0};document.querySelectorAll(".stars").forEach(function(b){paint(b,0)});
-      $("cm").value="";m.textContent="Obrigado pela sua avaliação!";loadAll();
-    });
-  };
+    m.textContent=
+      "Dê uma nota em todos os critérios.";
 
-  loadAll();
-  if(configured){
-    sb.channel("public:changes")
-      .on("postgres_changes",{event:"*",schema:"public",table:"ratings"},loadAll)
-      .on("postgres_changes",{event:"*",schema:"public",table:"teachers"},loadAll)
-      .subscribe();
+    return;
   }
+
+  sb.from("ratings")
+    .insert({
+
+      teacher_id:Number(id),
+      clareza:cur.c,
+      apoio:cur.a,
+      justica:cur.j,
+      comment:$("cm").value.trim()
+
+    })
+    .then(function(r){
+
+      if(r.error){
+
+        m.textContent="Erro ao enviar.";
+
+        console.error(r.error);
+
+        return;
+      }
+
+      cur={
+        c:0,
+        a:0,
+        j:0
+      };
+
+      document
+      .querySelectorAll(".stars")
+      .forEach(function(b){
+        paint(b,0);
+      });
+
+      $("cm").value="";
+
+      m.textContent=
+        "Obrigado pela sua avaliação!";
+
+      loadAll();
+
+    });
+
+};
+
+
+/* ADMIN */
+
+$("adminOpen").onclick=function(){
+
+  $("adminLogin").classList.toggle("hide");
+
+  $("adminKey").value="";
+
+  $("adminMsg").textContent="";
+
+};
+
+$("adminEnter").onclick=function(){
+
+  if($("adminKey").value===ADMIN_KEY){
+
+    $("adminLogin").classList.add("hide");
+
+    $("adminPanel").classList.remove("hide");
+
+    renderAdmin();
+
+  }else{
+
+    $("adminMsg").textContent=
+      "Chave de acesso incorreta.";
+
+  }
+
+};
+
+$("adminExit").onclick=function(){
+
+  $("adminPanel").classList.add("hide");
+
+};
+
+function renderAdmin(){
+
+  var box=$("adminComments");
+
+  var comments=ratings.filter(function(r){
+
+    return r.comment &&
+           r.comment.trim()!=="";
+
+  });
+
+  if(!comments.length){
+
+    box.innerHTML=
+      '<div class="mut">Não existem comentários.</div>';
+
+    return;
+  }
+
+  box.innerHTML=comments.map(function(r){
+
+    var teacher=teachers.find(function(t){
+      return t.id===r.teacher_id;
+    });
+
+    var teacherName=teacher
+      ? teacher.name
+      : "Professor desconhecido";
+
+    return (
+
+      '<div class="admin-comment">'+
+
+      '<strong>'+
+      esc(teacherName)+
+      '</strong>'+
+
+      '<div class="mut">'+
+      'Comentário #'+
+      r.id+
+      '</div>'+
+
+      '<textarea id="comment-'+
+      r.id+
+      '" rows="3">'+
+      esc(r.comment)+
+      '</textarea>'+
+
+      '<div class="admin-actions">'+
+
+      '<button class="edit-btn" '+
+      'onclick="editComment('+r.id+')">'+
+      'Guardar edição'+
+      '</button>'+
+
+      '<button class="delete-btn" '+
+      'onclick="deleteComment('+r.id+')">'+
+      'Apagar'+
+      '</button>'+
+
+      '</div>'+
+
+      '</div>'
+
+    );
+
+  }).join("");
+
+}
+
+window.editComment=function(id){
+
+  var textarea=$("comment-"+id);
+
+  if(!textarea)
+    return;
+
+  var newComment=textarea.value.trim();
+
+  if(!newComment){
+
+    alert(
+      "O comentário não pode ficar vazio. Usa Apagar para o remover."
+    );
+
+    return;
+  }
+
+  sb.from("ratings")
+    .update({
+      comment:newComment
+    })
+    .eq("id",id)
+    .then(function(r){
+
+      if(r.error){
+
+        alert("Erro ao editar o comentário.");
+
+        console.error(r.error);
+
+        return;
+      }
+
+      alert("Comentário editado.");
+
+      loadAll();
+
+    });
+
+};
+
+window.deleteComment=function(id){
+
+  if(!confirm(
+    "Tens a certeza que queres apagar este comentário?"
+  )){
+    return;
+  }
+
+  sb.from("ratings")
+    .delete()
+    .eq("id",id)
+    .then(function(r){
+
+      if(r.error){
+
+        alert("Erro ao apagar o comentário.");
+
+        console.error(r.error);
+
+        return;
+      }
+
+      alert("Comentário apagado.");
+
+      loadAll();
+
+    });
+
+};
+
+loadAll();
+
+if(configured){
+
+  sb.channel("public:changes")
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"ratings"
+      },
+      loadAll
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"teachers"
+      },
+      loadAll
+    )
+
+    .subscribe();
+
+}
+
 })();
 </script>
+
 </body>
 </html>

@@ -3,52 +3,238 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
 <title>Avaliação de Professores – Escola Comércio Lisboa</title>
 
 <style>
-:root{--bg:#f1f1ef;--card:#fff;--tx:#222;--mut:#6b6b6b;--ac:#1f3a68;--bd:#d4d4d0;--star:#c98a00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171717;--card:#212121;--tx:#e8e8e6;--mut:#a0a0a0;--ac:#8fb0e8;--bd:#3a3a3a;--star:#e0a526}}
-:root[data-theme="dark"]{--bg:#171717;--card:#212121;--tx:#e8e8e6;--mut:#a0a0a0;--ac:#8fb0e8;--bd:#3a3a3a;--star:#e0a526}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 Arial,Helvetica,sans-serif}
-.top{background:#1f3a68;color:#fff;padding:12px 16px;font-size:14px}
-.wrap{max-width:760px;margin:0 auto;padding:16px 16px 40px}
-h1{font-size:20px;margin:6px 0 4px;font-weight:700}
-.intro{margin:0 0 4px;color:var(--mut)}
-a{color:var(--ac)}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:2px;padding:12px 14px;margin-top:12px}
-h2{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin:0 0 10px;font-weight:700}
-input,select,textarea{width:100%;padding:8px;border:1px solid var(--bd);border-radius:2px;background:var(--card);color:var(--tx);font:inherit;margin-bottom:8px}
-button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;background:var(--ac);color:#fff}
-:root:not([data-theme="light"]) button{color:#111}
-.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 180px}
-.stars{display:inline-flex}
-.stars span{font-size:24px;color:var(--bd);cursor:pointer;user-select:none;padding-right:2px}
-.stars span.on{color:var(--star)}
-.t{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.avg{font-size:17px;font-weight:700;white-space:nowrap}
-.mut{color:var(--mut);font-size:13px}
-.cm{border-top:1px solid var(--bd);padding:6px 0 0;margin-top:6px;font-size:14px}
-#splash{position:fixed;inset:0;background:#1f3a68;color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;z-index:10}
-#splash h1{font-size:26px;margin:0 0 6px}
-#splash .mut{color:#c9d3e6}
-#splash .by{margin:22px 0 24px;font-size:14px;color:#c9d3e6}
-#splash button{background:#fff;color:#1f3a68;padding:9px 26px}
-.hide{display:none!important}
-.warn{background:#fff3cd;color:#7a5b00;border:1px solid #f0d67a;padding:10px 12px;font-size:13px;margin-top:12px}
+:root{
+  --bg:#f1f1ef;
+  --card:#fff;
+  --tx:#222;
+  --mut:#6b6b6b;
+  --ac:#1f3a68;
+  --bd:#d4d4d0;
+  --star:#c98a00;
+}
 
-.admin-btn{background:#555;margin-top:10px}
-.admin-comment{border-top:1px solid var(--bd);padding:10px 0}
-.admin-comment:first-child{border-top:0}
-.admin-actions{display:flex;gap:6px;margin-top:6px}
-.admin-actions button{padding:6px 10px}
-.delete-btn{background:#a83232}
-.edit-btn{background:#1f3a68}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#171717;
+    --card:#212121;
+    --tx:#e8e8e6;
+    --mut:#a0a0a0;
+    --ac:#8fb0e8;
+    --bd:#3a3a3a;
+    --star:#e0a526;
+  }
+}
+
+:root[data-theme="dark"]{
+  --bg:#171717;
+  --card:#212121;
+  --tx:#e8e8e6;
+  --mut:#a0a0a0;
+  --ac:#8fb0e8;
+  --bd:#3a3a3a;
+  --star:#e0a526;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font:15px/1.45 Arial,Helvetica,sans-serif;
+}
+
+.top{
+  background:#1f3a68;
+  color:#fff;
+  padding:12px 16px;
+  font-size:14px;
+}
+
+.top a{
+  color:#fff;
+  margin-left:20px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.top a:hover{
+  text-decoration:underline;
+}
+
+.wrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:16px 16px 40px;
+}
+
+h1{
+  font-size:20px;
+  margin:6px 0 4px;
+  font-weight:700;
+}
+
+.intro{
+  margin:0 0 4px;
+  color:var(--mut);
+}
+
+a{
+  color:var(--ac);
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:2px;
+  padding:12px 14px;
+  margin-top:12px;
+}
+
+h2{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  color:var(--mut);
+  margin:0 0 10px;
+  font-weight:700;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:8px;
+  border:1px solid var(--bd);
+  border-radius:2px;
+  background:var(--card);
+  color:var(--tx);
+  font:inherit;
+  margin-bottom:8px;
+}
+
+button{
+  font:inherit;
+  cursor:pointer;
+  border:0;
+  border-radius:2px;
+  padding:8px 14px;
+  background:var(--ac);
+  color:#fff;
+}
+
+:root:not([data-theme="light"]) button{
+  color:#111;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.row>*{
+  flex:1 1 180px;
+}
+
+.stars{
+  display:inline-flex;
+}
+
+.stars span{
+  font-size:24px;
+  color:var(--bd);
+  cursor:pointer;
+  user-select:none;
+  padding-right:2px;
+}
+
+.stars span.on{
+  color:var(--star);
+}
+
+.t{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.avg{
+  font-size:17px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.mut{
+  color:var(--mut);
+  font-size:13px;
+}
+
+.cm{
+  border-top:1px solid var(--bd);
+  padding:6px 0 0;
+  margin-top:6px;
+  font-size:14px;
+}
+
+#splash{
+  position:fixed;
+  inset:0;
+  background:#1f3a68;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  padding:24px;
+  z-index:10;
+}
+
+#splash h1{
+  font-size:26px;
+  margin:0 0 6px;
+}
+
+#splash .mut{
+  color:#c9d3e6;
+}
+
+#splash .by{
+  margin:22px 0 24px;
+  font-size:14px;
+  color:#c9d3e6;
+}
+
+#splash button{
+  background:#fff;
+  color:#1f3a68;
+  padding:9px 26px;
+}
+
+.hide{
+  display:none!important;
+}
+
+.warn{
+  background:#fff3cd;
+  color:#7a5b00;
+  border:1px solid #f0d67a;
+  padding:10px 12px;
+  font-size:13px;
+  margin-top:12px;
+}
 </style>
 </head>
 
 <body>
-<a href="admin.html">Menu Admin</a>
 
 <div id="splash">
   <h1>Avaliação de Professores</h1>
@@ -59,6 +245,7 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
 
 <div class="top">
   <b>Escola Comércio Lisboa</b> · Avaliação de professores
+  <a href="admin.html">Menu Admin</a>
 </div>
 
 <div class="wrap">
@@ -67,50 +254,41 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
 
   <p class="intro">
     Página para os alunos da
-    <a href="https://escolacomerciolisboa.pt/" target="_blank" rel="noopener">
+    <a
+      href="https://escolacomerciolisboa.pt/"
+      target="_blank"
+      rel="noopener"
+    >
       Escola Comércio Lisboa
     </a>.
     Seja respeitador. Feito pelo aluno 6096.
     As avaliações são visíveis para todos.
   </p>
 
-  <button id="adminOpen" class="admin-btn">Menu Admin</button>
-
-  <div id="adminLogin" class="card hide">
-    <h2>Acesso Admin</h2>
-
-    <input id="adminKey" type="password" placeholder="Chave de acesso">
-
-    <button id="adminEnter">Entrar</button>
-
-    <span id="adminMsg" class="mut"></span>
-  </div>
-
-  <div id="adminPanel" class="card hide">
-
-    <h2>Menu Admin</h2>
-
-    <button id="adminExit" class="admin-btn">Sair</button>
-
-    <div id="adminComments" class="admin-panel">
-      A carregar comentários...
-    </div>
-
-  </div>
-
   <div id="cfgWarn" class="warn hide">
     A base de dados ainda não está configurada.
   </div>
 
   <div class="card">
+
     <h2>Adicionar professor</h2>
 
     <div class="row">
-      <input id="nn" placeholder="Nome do professor" maxlength="60">
-      <input id="nd" placeholder="Disciplina / função" maxlength="60">
+      <input
+        id="nn"
+        placeholder="Nome do professor"
+        maxlength="60"
+      >
+
+      <input
+        id="nd"
+        placeholder="Disciplina / função"
+        maxlength="60"
+      >
     </div>
 
     <button id="addT">Adicionar</button>
+
   </div>
 
   <div class="card">
@@ -121,17 +299,28 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
       <option value="">— Escolha um professor —</option>
     </select>
 
-    <div class="mut">Clareza nas explicações</div>
+    <div class="mut">
+      Clareza nas explicações
+    </div>
+
     <div class="stars" data-k="c"></div>
 
-    <div class="mut" style="margin-top:6px">
+    <div
+      class="mut"
+      style="margin-top:6px"
+    >
       Apoio aos alunos
     </div>
+
     <div class="stars" data-k="a"></div>
 
-    <div class="mut" style="margin-top:6px">
+    <div
+      class="mut"
+      style="margin-top:6px"
+    >
       Justiça na avaliação
     </div>
+
     <div class="stars" data-k="j"></div>
 
     <textarea
@@ -139,10 +328,12 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
       rows="3"
       maxlength="400"
       placeholder="Comentário (opcional)"
-      style="margin-top:10px">
-    </textarea>
+      style="margin-top:10px"
+    ></textarea>
 
-    <button id="send">Enviar avaliação</button>
+    <button id="send">
+      Enviar avaliação
+    </button>
 
     <span id="msg" class="mut"></span>
 
@@ -155,7 +346,9 @@ button{font:inherit;cursor:pointer;border:0;border-radius:2px;padding:8px 14px;b
   >
 
   <div id="list">
-    <div class="card mut">A carregar…</div>
+    <div class="card mut">
+      A carregar…
+    </div>
   </div>
 
 </div>
@@ -169,8 +362,6 @@ var SUPABASE_URL =
 
 var SUPABASE_KEY =
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
-
-var ADMIN_KEY = "1M178_Jdh";
 
 (function(){
 
@@ -192,7 +383,10 @@ var configured =
   SUPABASE_KEY.length > 20;
 
 var sb = configured
-  ? window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+  ? window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    )
   : null;
 
 if(!configured){
@@ -200,42 +394,58 @@ if(!configured){
 }
 
 function esc(s){
-  var d=document.createElement("div");
-  d.textContent=s;
+
+  var d = document.createElement("div");
+
+  d.textContent = s;
+
   return d.innerHTML;
+
 }
 
 $("enter").onclick=function(){
+
   $("splash").classList.add("hide");
+
 };
 
 document.querySelectorAll(".stars").forEach(function(box){
 
-  var k=box.dataset.k;
+  var k = box.dataset.k;
 
   for(var i=1;i<=5;i++){
 
     (function(i){
 
-      var s=document.createElement("span");
+      var s = document.createElement("span");
 
-      s.textContent="★";
+      s.textContent = "★";
 
-      s.onclick=function(){
-        cur[k]=i;
+      s.onclick = function(){
+
+        cur[k] = i;
+
         paint(box,i);
+
       };
 
       box.appendChild(s);
 
     })(i);
+
   }
+
 });
 
 function paint(box,n){
 
   box.querySelectorAll("span").forEach(function(s,i){
-    s.classList.toggle("on",i<n);
+
+    s.classList.toggle(
+      "on",
+      i<n
+    );
+
   });
 
 }
@@ -246,125 +456,164 @@ function avg(list,k){
     return 0;
 
   return list.reduce(function(a,x){
-    return a+x[k];
-  },0)/list.length;
+
+    return a + x[k];
+
+  },0) / list.length;
 
 }
 
 function render(){
 
-  var sel=$("sel");
-  var v=sel.value;
+  var sel = $("sel");
 
-  sel.innerHTML=
-    '<option value="">— Escolha um professor —</option>'+
+  var v = sel.value;
+
+  sel.innerHTML =
+    '<option value="">— Escolha um professor —</option>' +
     teachers.map(function(t){
 
-      return '<option value="'+t.id+'">'+
-        esc(t.name)+
-        ' ('+
-        esc(t.subject)+
+      return '<option value="' +
+        t.id +
+        '">' +
+        esc(t.name) +
+        ' (' +
+        esc(t.subject) +
         ')</option>';
 
     }).join("");
 
-  sel.value=v;
+  sel.value = v;
 
-  var q=$("q").value.toLowerCase();
-  var out="";
+  var q = $("q").value.toLowerCase();
+
+  var out = "";
 
   teachers.forEach(function(t){
 
     if(
-      (t.name+" "+t.subject)
+      (t.name + " " + t.subject)
       .toLowerCase()
-      .indexOf(q)<0
+      .indexOf(q) < 0
     )
       return;
 
-    var r=ratings.filter(function(x){
-      return x.teacher_id===t.id;
+    var r = ratings.filter(function(x){
+
+      return x.teacher_id === t.id;
+
     });
 
-    var tot=
-      (avg(r,"clareza")+
-       avg(r,"apoio")+
-       avg(r,"justica"))/3;
+    var tot =
+      (
+        avg(r,"clareza") +
+        avg(r,"apoio") +
+        avg(r,"justica")
+      ) / 3;
 
-    out+=
-      '<div class="card">'+
-      '<div class="t">'+
-      '<div>'+
-      '<strong>'+esc(t.name)+'</strong>'+
-      '<div class="mut">'+
-      esc(t.subject)+
-      ' · '+
-      r.length+
-      ' avaliaç'+
-      (r.length===1?'ão':'ões')+
-      '</div>'+
-      '</div>'+
-      '<div class="avg">'+
-      (r.length?"★ "+tot.toFixed(1):"—")+
-      '</div>'+
-      '</div>'+
+    out +=
+      '<div class="card">' +
 
-      (r.length?
-        '<div class="mut">'+
-        'Clareza '+avg(r,"clareza").toFixed(1)+
-        ' · Apoio '+avg(r,"apoio").toFixed(1)+
-        ' · Justiça '+avg(r,"justica").toFixed(1)+
+      '<div class="t">' +
+
+      '<div>' +
+
+      '<strong>' +
+      esc(t.name) +
+      '</strong>' +
+
+      '<div class="mut">' +
+      esc(t.subject) +
+      ' · ' +
+      r.length +
+      ' avaliaç' +
+      (r.length===1 ? 'ão' : 'ões') +
+      '</div>' +
+
+      '</div>' +
+
+      '<div class="avg">' +
+      (r.length ? "★ " + tot.toFixed(1) : "—") +
+      '</div>' +
+
+      '</div>' +
+
+      (
+        r.length
+        ?
+        '<div class="mut">' +
+        'Clareza ' +
+        avg(r,"clareza").toFixed(1) +
+        ' · Apoio ' +
+        avg(r,"apoio").toFixed(1) +
+        ' · Justiça ' +
+        avg(r,"justica").toFixed(1) +
         '</div>'
-        :"")+
+        :
+        ""
+      ) +
 
       r
       .filter(function(x){
+
         return x.comment;
+
       })
       .slice(-5)
       .reverse()
       .map(function(x){
-        return '<div class="cm">"'+
-        esc(x.comment)+
-        '"</div>';
+
+        return '<div class="cm">"' +
+          esc(x.comment) +
+          '"</div>';
+
       })
-      .join("")+
+      .join("") +
 
       '</div>';
 
   });
 
-  $("list").innerHTML=
+  $("list").innerHTML =
     out ||
-    '<div class="card mut">Ainda não há professores.</div>';
+    '<div class="card mut">' +
+    'Ainda não há professores.' +
+    '</div>';
 
 }
 
-$("q").oninput=render;
+$("q").oninput = render;
 
 function loadAll(){
 
   if(!configured){
 
-    $("list").innerHTML=
-      '<div class="card mut">'+
-      'Configure a base de dados para ver e enviar avaliações partilhadas.'+
+    $("list").innerHTML =
+      '<div class="card mut">' +
+      'Configure a base de dados para ver e enviar avaliações partilhadas.' +
       '</div>';
 
     return;
+
   }
 
   Promise.all([
 
-    sb.from("teachers").select("*").order("name"),
+    sb
+      .from("teachers")
+      .select("*")
+      .order("name"),
 
-    sb.from("ratings").select("*")
+    sb
+      .from("ratings")
+      .select("*")
 
   ]).then(function(res){
 
-    if(res[0].error||res[1].error){
+    if(res[0].error || res[1].error){
 
-      $("msg").textContent="Erro a carregar dados.";
+      $("msg").textContent =
+        "Erro a carregar dados.";
 
       console.error(
         res[0].error,
@@ -372,16 +621,13 @@ function loadAll(){
       );
 
       return;
+
     }
 
-    teachers=res[0].data;
-    ratings=res[1].data;
+    teachers = res[0].data || [];
+    ratings = res[1].data || [];
 
     render();
-
-    if(!$("adminPanel").classList.contains("hide")){
-      renderAdmin();
-    }
 
   });
 
@@ -392,13 +638,14 @@ $("addT").onclick=function(){
   if(!configured)
     return;
 
-  var n=$("nn").value.trim();
-  var d=$("nd").value.trim();
+  var n = $("nn").value.trim();
+  var d = $("nd").value.trim();
 
-  if(!n||!d)
+  if(!n || !d)
     return;
 
-  sb.from("teachers")
+  sb
+    .from("teachers")
     .insert({
       name:n,
       subject:d
@@ -407,14 +654,17 @@ $("addT").onclick=function(){
 
       if(r.error){
 
-        $("msg").textContent=
+        $("msg").textContent =
           "Já existe ou erro ao adicionar.";
 
+        console.error(r.error);
+
         return;
+
       }
 
-      $("nn").value="";
-      $("nd").value="";
+      $("nn").value = "";
+      $("nd").value = "";
 
       loadAll();
 
@@ -427,26 +677,29 @@ $("send").onclick=function(){
   if(!configured)
     return;
 
-  var id=$("sel").value;
-  var m=$("msg");
+  var id = $("sel").value;
+  var m = $("msg");
 
   if(!id){
 
-    m.textContent=
+    m.textContent =
       "Escolha um professor.";
 
     return;
+
   }
 
-  if(!cur.c||!cur.a||!cur.j){
+  if(!cur.c || !cur.a || !cur.j){
 
-    m.textContent=
+    m.textContent =
       "Dê uma nota em todos os critérios.";
 
     return;
+
   }
 
-  sb.from("ratings")
+  sb
+    .from("ratings")
     .insert({
 
       teacher_id:Number(id),
@@ -460,209 +713,33 @@ $("send").onclick=function(){
 
       if(r.error){
 
-        m.textContent="Erro ao enviar.";
+        m.textContent =
+          "Erro ao enviar.";
 
         console.error(r.error);
 
         return;
+
       }
 
-      cur={
+      cur = {
         c:0,
         a:0,
         j:0
       };
 
       document
-      .querySelectorAll(".stars")
-      .forEach(function(b){
-        paint(b,0);
-      });
+        .querySelectorAll(".stars")
+        .forEach(function(b){
 
-      $("cm").value="";
+          paint(b,0);
 
-      m.textContent=
+        });
+
+      $("cm").value = "";
+
+      m.textContent =
         "Obrigado pela sua avaliação!";
-
-      loadAll();
-
-    });
-
-};
-
-
-/* ADMIN */
-
-$("adminOpen").onclick=function(){
-
-  $("adminLogin").classList.toggle("hide");
-
-  $("adminKey").value="";
-
-  $("adminMsg").textContent="";
-
-};
-
-$("adminEnter").onclick=function(){
-
-  if($("adminKey").value===ADMIN_KEY){
-
-    $("adminLogin").classList.add("hide");
-
-    $("adminPanel").classList.remove("hide");
-
-    renderAdmin();
-
-  }else{
-
-    $("adminMsg").textContent=
-      "Chave de acesso incorreta.";
-
-  }
-
-};
-
-$("adminExit").onclick=function(){
-
-  $("adminPanel").classList.add("hide");
-
-};
-
-function renderAdmin(){
-
-  var box=$("adminComments");
-
-  var comments=ratings.filter(function(r){
-
-    return r.comment &&
-           r.comment.trim()!=="";
-
-  });
-
-  if(!comments.length){
-
-    box.innerHTML=
-      '<div class="mut">Não existem comentários.</div>';
-
-    return;
-  }
-
-  box.innerHTML=comments.map(function(r){
-
-    var teacher=teachers.find(function(t){
-      return t.id===r.teacher_id;
-    });
-
-    var teacherName=teacher
-      ? teacher.name
-      : "Professor desconhecido";
-
-    return (
-
-      '<div class="admin-comment">'+
-
-      '<strong>'+
-      esc(teacherName)+
-      '</strong>'+
-
-      '<div class="mut">'+
-      'Comentário #'+
-      r.id+
-      '</div>'+
-
-      '<textarea id="comment-'+
-      r.id+
-      '" rows="3">'+
-      esc(r.comment)+
-      '</textarea>'+
-
-      '<div class="admin-actions">'+
-
-      '<button class="edit-btn" '+
-      'onclick="editComment('+r.id+')">'+
-      'Guardar edição'+
-      '</button>'+
-
-      '<button class="delete-btn" '+
-      'onclick="deleteComment('+r.id+')">'+
-      'Apagar'+
-      '</button>'+
-
-      '</div>'+
-
-      '</div>'
-
-    );
-
-  }).join("");
-
-}
-
-window.editComment=function(id){
-
-  var textarea=$("comment-"+id);
-
-  if(!textarea)
-    return;
-
-  var newComment=textarea.value.trim();
-
-  if(!newComment){
-
-    alert(
-      "O comentário não pode ficar vazio. Usa Apagar para o remover."
-    );
-
-    return;
-  }
-
-  sb.from("ratings")
-    .update({
-      comment:newComment
-    })
-    .eq("id",id)
-    .then(function(r){
-
-      if(r.error){
-
-        alert("Erro ao editar o comentário.");
-
-        console.error(r.error);
-
-        return;
-      }
-
-      alert("Comentário editado.");
-
-      loadAll();
-
-    });
-
-};
-
-window.deleteComment=function(id){
-
-  if(!confirm(
-    "Tens a certeza que queres apagar este comentário?"
-  )){
-    return;
-  }
-
-  sb.from("ratings")
-    .delete()
-    .eq("id",id)
-    .then(function(r){
-
-      if(r.error){
-
-        alert("Erro ao apagar o comentário.");
-
-        console.error(r.error);
-
-        return;
-      }
-
-      alert("Comentário apagado.");
 
       loadAll();
 
@@ -674,7 +751,8 @@ loadAll();
 
 if(configured){
 
-  sb.channel("public:changes")
+  sb
+    .channel("public:changes")
 
     .on(
       "postgres_changes",
@@ -701,6 +779,7 @@ if(configured){
 }
 
 })();
+
 </script>
 
 </body>

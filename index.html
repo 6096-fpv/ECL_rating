@@ -424,7 +424,7 @@ function avg(list,k){
 
   return list.reduce(function(a,x){
 
-    return a + x[k];
+    return a + Number(x[k]);
 
   },0) / list.length;
 
@@ -467,7 +467,7 @@ function render(){
 
     var r = ratings.filter(function(x){
 
-      return x.teacher_id === t.id;
+      return Number(x.teacher_id) === Number(t.id);
 
     });
 
@@ -561,42 +561,58 @@ function loadAll(){
       '</div>';
 
     return;
-
   }
 
-  Promise.all([
+  sb
+    .from("teachers")
+    .select("id,name,subject")
+    .order("name")
+    .then(function(result){
 
-    sb
-      .from("teachers")
-      .select("*")
-      .order("name"),
+      if(result.error){
 
-    sb
-      .from("ratings")
-      .select("*")
+        console.error(
+          "ERRO AO CARREGAR PROFESSORES:",
+          result.error
+        );
 
-  ]).then(function(res){
+        $("msg").textContent =
+          "Erro ao carregar professores.";
 
-    if(res[0].error || res[1].error){
+        return;
+      }
 
-      $("msg").textContent =
-        "Erro a carregar dados.";
+      teachers = result.data || [];
 
-      console.error(
-        res[0].error,
-        res[1].error
+      console.log(
+        "PROFESSORES CARREGADOS:",
+        teachers
       );
 
-      return;
+      render();
 
-    }
+    });
 
-    teachers = res[0].data || [];
-    ratings = res[1].data || [];
+  sb
+    .from("ratings")
+    .select("*")
+    .then(function(result){
 
-    render();
+      if(result.error){
 
-  });
+        console.error(
+          "ERRO AO CARREGAR AVALIAÇÕES:",
+          result.error
+        );
+
+        return;
+      }
+
+      ratings = result.data || [];
+
+      render();
+
+    });
 
 }
 
@@ -701,7 +717,6 @@ if(configured){
       },
       loadAll
     )
-
     .subscribe();
 
 }

@@ -133,16 +133,6 @@ button{
   color:#111;
 }
 
-.row{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.row>*{
-  flex:1 1 180px;
-}
-
 .stars{
   display:inline-flex;
 }
@@ -269,7 +259,6 @@ button{
     A base de dados ainda não está configurada.
   </div>
 
-
   <div class="card">
 
     <h2>Deixar uma avaliação</h2>
@@ -340,7 +329,7 @@ var SUPABASE_URL =
 "https://qsnncbwoybwkhwyepaai.supabase.co";
 
 var SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwiaWF0IjoxNzkwNjY1MTIxLCJleHAiOjIxMDYyNDExMjF9.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
 
 (function(){
 
@@ -379,7 +368,6 @@ function esc(s){
   d.textContent = s;
 
   return d.innerHTML;
-
 }
 
 $("enter").onclick=function(){
@@ -611,45 +599,6 @@ function loadAll(){
   });
 
 }
-
-$("addT").onclick=function(){
-
-  if(!configured)
-    return;
-
-  var n = $("nn").value.trim();
-  var d = $("nd").value.trim();
-
-  if(!n || !d)
-    return;
-
-  sb
-    .from("teachers")
-    .insert({
-      name:n,
-      subject:d
-    })
-    .then(function(r){
-
-      if(r.error){
-
-        $("msg").textContent =
-          "Já existe ou erro ao adicionar.";
-
-        console.error(r.error);
-
-        return;
-
-      }
-
-      $("nn").value = "";
-      $("nd").value = "";
-
-      loadAll();
-
-    });
-
-};
 
 $("send").onclick=function(){
 

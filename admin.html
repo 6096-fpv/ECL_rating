@@ -1,243 +1,429 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin - Avaliação de Professores</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Menu Admin - Escola Comércio Lisboa</title>
 
 <style>
-:root{
-  --bg:#f1f1ef;
-  --card:#fff;
-  --tx:#222;
-  --mut:#6b6b6b;
-  --ac:#1f3a68;
-  --bd:#d4d4d0;
-  --danger:#a83232;
-}
 
 *{
-  box-sizing:border-box;
+    box-sizing:border-box;
 }
 
 body{
-  margin:0;
-  background:var(--bg);
-  color:var(--tx);
-  font:15px/1.45 Arial,Helvetica,sans-serif;
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f1ef;
+    color:#222;
 }
 
 .top{
-  background:#1f3a68;
-  color:#fff;
-  padding:12px 16px;
+    background:#1f3a68;
+    color:white;
+    padding:14px 18px;
+    font-size:15px;
+}
+
+.top a{
+    color:white;
+    text-decoration:none;
+    margin-left:20px;
 }
 
 .wrap{
-  max-width:900px;
-  margin:0 auto;
-  padding:20px 16px 40px;
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
 }
 
 .card{
-  background:var(--card);
-  border:1px solid var(--bd);
-  padding:14px;
-  margin-top:12px;
-  border-radius:3px;
+    background:white;
+    border:1px solid #d4d4d0;
+    border-radius:4px;
+    padding:16px;
+    margin-top:15px;
 }
 
 h1{
-  font-size:22px;
-  margin:0 0 5px;
+    margin:0 0 5px;
 }
 
 h2{
-  font-size:14px;
-  text-transform:uppercase;
-  color:var(--mut);
+    margin-top:0;
+}
+
+.mut{
+    color:#6b6b6b;
+    font-size:14px;
 }
 
 input,
-select,
-textarea{
-  width:100%;
-  padding:9px;
-  border:1px solid var(--bd);
-  background:var(--card);
-  color:var(--tx);
-  margin-bottom:8px;
-  font:inherit;
+textarea,
+select{
+    width:100%;
+    padding:9px;
+    margin:6px 0;
+    border:1px solid #ccc;
+    border-radius:4px;
+    font:inherit;
 }
 
 button{
-  border:0;
-  padding:8px 14px;
-  cursor:pointer;
-  background:var(--ac);
-  color:#fff;
-  border-radius:2px;
-  font:inherit;
+    border:0;
+    border-radius:4px;
+    padding:9px 14px;
+    cursor:pointer;
+    background:#1f3a68;
+    color:white;
+    font:inherit;
+}
+
+button:hover{
+    opacity:.9;
 }
 
 .delete{
-  background:var(--danger);
+    background:#a83232;
 }
 
-.secondary{
-  background:#555;
+.edit{
+    background:#1f3a68;
 }
 
-.rating{
-  border-top:1px solid var(--bd);
-  padding:14px 0;
+.logout{
+    background:#555;
 }
 
-.rating:first-child{
-  border-top:0;
+.login{
+    max-width:400px;
+    margin:80px auto;
 }
 
-.rating-title{
-  font-weight:bold;
-  margin-bottom:6px;
+.tabs{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    margin-top:20px;
 }
 
-.rating-info{
-  color:var(--mut);
-  font-size:13px;
-  margin-bottom:8px;
+.tab{
+    background:#ddd;
+    color:#222;
 }
 
-.actions{
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
+.tab.active{
+    background:#1f3a68;
+    color:white;
 }
 
-.hidden{
-  display:none;
+.tab-content{
+    display:none;
 }
 
-.error{
-  color:#a83232;
-}
-
-.success{
-  color:#287a38;
+.tab-content.active{
+    display:block;
 }
 
 .stats{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
 }
 
 .stat{
-  flex:1;
-  min-width:150px;
-  border:1px solid var(--bd);
-  padding:12px;
+    background:#f5f5f5;
+    border:1px solid #ddd;
+    padding:18px;
+    text-align:center;
+    border-radius:4px;
 }
 
 .stat-number{
-  font-size:22px;
-  font-weight:bold;
+    font-size:28px;
+    font-weight:bold;
+    color:#1f3a68;
 }
 
-.back{
-  display:inline-block;
-  color:#fff;
-  text-decoration:none;
-  margin-top:5px;
+.item{
+    border-top:1px solid #ddd;
+    padding:15px 0;
 }
+
+.item:first-child{
+    border-top:0;
+}
+
+.actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-top:8px;
+}
+
+.rating{
+    background:#f8f8f8;
+    border:1px solid #ddd;
+    padding:12px;
+    margin-top:10px;
+    border-radius:4px;
+}
+
+.hidden{
+    display:none;
+}
+
+.message{
+    margin-top:8px;
+    color:#6b6b6b;
+}
+
+@media(max-width:600px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .tabs{
+        flex-direction:column;
+    }
+
+    .tab{
+        width:100%;
+    }
+
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="top">
-  <b>Escola Comércio Lisboa</b> · Administração
-  <br>
-  <a class="back" href="index.html">Voltar para avaliações</a>
+<div id="loginScreen" class="login">
+
+    <div class="card">
+
+        <h2>Menu Admin</h2>
+
+        <p class="mut">
+            Introduza a chave de acesso.
+        </p>
+
+        <input
+            id="adminKey"
+            type="password"
+            placeholder="Chave de acesso"
+        >
+
+        <button onclick="login()">
+            Entrar
+        </button>
+
+        <div id="loginMessage" class="message"></div>
+
+    </div>
+
 </div>
 
-<div class="wrap">
 
-  <div id="login" class="card">
+<div id="adminScreen" class="hidden">
 
-    <h1>Menu Admin</h1>
+    <div class="top">
 
-    <p>Introduza a chave de acesso.</p>
+        <b>Escola Comércio Lisboa</b>
+        · Menu Admin
 
-    <input
-      id="adminKey"
-      type="password"
-      placeholder="Chave de acesso"
-    >
-
-    <button id="loginBtn">Entrar</button>
-
-    <div id="loginMsg" class="error"></div>
-
-  </div>
-
-
-  <div id="admin" class="hidden">
-
-    <h1>Administração</h1>
-
-    <button id="logout" class="secondary">
-      Sair
-    </button>
-
-
-    <div class="stats">
-
-      <div class="stat">
-        <div>Professores</div>
-        <div id="teacherCount" class="stat-number">0</div>
-      </div>
-
-      <div class="stat">
-        <div>Avaliações</div>
-        <div id="ratingCount" class="stat-number">0</div>
-      </div>
-
-      <div class="stat">
-        <div>Comentários</div>
-        <div id="commentCount" class="stat-number">0</div>
-      </div>
+        <a href="index.html">
+            Voltar ao site
+        </a>
 
     </div>
 
 
-    <div class="card">
+    <div class="wrap">
 
-      <h2>Professores</h2>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
 
-      <div id="teachers">
-        A carregar...
-      </div>
+            <div>
+                <h1>Menu Admin</h1>
+                <div class="mut">
+                    Gestão do site
+                </div>
+            </div>
+
+            <button class="logout" onclick="logout()">
+                Sair
+            </button>
+
+        </div>
+
+
+        <div class="tabs">
+
+            <button
+                class="tab active"
+                onclick="openTab('stats',this)"
+            >
+                Estatísticas
+            </button>
+
+            <button
+                class="tab"
+                onclick="openTab('teachers',this)"
+            >
+                Professores
+            </button>
+
+            <button
+                class="tab"
+                onclick="openTab('ratings',this)"
+            >
+                Avaliações
+            </button>
+
+            <button
+                class="tab"
+                onclick="openTab('addTeacher',this)"
+            >
+                Adicionar professor
+            </button>
+
+        </div>
+
+
+        <!-- ESTATÍSTICAS -->
+
+        <div id="stats" class="tab-content active">
+
+            <div class="card">
+
+                <h2>Estatísticas</h2>
+
+                <div class="stats">
+
+                    <div class="stat">
+
+                        <div class="stat-number" id="statTeachers">
+                            0
+                        </div>
+
+                        <div>
+                            Professores
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <div class="stat-number" id="statRatings">
+                            0
+                        </div>
+
+                        <div>
+                            Avaliações
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <div class="stat-number" id="statComments">
+                            0
+                        </div>
+
+                        <div>
+                            Comentários
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROFESSORES -->
+
+        <div id="teachers" class="tab-content">
+
+            <div class="card">
+
+                <h2>Professores</h2>
+
+                <input
+                    id="teacherSearch"
+                    placeholder="Pesquisar professor..."
+                    oninput="renderTeachers()"
+                >
+
+                <div id="teacherList">
+                    A carregar...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- AVALIAÇÕES -->
+
+        <div id="ratings" class="tab-content">
+
+            <div class="card">
+
+                <h2>Avaliações</h2>
+
+                <input
+                    id="ratingSearch"
+                    placeholder="Pesquisar professor ou comentário..."
+                    oninput="renderRatings()"
+                >
+
+                <div id="ratingList">
+                    A carregar...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADICIONAR PROFESSOR -->
+
+        <div id="addTeacher" class="tab-content">
+
+            <div class="card">
+
+                <h2>Adicionar professor</h2>
+
+                <input
+                    id="newTeacherName"
+                    placeholder="Nome do professor"
+                    maxlength="60"
+                >
+
+                <input
+                    id="newTeacherSubject"
+                    placeholder="Disciplina / função"
+                    maxlength="60"
+                >
+
+                <button onclick="addTeacher()">
+                    Adicionar professor
+                </button>
+
+                <div id="addMessage" class="message"></div>
+
+            </div>
+
+        </div>
 
     </div>
-
-
-    <div class="card">
-
-      <h2>Avaliações</h2>
-
-      <input
-        id="search"
-        placeholder="Pesquisar professor ou comentário"
-      >
-
-      <div id="ratings">
-        A carregar...
-      </div>
-
-    </div>
-
-  </div>
 
 </div>
 
@@ -254,133 +440,161 @@ var SUPABASE_KEY =
 
 var ADMIN_KEY = "1M178_Jdh";
 
-var sb =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+
+var sb = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
+
 
 var teachers = [];
 var ratings = [];
 
 
-function esc(s){
+function esc(text){
 
-  var d=document.createElement("div");
+    var div = document.createElement("div");
 
-  d.textContent=s;
+    div.textContent = text == null ? "" : text;
 
-  return d.innerHTML;
+    return div.innerHTML;
 
 }
 
 
 /* LOGIN */
 
-document.getElementById("loginBtn").onclick=function(){
+function login(){
 
-  var key=
-    document.getElementById("adminKey").value;
+    var key =
+        document.getElementById("adminKey").value;
 
-  if(key===ADMIN_KEY){
+    if(key === ADMIN_KEY){
+
+        document
+            .getElementById("loginScreen")
+            .classList.add("hidden");
+
+        document
+            .getElementById("adminScreen")
+            .classList.remove("hidden");
+
+        loadData();
+
+    }else{
+
+        document
+            .getElementById("loginMessage")
+            .textContent =
+            "Chave de acesso incorreta.";
+
+    }
+
+}
+
+
+function logout(){
+
+    location.reload();
+
+}
+
+
+document
+    .getElementById("adminKey")
+    .addEventListener("keydown",function(e){
+
+        if(e.key === "Enter"){
+            login();
+        }
+
+    });
+
+
+/* TABS */
+
+function openTab(id,button){
 
     document
-      .getElementById("login")
-      .classList.add("hidden");
+        .querySelectorAll(".tab-content")
+        .forEach(function(tab){
+
+            tab.classList.remove("active");
+
+        });
+
 
     document
-      .getElementById("admin")
-      .classList.remove("hidden");
+        .querySelectorAll(".tab")
+        .forEach(function(tab){
 
-    loadData();
+            tab.classList.remove("active");
 
-  }else{
+        });
+
 
     document
-      .getElementById("loginMsg")
-      .textContent=
-      "Chave de acesso incorreta.";
-
-  }
-
-};
+        .getElementById(id)
+        .classList.add("active");
 
 
-/* ENTER */
+    button.classList.add("active");
 
-document.getElementById("adminKey").onkeydown=function(e){
-
-  if(e.key==="Enter"){
-
-    document
-      .getElementById("loginBtn")
-      .click();
-
-  }
-
-};
+}
 
 
-/* LOGOUT */
-
-document.getElementById("logout").onclick=function(){
-
-  location.reload();
-
-};
-
-
-/* LOAD */
+/* LOAD DATA */
 
 function loadData(){
 
-  Promise.all([
+    Promise.all([
 
-    sb
-      .from("teachers")
-      .select("*")
-      .order("name"),
+        sb
+            .from("teachers")
+            .select("*")
+            .order("name"),
 
-    sb
-      .from("ratings")
-      .select("*")
-      .order("id",{ascending:false})
+        sb
+            .from("ratings")
+            .select("*")
+            .order("id",{ascending:false})
 
-  ]).then(function(res){
+    ]).then(function(result){
 
-    if(res[0].error){
+        if(result[0].error){
 
-      alert(
-        "Erro ao carregar professores:\n"+
-        res[0].error.message
-      );
+            console.error(result[0].error);
 
-      return;
+            alert("Erro ao carregar professores.");
 
-    }
+            return;
 
-    if(res[1].error){
+        }
 
-      alert(
-        "Erro ao carregar avaliações:\n"+
-        res[1].error.message
-      );
 
-      return;
+        if(result[1].error){
 
-    }
+            console.error(result[1].error);
 
-    teachers=res[0].data || [];
+            alert("Erro ao carregar avaliações.");
 
-    ratings=res[1].data || [];
+            return;
 
-    updateStats();
+        }
 
-    renderTeachers();
 
-    renderRatings();
+        teachers = result[0].data || [];
 
-  });
+        ratings = result[1].data || [];
+
+
+        updateStats();
+
+        renderTeachers();
+
+        renderRatings();
+
+    });
 
 }
 
@@ -389,20 +603,27 @@ function loadData(){
 
 function updateStats(){
 
-  document.getElementById("teacherCount")
-    .textContent=teachers.length;
+    document
+        .getElementById("statTeachers")
+        .textContent =
+        teachers.length;
 
-  document.getElementById("ratingCount")
-    .textContent=ratings.length;
 
-  document.getElementById("commentCount")
-    .textContent=
-    ratings.filter(function(r){
+    document
+        .getElementById("statRatings")
+        .textContent =
+        ratings.length;
 
-      return r.comment &&
-             r.comment.trim()!=="";
 
-    }).length;
+    document
+        .getElementById("statComments")
+        .textContent =
+        ratings.filter(function(r){
+
+            return r.comment &&
+                   r.comment.trim() !== "";
+
+        }).length;
 
 }
 
@@ -411,60 +632,321 @@ function updateStats(){
 
 function renderTeachers(){
 
-  var box=
-    document.getElementById("teachers");
+    var search =
+        document
+        .getElementById("teacherSearch")
+        .value
+        .toLowerCase();
 
-  if(!teachers.length){
 
-    box.innerHTML=
-      '<div>Nenhum professor.</div>';
+    var list =
+        document.getElementById("teacherList");
 
-    return;
 
-  }
+    var filtered =
+        teachers.filter(function(t){
 
-  box.innerHTML=teachers.map(function(t){
+            return (
+                t.name + " " + t.subject
+            )
+            .toLowerCase()
+            .includes(search);
 
-    var count=
-      ratings.filter(function(r){
+        });
 
-        return r.teacher_id===t.id;
 
-      }).length;
+    if(!filtered.length){
 
-    return `
+        list.innerHTML =
+            '<div class="mut">' +
+            'Nenhum professor encontrado.' +
+            '</div>';
 
-      <div class="rating">
+        return;
 
-        <div class="rating-title">
-          ${esc(t.name)}
-        </div>
+    }
 
-        <div class="rating-info">
-          ${esc(t.subject)}
-          · ${count} avaliação(ões)
-        </div>
 
-        <div class="actions">
+    list.innerHTML =
+        filtered.map(function(t){
 
-          <button
-            onclick="editTeacher(${t.id})">
-            Editar professor
-          </button>
+            var count =
+                ratings.filter(function(r){
 
-          <button
-            class="delete"
-            onclick="deleteTeacher(${t.id})">
-            Apagar professor
-          </button>
+                    return r.teacher_id === t.id;
 
-        </div>
+                }).length;
 
-      </div>
 
-    `;
+            return (
 
-  }).join("");
+                '<div class="item">' +
+
+                '<strong>' +
+                esc(t.name) +
+                '</strong>' +
+
+                '<div class="mut">' +
+                esc(t.subject) +
+                ' · ' +
+                count +
+                ' avaliação(ões)' +
+                '</div>' +
+
+                '<div class="actions">' +
+
+                '<button onclick="editTeacher(' +
+                t.id +
+                ')">' +
+                'Editar' +
+                '</button>' +
+
+                '<button class="delete" onclick="deleteTeacher(' +
+                t.id +
+                ')">' +
+                'Apagar' +
+                '</button>' +
+
+                '</div>' +
+
+                '</div>'
+
+            );
+
+        }).join("");
+
+}
+
+
+/* EDIT TEACHER */
+
+function editTeacher(id){
+
+    var teacher =
+        teachers.find(function(t){
+
+            return t.id === id;
+
+        });
+
+
+    if(!teacher)
+        return;
+
+
+    var name =
+        prompt(
+            "Nome do professor:",
+            teacher.name
+        );
+
+
+    if(name === null)
+        return;
+
+
+    var subject =
+        prompt(
+            "Disciplina / função:",
+            teacher.subject
+        );
+
+
+    if(subject === null)
+        return;
+
+
+    name = name.trim();
+
+    subject = subject.trim();
+
+
+    if(!name || !subject){
+
+        alert("Preenche todos os campos.");
+
+        return;
+
+    }
+
+
+    sb
+        .from("teachers")
+        .update({
+
+            name:name,
+            subject:subject
+
+        })
+        .eq("id",id)
+        .then(function(result){
+
+            if(result.error){
+
+                console.error(result.error);
+
+                alert("Erro ao editar professor.");
+
+                return;
+
+            }
+
+
+            loadData();
+
+        });
+
+}
+
+
+/* DELETE TEACHER */
+
+function deleteTeacher(id){
+
+    var teacher =
+        teachers.find(function(t){
+
+            return t.id === id;
+
+        });
+
+
+    if(!teacher)
+        return;
+
+
+    var ok =
+        confirm(
+            "Apagar o professor \"" +
+            teacher.name +
+            "\" e todas as suas avaliações?"
+        );
+
+
+    if(!ok)
+        return;
+
+
+    sb
+        .from("ratings")
+        .delete()
+        .eq("teacher_id",id)
+        .then(function(result){
+
+            if(result.error){
+
+                console.error(result.error);
+
+                alert(
+                    "Erro ao apagar avaliações."
+                );
+
+                return;
+
+            }
+
+
+            sb
+                .from("teachers")
+                .delete()
+                .eq("id",id)
+                .then(function(result2){
+
+                    if(result2.error){
+
+                        console.error(
+                            result2.error
+                        );
+
+                        alert(
+                            "Erro ao apagar professor."
+                        );
+
+                        return;
+
+                    }
+
+
+                    loadData();
+
+                });
+
+        });
+
+}
+
+
+/* ADD TEACHER */
+
+function addTeacher(){
+
+    var name =
+        document
+        .getElementById("newTeacherName")
+        .value
+        .trim();
+
+
+    var subject =
+        document
+        .getElementById("newTeacherSubject")
+        .value
+        .trim();
+
+
+    var message =
+        document.getElementById("addMessage");
+
+
+    if(!name || !subject){
+
+        message.textContent =
+            "Preenche o nome e a disciplina.";
+
+        return;
+
+    }
+
+
+    sb
+        .from("teachers")
+        .insert({
+
+            name:name,
+            subject:subject
+
+        })
+        .then(function(result){
+
+            if(result.error){
+
+                console.error(result.error);
+
+                message.textContent =
+                    "Erro ao adicionar professor.";
+
+                return;
+
+            }
+
+
+            document
+                .getElementById("newTeacherName")
+                .value = "";
+
+
+            document
+                .getElementById("newTeacherSubject")
+                .value = "";
+
+
+            message.textContent =
+                "Professor adicionado.";
+
+
+            loadData();
+
+        });
 
 }
 
@@ -473,415 +955,275 @@ function renderTeachers(){
 
 function renderRatings(){
 
-  var box=
-    document.getElementById("ratings");
-
-  var search=
-    document.getElementById("search")
-    .value
-    .toLowerCase();
-
-  var filtered=
-    ratings.filter(function(r){
-
-      var teacher=
-        teachers.find(function(t){
-
-          return t.id===r.teacher_id;
-
-        });
-
-      var name=
-        teacher ? teacher.name : "";
-
-      var comment=
-        r.comment || "";
-
-      return (
-        name+" "+comment
-      )
-      .toLowerCase()
-      .includes(search);
-
-    });
+    var search =
+        document
+        .getElementById("ratingSearch")
+        .value
+        .toLowerCase();
 
 
-  if(!filtered.length){
-
-    box.innerHTML=
-      '<div>Nenhuma avaliação encontrada.</div>';
-
-    return;
-
-  }
+    var list =
+        document.getElementById("ratingList");
 
 
-  box.innerHTML=
-    filtered.map(function(r){
+    var filtered =
+        ratings.filter(function(r){
 
-      var teacher=
-        teachers.find(function(t){
+            var teacher =
+                teachers.find(function(t){
 
-          return t.id===r.teacher_id;
+                    return t.id === r.teacher_id;
+
+                });
+
+
+            var teacherName =
+                teacher ? teacher.name : "";
+
+
+            var text =
+                teacherName +
+                " " +
+                (r.comment || "");
+
+
+            return text
+                .toLowerCase()
+                .includes(search);
 
         });
 
 
-      var teacherName=
-        teacher
-        ? teacher.name
-        : "Professor desconhecido";
+    if(!filtered.length){
 
-
-      return `
-
-        <div class="rating">
-
-          <div class="rating-title">
-            ${esc(teacherName)}
-          </div>
-
-          <div class="rating-info">
-            Avaliação #${r.id}
-          </div>
-
-          <label>Clareza</label>
-
-          <select id="clareza-${r.id}">
-
-            ${options(r.clareza)}
-
-          </select>
-
-
-          <label>Apoio</label>
-
-          <select id="apoio-${r.id}">
-
-            ${options(r.apoio)}
-
-          </select>
-
-
-          <label>Justiça</label>
-
-          <select id="justica-${r.id}">
-
-            ${options(r.justica)}
-
-          </select>
-
-
-          <label>Comentário</label>
-
-          <textarea
-            id="comment-${r.id}"
-            rows="3"
-            maxlength="400"
-          >${esc(r.comment || "")}</textarea>
-
-
-          <div class="actions">
-
-            <button
-              onclick="saveRating(${r.id})">
-              Guardar alterações
-            </button>
-
-            <button
-              class="delete"
-              onclick="deleteRating(${r.id})">
-              Apagar avaliação
-            </button>
-
-          </div>
-
-        </div>
-
-      `;
-
-    }).join("");
-
-}
-
-
-/* OPTIONS */
-
-function options(value){
-
-  var out="";
-
-  for(var i=1;i<=5;i++){
-
-    out+=
-      '<option value="'+i+'" '+
-      (Number(value)===i?"selected":"")+
-      '>'+i+' / 5</option>';
-
-  }
-
-  return out;
-
-}
-
-
-/* SEARCH */
-
-document.getElementById("search").oninput=
-function(){
-
-  renderRatings();
-
-};
-
-
-/* SAVE RATING */
-
-window.saveRating=function(id){
-
-  var clareza=
-    Number(
-      document.getElementById(
-        "clareza-"+id
-      ).value
-    );
-
-  var apoio=
-    Number(
-      document.getElementById(
-        "apoio-"+id
-      ).value
-    );
-
-  var justica=
-    Number(
-      document.getElementById(
-        "justica-"+id
-      ).value
-    );
-
-  var comment=
-    document.getElementById(
-      "comment-"+id
-    ).value.trim();
-
-
-  sb
-    .from("ratings")
-    .update({
-
-      clareza:clareza,
-      apoio:apoio,
-      justica:justica,
-      comment:comment
-
-    })
-    .eq("id",id)
-    .then(function(res){
-
-      if(res.error){
-
-        alert(
-          "Erro ao editar:\n"+
-          res.error.message
-        );
+        list.innerHTML =
+            '<div class="mut">' +
+            'Nenhuma avaliação encontrada.' +
+            '</div>';
 
         return;
 
-      }
+    }
 
-      alert("Avaliação atualizada.");
 
-      loadData();
+    list.innerHTML =
+        filtered.map(function(r){
 
-    });
+            var teacher =
+                teachers.find(function(t){
 
-};
+                    return t.id === r.teacher_id;
+
+                });
+
+
+            var teacherName =
+                teacher
+                ? teacher.name
+                : "Professor desconhecido";
+
+
+            return (
+
+                '<div class="rating">' +
+
+                '<strong>' +
+                esc(teacherName) +
+                '</strong>' +
+
+                '<div class="mut">' +
+                'Avaliação #' +
+                r.id +
+                '</div>' +
+
+                '<p>' +
+                'Clareza: ' +
+                r.clareza +
+                '/5<br>' +
+
+                'Apoio: ' +
+                r.apoio +
+                '/5<br>' +
+
+                'Justiça: ' +
+                r.justica +
+                '/5' +
+
+                '</p>' +
+
+                '<textarea id="comment-' +
+                r.id +
+                '" rows="3">' +
+                esc(r.comment || "") +
+                '</textarea>' +
+
+                '<div class="actions">' +
+
+                '<button onclick="saveRating(' +
+                r.id +
+                ')">' +
+                'Guardar edição' +
+                '</button>' +
+
+                '<button class="delete" onclick="deleteRating(' +
+                r.id +
+                ')">' +
+                'Apagar' +
+                '</button>' +
+
+                '</div>' +
+
+                '</div>'
+
+            );
+
+        }).join("");
+
+}
+
+
+/* EDIT RATING */
+
+function saveRating(id){
+
+    var rating =
+        ratings.find(function(r){
+
+            return r.id === id;
+
+        });
+
+
+    if(!rating)
+        return;
+
+
+    var clareza =
+        prompt(
+            "Clareza (1-5):",
+            rating.clareza
+        );
+
+
+    if(clareza === null)
+        return;
+
+
+    var apoio =
+        prompt(
+            "Apoio (1-5):",
+            rating.apoio
+        );
+
+
+    if(apoio === null)
+        return;
+
+
+    var justica =
+        prompt(
+            "Justiça (1-5):",
+            rating.justica
+        );
+
+
+    if(justica === null)
+        return;
+
+
+    clareza = Number(clareza);
+    apoio = Number(apoio);
+    justica = Number(justica);
+
+
+    if(
+        clareza < 1 || clareza > 5 ||
+        apoio < 1 || apoio > 5 ||
+        justica < 1 || justica > 5
+    ){
+
+        alert("As notas devem estar entre 1 e 5.");
+
+        return;
+
+    }
+
+
+    var comment =
+        document
+        .getElementById("comment-"+id)
+        .value
+        .trim();
+
+
+    sb
+        .from("ratings")
+        .update({
+
+            clareza:clareza,
+            apoio:apoio,
+            justica:justica,
+            comment:comment
+
+        })
+        .eq("id",id)
+        .then(function(result){
+
+            if(result.error){
+
+                console.error(result.error);
+
+                alert("Erro ao editar avaliação.");
+
+                return;
+
+            }
+
+
+            loadData();
+
+        });
+
+}
 
 
 /* DELETE RATING */
 
-window.deleteRating=function(id){
+function deleteRating(id){
 
-  if(!confirm(
-    "Apagar esta avaliação?"
-  )){
-    return;
-  }
-
-
-  sb
-    .from("ratings")
-    .delete()
-    .eq("id",id)
-    .then(function(res){
-
-      if(res.error){
-
-        alert(
-          "Erro ao apagar:\n"+
-          res.error.message
-        );
+    if(
+        !confirm(
+            "Tens a certeza que queres apagar esta avaliação?"
+        )
+    ){
 
         return;
 
-      }
-
-      alert("Avaliação apagada.");
-
-      loadData();
-
-    });
-
-};
+    }
 
 
-/* EDIT TEACHER */
-
-window.editTeacher=function(id){
-
-  var teacher=
-    teachers.find(function(t){
-
-      return t.id===id;
-
-    });
-
-  if(!teacher)
-    return;
-
-
-  var name=
-    prompt(
-      "Nome do professor:",
-      teacher.name
-    );
-
-  if(name===null)
-    return;
-
-
-  var subject=
-    prompt(
-      "Disciplina / função:",
-      teacher.subject
-    );
-
-  if(subject===null)
-    return;
-
-
-  name=name.trim();
-
-  subject=subject.trim();
-
-
-  if(!name || !subject){
-
-    alert(
-      "Preenche os dois campos."
-    );
-
-    return;
-
-  }
-
-
-  sb
-    .from("teachers")
-    .update({
-
-      name:name,
-      subject:subject
-
-    })
-    .eq("id",id)
-    .then(function(res){
-
-      if(res.error){
-
-        alert(
-          "Erro ao editar professor:\n"+
-          res.error.message
-        );
-
-        return;
-
-      }
-
-      loadData();
-
-    });
-
-};
-
-
-/* DELETE TEACHER */
-
-window.deleteTeacher=function(id){
-
-  var teacher=
-    teachers.find(function(t){
-
-      return t.id===id;
-
-    });
-
-  if(!teacher)
-    return;
-
-
-  if(!confirm(
-    "Apagar o professor "+
-    teacher.name+
-    " e todas as suas avaliações?"
-  )){
-    return;
-  }
-
-
-  sb
-    .from("ratings")
-    .delete()
-    .eq("teacher_id",id)
-    .then(function(res){
-
-      if(res.error){
-
-        alert(
-          "Erro ao apagar avaliações:\n"+
-          res.error.message
-        );
-
-        return;
-
-      }
-
-
-      sb
-        .from("teachers")
+    sb
+        .from("ratings")
         .delete()
         .eq("id",id)
-        .then(function(res2){
+        .then(function(result){
 
-          if(res2.error){
+            if(result.error){
 
-            alert(
-              "Erro ao apagar professor:\n"+
-              res2.error.message
-            );
+                console.error(result.error);
 
-            return;
+                alert("Erro ao apagar avaliação.");
 
-          }
+                return;
 
-          loadData();
+            }
+
+
+            loadData();
 
         });
 
-    });
-
-};
+}
 
 </script>
 

@@ -211,9 +211,19 @@ button:hover{
         </p>
 
         <input
-            id="adminKey"
+            id="adminEmail"
+            type="email"
+            placeholder="Email do administrador"
+            autocomplete="username"
+            required
+        >
+
+        <input
+            id="adminPassword"
             type="password"
-            placeholder="Chave de acesso"
+            placeholder="Palavra-passe"
+            autocomplete="current-password"
+            required
         >
 
         <button onclick="login()">
@@ -438,8 +448,6 @@ var SUPABASE_URL =
 var SUPABASE_KEY =
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
 
-var ADMIN_KEY = "1M178_Jdh";
-
 
 var sb = window.supabase.createClient(
     SUPABASE_URL,
@@ -464,50 +472,61 @@ function esc(text){
 
 /* LOGIN */
 
-function login(){
+async function login(){
 
-    var key =
-        document.getElementById("adminKey").value;
+    var email = document.getElementById("adminEmail").value.trim();
+    var password = document.getElementById("adminPassword").value;
+    var message = document.getElementById("loginMessage");
 
-    if(key === ADMIN_KEY){
+    message.textContent = "";
 
-        document
-            .getElementById("loginScreen")
-            .classList.add("hidden");
-
-        document
-            .getElementById("adminScreen")
-            .classList.remove("hidden");
-
-        loadData();
-
-    }else{
-
-        document
-            .getElementById("loginMessage")
-            .textContent =
-            "Chave de acesso incorreta.";
-
+    if(!email || !password){
+        message.textContent = "Introduz o email e a palavra-passe.";
+        return;
     }
 
+    var loginResult = await sb.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    if(loginResult.error){
+        message.textContent = "Credenciais incorretas.";
+        return;
+    }
+
+    var user = loginResult.data.user;
+
+    var adminResult = await sb
+        .from("admin_users")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    if(adminResult.error || !adminResult.data){
+        await sb.auth.signOut();
+        message.textContent = "Esta conta não tem permissões de administrador.";
+        return;
+    }
+
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("adminScreen").classList.remove("hidden");
+    loadData();
 }
 
 
-function logout(){
-
+async function logout(){
+    await sb.auth.signOut();
     location.reload();
-
 }
 
 
 document
-    .getElementById("adminKey")
+    .getElementById("adminPassword")
     .addEventListener("keydown",function(e){
-
         if(e.key === "Enter"){
             login();
         }
-
     });
 
 

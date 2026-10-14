@@ -8,6 +8,41 @@
 
 <style>
 
+:root{
+    --bg:#f1f1ef;
+    --card:#fff;
+    --tx:#222;
+    --mut:#6b6b6b;
+    --ac:#1f3a68;
+    --ac-soft:#e7ecf5;
+    --bd:#d4d4d0;
+    --track:#e6e6e2;
+}
+
+@media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+        --bg:#171717;
+        --card:#212121;
+        --tx:#e8e8e6;
+        --mut:#a0a0a0;
+        --ac:#8fb0e8;
+        --ac-soft:#243044;
+        --bd:#3a3a3a;
+        --track:#2e2e2e;
+    }
+}
+
+:root[data-theme="dark"]{
+    --bg:#171717;
+    --card:#212121;
+    --tx:#e8e8e6;
+    --mut:#a0a0a0;
+    --ac:#8fb0e8;
+    --ac-soft:#243044;
+    --bd:#3a3a3a;
+    --track:#2e2e2e;
+}
+
 *{
     box-sizing:border-box;
 }
@@ -15,8 +50,8 @@
 body{
     margin:0;
     font-family:Arial,Helvetica,sans-serif;
-    background:#f1f1ef;
-    color:#222;
+    background:var(--bg);
+    color:var(--tx);
 }
 
 .top{
@@ -39,9 +74,9 @@ body{
 }
 
 .card{
-    background:white;
-    border:1px solid #d4d4d0;
-    border-radius:4px;
+    background:var(--card);
+    border:1px solid var(--bd);
+    border-radius:8px;
     padding:16px;
     margin-top:15px;
 }
@@ -55,8 +90,34 @@ h2{
 }
 
 .mut{
-    color:#6b6b6b;
+    color:var(--mut);
     font-size:14px;
+}
+
+.admwho{
+    margin-left:auto;
+    font-weight:400;
+}
+
+.badge{
+    display:inline-block;
+    padding:1px 7px;
+    border-radius:10px;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    vertical-align:middle;
+}
+
+.b-owner{background:#f0b429;color:#3d2c00}
+.b-admin{background:#1f3a68;color:#fff}
+.b-moderator{background:#1f7a4d;color:#fff}
+.b-user{background:var(--ac-soft);color:var(--ac)}
+
+select{
+    width:auto;
+    min-width:140px;
 }
 
 input,
@@ -65,19 +126,34 @@ select{
     width:100%;
     padding:9px;
     margin:6px 0;
-    border:1px solid #ccc;
-    border-radius:4px;
+    border:1px solid var(--bd);
+    border-radius:6px;
+    background:var(--card);
+    color:var(--tx);
     font:inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus-visible,
+.tab:focus-visible{
+    outline:2px solid var(--ac);
+    outline-offset:1px;
 }
 
 button{
     border:0;
-    border-radius:4px;
+    border-radius:6px;
     padding:9px 14px;
     cursor:pointer;
-    background:#1f3a68;
-    color:white;
+    background:var(--ac);
+    color:#fff;
     font:inherit;
+}
+
+:root:not([data-theme="light"]) button:not(.delete):not(.logout):not(.tab){
+    color:#111;
 }
 
 button:hover{
@@ -109,13 +185,15 @@ button:hover{
 }
 
 .tab{
-    background:#ddd;
-    color:#222;
+    background:var(--track);
+    color:var(--tx);
+    border:1px solid var(--bd);
 }
 
 .tab.active{
-    background:#1f3a68;
-    color:white;
+    background:var(--ac);
+    color:var(--card);
+    border-color:var(--ac);
 }
 
 .tab-content{
@@ -128,26 +206,26 @@ button:hover{
 
 .stats{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
     gap:12px;
 }
 
 .stat{
-    background:#f5f5f5;
-    border:1px solid #ddd;
+    background:var(--bg);
+    border:1px solid var(--bd);
     padding:18px;
     text-align:center;
-    border-radius:4px;
+    border-radius:6px;
 }
 
 .stat-number{
     font-size:28px;
     font-weight:bold;
-    color:#1f3a68;
+    color:var(--ac);
 }
 
 .item{
-    border-top:1px solid #ddd;
+    border-top:1px solid var(--bd);
     padding:15px 0;
 }
 
@@ -163,20 +241,24 @@ button:hover{
 }
 
 .rating{
-    background:#f8f8f8;
-    border:1px solid #ddd;
+    background:var(--bg);
+    border:1px solid var(--bd);
     padding:12px;
     margin-top:10px;
-    border-radius:4px;
+    border-radius:6px;
 }
 
 .hidden{
     display:none;
 }
 
+.hide{
+    display:none!important;
+}
+
 .message{
     margin-top:8px;
-    color:#6b6b6b;
+    color:var(--mut);
 }
 
 @media(max-width:600px){
@@ -207,14 +289,15 @@ button:hover{
         <h2>Menu Admin</h2>
 
         <p class="mut">
-            Introduza a chave de acesso.
+            Introduza o username e a palavra-passe.
         </p>
 
         <input
-            id="adminEmail"
-            type="email"
-            placeholder="Email do administrador"
+            id="adminUsername"
+            placeholder="Username"
             autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
             required
         >
 
@@ -226,11 +309,16 @@ button:hover{
             required
         >
 
-        <button onclick="login()">
+        <button id="loginBtn" onclick="login()">
             Entrar
         </button>
 
         <div id="loginMessage" class="message"></div>
+
+        <p class="mut" style="margin-bottom:0">
+            Ainda não tens conta?
+            <a href="auth.html">Cria uma aqui</a>.
+        </p>
 
     </div>
 
@@ -243,6 +331,8 @@ button:hover{
 
         <b>Escola Comércio Lisboa</b>
         · Menu Admin
+
+        <span id="admWho" class="admwho"></span>
 
         <a href="index.html">
             Voltar ao site
@@ -269,10 +359,23 @@ button:hover{
         </div>
 
 
+        <div id="noPerms" class="card hide">
+
+            <h2>Sem permissões</h2>
+
+            <div class="mut">
+                A tua conta não tem permissões de administrador.
+                Fala com o owner do site.
+            </div>
+
+        </div>
+
+
         <div class="tabs">
 
             <button
                 class="tab active"
+                data-min="mod"
                 onclick="openTab('stats',this)"
             >
                 Estatísticas
@@ -280,6 +383,7 @@ button:hover{
 
             <button
                 class="tab"
+                data-min="admin"
                 onclick="openTab('teachers',this)"
             >
                 Professores
@@ -287,6 +391,7 @@ button:hover{
 
             <button
                 class="tab"
+                data-min="mod"
                 onclick="openTab('ratings',this)"
             >
                 Avaliações
@@ -294,9 +399,26 @@ button:hover{
 
             <button
                 class="tab"
+                data-min="admin"
                 onclick="openTab('addTeacher',this)"
             >
                 Adicionar professor
+            </button>
+
+            <button
+                class="tab"
+                data-min="mod"
+                onclick="openTab('forumTab',this)"
+            >
+                Fórum
+            </button>
+
+            <button
+                class="tab"
+                data-min="owner"
+                onclick="openTab('usersTab',this)"
+            >
+                Utilizadores
             </button>
 
         </div>
@@ -346,6 +468,19 @@ button:hover{
 
                         <div>
                             Comentários
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <div class="stat-number" id="statForum">
+                            0
+                        </div>
+
+                        <div>
+                            Mensagens no fórum
                         </div>
 
                     </div>
@@ -433,12 +568,63 @@ button:hover{
 
         </div>
 
+
+        <!-- FÓRUM -->
+
+        <div id="forumTab" class="tab-content">
+
+            <div class="card">
+
+                <h2>Fórum</h2>
+
+                <div id="forumSetup" class="message hide">
+                    O fórum ainda não está configurado.
+                    Corra o script de configuração do fórum no Supabase.
+                </div>
+
+                <input
+                    id="forumSearch"
+                    placeholder="Pesquisar mensagens..."
+                    oninput="renderForum()"
+                >
+
+                <div id="forumList">
+                    A carregar...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- UTILIZADORES -->
+
+        <div id="usersTab" class="tab-content">
+
+            <div class="card">
+
+                <h2>Utilizadores</h2>
+
+                <div id="usersList">
+                    A carregar...
+                </div>
+
+                <div class="message">
+                    Só o owner altera cargos.
+                    Não podes alterar o teu próprio cargo.
+                    Remover contas é feito no painel do Supabase.
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 
 <script>
 
@@ -457,6 +643,9 @@ var sb = window.supabase.createClient(
 
 var teachers = [];
 var ratings = [];
+var forumPosts = [];
+var profiles = [];
+var forumSetupNeeded = false;
 
 
 function esc(text){
@@ -470,53 +659,201 @@ function esc(text){
 }
 
 
+/* SESSÃO */
+
+var SKEY = "ecl-session";
+
+function getSession(){
+
+    try{
+        var s = JSON.parse(localStorage.getItem(SKEY));
+        if(s && s.token && Number(s.exp) * 1000 > Date.now())
+            return s;
+    }catch(e){}
+
+    return null;
+
+}
+
+function saveSession(s){
+    localStorage.setItem(SKEY, JSON.stringify(s));
+}
+
+function endSession(){
+    localStorage.removeItem(SKEY);
+}
+
+var ROLE_LABEL = {
+    user:"USER",
+    moderator:"MODERATOR",
+    admin:"ADMIN",
+    owner:"OWNER"
+};
+
+var ROLE_LEVEL = {
+    user:0,
+    moderator:1,
+    admin:2,
+    owner:3
+};
+
+function badgeHtml(role){
+
+    if(!role)
+        return "";
+
+    return '<span class="badge b-' + esc(role) + '">' +
+        esc(ROLE_LABEL[role] || String(role).toUpperCase()) +
+        '</span>';
+
+}
+
+function isAuthErr(e){
+    return !!(e && /sess.o/i.test(e.message || ""));
+}
+
+function authFail(){
+    endSession();
+    paintWho();
+    document.getElementById("adminScreen").classList.add("hidden");
+    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("loginMessage").textContent =
+        "Sessão expirada. Volta a entrar.";
+}
+
+
+function paintWho(){
+
+    var s = getSession();
+
+    document.getElementById("admWho").innerHTML = s
+        ? esc(s.username) + ' ' + badgeHtml(s.role)
+        : "";
+
+}
+
+
+function applyRole(role){
+
+    var lvl = ROLE_LEVEL[role] || 0;
+
+    document
+        .querySelectorAll("[data-min]")
+        .forEach(function(b){
+
+            var need = { mod:1, admin:2, owner:3 }[b.getAttribute("data-min")] || 0;
+
+            b.style.display = lvl >= need ? "" : "none";
+
+        });
+
+    var staff = lvl >= 1;
+
+    document.querySelector(".tabs").style.display = staff ? "" : "none";
+    document.getElementById("noPerms").classList.toggle("hide", staff);
+
+    if(!staff){
+        document
+            .querySelectorAll(".tab-content")
+            .forEach(function(c){ c.classList.remove("active"); });
+        return;
+    }
+
+    var first = null;
+
+    document
+        .querySelectorAll("[data-min]")
+        .forEach(function(b){
+            if(!first && b.style.display !== "none")
+                first = b;
+        });
+
+    if(first)
+        first.click();
+
+}
+
+
 /* LOGIN */
 
 async function login(){
 
-    var email = document.getElementById("adminEmail").value.trim();
+    var username =
+        document.getElementById("adminUsername").value.trim().toLowerCase();
     var password = document.getElementById("adminPassword").value;
     var message = document.getElementById("loginMessage");
+    var button = document.getElementById("loginBtn");
 
     message.textContent = "";
 
-    if(!email || !password){
-        message.textContent = "Introduz o email e a palavra-passe.";
+    if(!username || !password){
+        message.textContent = "Introduz o username e a palavra-passe.";
         return;
     }
 
-    var loginResult = await sb.auth.signInWithPassword({
-        email: email,
-        password: password
+    button.disabled = true;
+
+    var r = await sb.rpc("login",{
+        p_username: username,
+        p_password: password
     });
 
-    if(loginResult.error){
-        message.textContent = "Credenciais incorretas.";
+    button.disabled = false;
+
+    if(r.error || !r.data || !r.data.token){
+        message.textContent =
+            (r.error && r.error.message) || "Credenciais incorretas.";
         return;
     }
 
-    var user = loginResult.data.user;
+    saveSession(r.data);
 
-    var adminResult = await sb
-        .from("admin_users")
-        .select("user_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+    enterAdmin();
+}
 
-    if(adminResult.error || !adminResult.data){
-        await sb.auth.signOut();
-        message.textContent = "Esta conta não tem permissões de administrador.";
+
+async function enterAdmin(){
+
+    var s = getSession();
+
+    if(!s){
+        document.getElementById("loginScreen").classList.remove("hidden");
+        document.getElementById("adminScreen").classList.add("hidden");
         return;
     }
+
+    var r = await sb.rpc("session_info",{ p_token: s.token });
+
+    if(r.error || !r.data){
+        authFail();
+        return;
+    }
+
+    saveSession(r.data);
+
+    paintWho();
 
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("adminScreen").classList.remove("hidden");
+
+    applyRole(r.data.role);
+
     loadData();
 }
 
 
 async function logout(){
-    await sb.auth.signOut();
+
+    var s = getSession();
+
+    if(s){
+        try{
+            await sb.rpc("logout",{ p_token: s.token });
+        }catch(e){}
+    }
+
+    endSession();
+
     location.reload();
 }
 
@@ -528,6 +865,18 @@ document
             login();
         }
     });
+
+
+document
+    .getElementById("adminUsername")
+    .addEventListener("keydown",function(e){
+        if(e.key === "Enter"){
+            login();
+        }
+    });
+
+
+enterAdmin();
 
 
 /* TABS */
@@ -576,7 +925,16 @@ function loadData(){
         sb
             .from("ratings")
             .select("*")
-            .order("id",{ascending:false})
+            .order("id",{ascending:false}),
+
+        sb
+            .from("forum_posts")
+            .select("*")
+            .order("id",{ascending:false}),
+
+        sb
+            .from("profiles")
+            .select("id,username,role")
 
     ]).then(function(result){
 
@@ -607,11 +965,44 @@ function loadData(){
         ratings = result[1].data || [];
 
 
+        forumSetupNeeded = false;
+        forumPosts = [];
+
+        if(result[2].error){
+
+            console.error(result[2].error);
+
+            forumSetupNeeded =
+                result[2].error.code === "42P01";
+
+        }else{
+
+            forumPosts = result[2].data || [];
+
+        }
+
+
+        document
+            .getElementById("forumSetup")
+            .classList.toggle("hide", !forumSetupNeeded);
+
+
+        profiles = [];
+
+        if(result[3] && !result[3].error){
+            profiles = result[3].data || [];
+        }
+
+
         updateStats();
 
         renderTeachers();
 
         renderRatings();
+
+        renderForum();
+
+        renderUsers();
 
     });
 
@@ -643,6 +1034,12 @@ function updateStats(){
                    r.comment.trim() !== "";
 
         }).length;
+
+
+    document
+        .getElementById("statForum")
+        .textContent =
+        forumPosts.length;
 
 }
 
@@ -1232,6 +1629,203 @@ function deleteRating(id){
                 console.error(result.error);
 
                 alert("Erro ao apagar avaliação.");
+
+                return;
+
+            }
+
+
+            loadData();
+
+        });
+
+}
+
+/* FORUM */
+
+function fmtDate(v){
+
+    if(!v)
+        return "";
+
+    var d = new Date(v);
+
+    if(isNaN(d))
+        return "";
+
+    return d.toLocaleString("pt-PT",{
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit"
+    });
+
+}
+
+
+function renderForum(){
+
+    var list =
+        document.getElementById("forumList");
+
+
+    if(forumSetupNeeded){
+
+        list.innerHTML =
+            '<div class="mut">' +
+            'Fórum por configurar.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    var search =
+        document
+        .getElementById("forumSearch")
+        .value
+        .toLowerCase();
+
+
+    var filtered =
+        forumPosts.filter(function(p){
+
+            var teacher =
+                teachers.find(function(t){
+
+                    return Number(t.id) === Number(p.teacher_id);
+
+                });
+
+
+            var text =
+                (p.title || "") +
+                " " +
+                (p.content || "") +
+                " " +
+                (p.author_name || "") +
+                " " +
+                (teacher ? teacher.name : "");
+
+
+            return text
+                .toLowerCase()
+                .includes(search);
+
+        });
+
+
+    if(!filtered.length){
+
+        list.innerHTML =
+            '<div class="mut">' +
+            'Nenhuma mensagem encontrada.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        filtered.map(function(p){
+
+            var teacher =
+                teachers.find(function(t){
+
+                    return Number(t.id) === Number(p.teacher_id);
+
+                });
+
+
+            var topic =
+                p.parent_id
+                ? forumPosts.find(function(x){
+
+                    return Number(x.id) === Number(p.parent_id);
+
+                  })
+                : null;
+
+
+            return (
+
+                '<div class="rating">' +
+
+                '<strong>' +
+                esc(p.title || "Resposta") +
+                '</strong>' +
+
+                '<div class="mut">' +
+                (p.parent_id
+                    ? 'Resposta ao tópico "' +
+                      esc(topic ? topic.title : "#" + p.parent_id) +
+                      '"'
+                    : "Tópico") +
+                '</div>' +
+
+                '<div class="mut">' +
+                esc(p.author_name || "Anónimo") +
+                ' · ' +
+                fmtDate(p.created_at) +
+                (teacher ? ' · ' + esc(teacher.name) : "") +
+                '</div>' +
+
+                '<p>' +
+                esc(p.content) +
+                '</p>' +
+
+                '<div class="actions">' +
+
+                (
+                    p.parent_id
+                    ? ""
+                    : '<button onclick="location.href=\'forum.html#topico-' +
+                      p.id +
+                      '\'">Abrir no fórum</button>'
+                ) +
+
+                '<button class="delete" onclick="deleteForumPost(' +
+                p.id +
+                ')">' +
+                'Apagar' +
+                '</button>' +
+
+                '</div>' +
+
+                '</div>'
+
+            );
+
+        }).join("");
+
+}
+
+
+function deleteForumPost(id){
+
+    if(
+        !confirm(
+            "Tens a certeza que queres apagar esta mensagem do fórum?"
+        )
+    ){
+        return;
+    }
+
+
+    sb
+        .from("forum_posts")
+        .delete()
+        .eq("id",id)
+        .then(function(result){
+
+            if(result.error){
+
+                console.error(result.error);
+
+                alert("Erro ao apagar mensagem.");
 
                 return;
 

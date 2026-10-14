@@ -13,8 +13,10 @@
   --tx:#222;
   --mut:#6b6b6b;
   --ac:#1f3a68;
+  --ac-soft:#e7ecf5;
   --bd:#d4d4d0;
   --star:#c98a00;
+  --track:#e6e6e2;
 }
 
 @media (prefers-color-scheme:dark){
@@ -24,8 +26,10 @@
     --tx:#e8e8e6;
     --mut:#a0a0a0;
     --ac:#8fb0e8;
+    --ac-soft:#243044;
     --bd:#3a3a3a;
     --star:#e0a526;
+    --track:#2e2e2e;
   }
 }
 
@@ -35,8 +39,10 @@
   --tx:#e8e8e6;
   --mut:#a0a0a0;
   --ac:#8fb0e8;
+  --ac-soft:#243044;
   --bd:#3a3a3a;
   --star:#e0a526;
+  --track:#2e2e2e;
 }
 
 *{
@@ -55,21 +61,36 @@ body{
   color:#fff;
   padding:12px 16px;
   font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.top nav{
+  margin-left:auto;
+  display:flex;
+  gap:18px;
 }
 
 .top a{
   color:#fff;
-  margin-left:20px;
   text-decoration:none;
   font-weight:bold;
 }
 
-.top a:hover{
+.top a:hover,
+.top a.on{
   text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+.acct{
+  font-weight:400;
 }
 
 .wrap{
-  max-width:760px;
+  max-width:960px;
   margin:0 auto;
   padding:16px 16px 40px;
 }
@@ -92,7 +113,7 @@ a{
 .card{
   background:var(--card);
   border:1px solid var(--bd);
-  border-radius:2px;
+  border-radius:8px;
   padding:12px 14px;
   margin-top:12px;
 }
@@ -110,56 +131,102 @@ input,
 select,
 textarea{
   width:100%;
-  padding:8px;
+  padding:9px 10px;
   border:1px solid var(--bd);
-  border-radius:2px;
+  border-radius:6px;
   background:var(--card);
   color:var(--tx);
   font:inherit;
   margin-bottom:8px;
 }
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible,
+a:focus-visible{
+  outline:2px solid var(--ac);
+  outline-offset:1px;
+}
+
 button{
   font:inherit;
   cursor:pointer;
   border:0;
-  border-radius:2px;
-  padding:8px 14px;
+  border-radius:6px;
+  padding:9px 16px;
   background:var(--ac);
   color:#fff;
+}
+
+button:hover{
+  opacity:.9;
 }
 
 :root:not([data-theme="light"]) button{
   color:#111;
 }
 
-.stars{
-  display:inline-flex;
-}
-
-.stars span{
-  font-size:24px;
-  color:var(--bd);
-  cursor:pointer;
-  user-select:none;
-  padding-right:2px;
-}
-
-.stars span.on{
-  color:var(--star);
-}
-
-.t{
+.toolbar{
   display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:flex-start;
+  gap:8px;
+  margin-top:16px;
 }
 
-.avg{
-  font-size:17px;
+.toolbar input{
+  margin-bottom:0;
+  flex:1;
+}
+
+.toolbar select{
+  margin-bottom:0;
+  width:auto;
+  min-width:150px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:12px;
+}
+
+.tcard{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  margin-top:0;
+  text-decoration:none;
+  color:inherit;
+  transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;
+}
+
+.tcard:hover{
+  transform:translateY(-2px);
+  border-color:var(--ac);
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+.avatar{
+  flex:0 0 auto;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--ac-soft);
+  color:var(--ac);
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-weight:700;
-  white-space:nowrap;
+  font-size:15px;
+}
+
+.tinfo{
+  flex:1;
+  min-width:0;
+}
+
+.tname{
+  font-weight:700;
 }
 
 .mut{
@@ -167,11 +234,52 @@ button{
   font-size:13px;
 }
 
-.cm{
-  border-top:1px solid var(--bd);
-  padding:6px 0 0;
-  margin-top:6px;
-  font-size:14px;
+.avg{
+  font-size:17px;
+  font-weight:700;
+  white-space:nowrap;
+  color:var(--tx);
+}
+
+.stars{
+  color:var(--star);
+  letter-spacing:1px;
+  font-size:13px;
+}
+
+.bars{
+  margin-top:8px;
+  display:grid;
+  gap:5px;
+}
+
+.bar{
+  display:grid;
+  grid-template-columns:58px 1fr 24px;
+  gap:8px;
+  align-items:center;
+  font-size:12px;
+  color:var(--mut);
+}
+
+.track{
+  height:6px;
+  background:var(--track);
+  border-radius:3px;
+  overflow:hidden;
+}
+
+.fill{
+  display:block;
+  height:100%;
+  background:var(--star);
+  border-radius:3px;
+}
+
+.bar b{
+  text-align:right;
+  color:var(--tx);
+  font-weight:600;
 }
 
 #splash{
@@ -208,7 +316,7 @@ button{
   margin:0 0 24px;
   padding:12px 16px;
   border:1px solid rgba(255,255,255,.35);
-  border-radius:4px;
+  border-radius:6px;
   color:#fff;
   font-size:14px;
   line-height:1.5;
@@ -237,6 +345,7 @@ button{
   border:1px solid #f0d67a;
   padding:10px 12px;
   font-size:13px;
+  border-radius:6px;
   margin-top:12px;
 }
 </style>
@@ -257,12 +366,16 @@ button{
 
 <div class="top">
   <b>Escola Comércio Lisboa</b> · Avaliação de professores
-  <a href="admin.html">Menu Admin</a>
+  <nav>
+    <a href="index.html" class="on">Professores</a>
+    <a href="forum.html">Fórum</a>
+    <span id="acct" class="acct"></span>
+  </nav>
 </div>
 
 <div class="wrap">
 
-  <h1>Avalie os seus professores</h1>
+  <h1>Escolha um professor</h1>
 
   <p class="intro">
     Página para os alunos da
@@ -275,69 +388,35 @@ button{
     </a>.
     Seja respeitador. Feito pelo aluno 6096.
     As avaliações são visíveis para todos.
+    Clique num professor para ver o perfil, avaliar e comentar.
   </p>
 
   <div id="cfgWarn" class="warn hide">
     A base de dados ainda não está configurada.
   </div>
 
-  <div class="card">
-
-    <h2>Deixar uma avaliação</h2>
-
-    <select id="sel">
-      <option value="">— Escolha um professor —</option>
+  <div class="toolbar">
+    <input
+      id="q"
+      placeholder="Pesquisar professor ou função"
+      autocomplete="off"
+    >
+    <select id="sort">
+      <option value="name">Nome (A-Z)</option>
+      <option value="rating">Melhor média</option>
+      <option value="count">Mais avaliações</option>
     </select>
-
-    <div class="mut">
-      Clareza nas explicações
-    </div>
-
-    <div class="stars" data-k="c"></div>
-
-    <div class="mut" style="margin-top:6px">
-      Apoio aos alunos
-    </div>
-
-    <div class="stars" data-k="a"></div>
-
-    <div class="mut" style="margin-top:6px">
-      Justiça na avaliação
-    </div>
-
-    <div class="stars" data-k="j"></div>
-
-    <textarea
-      id="cm"
-      rows="3"
-      maxlength="400"
-      placeholder="Comentário (opcional)"
-      style="margin-top:10px"
-    ></textarea>
-
-    <button id="send">
-      Enviar avaliação
-    </button>
-
-    <span id="msg" class="mut"></span>
-
   </div>
 
-  <input
-    id="q"
-    placeholder="Pesquisar professor ou função"
-    style="margin-top:16px"
-  >
-
-  <div id="list">
-    <div class="card mut">
+  <div id="list" class="grid" style="margin-top:12px">
+    <div class="card mut" style="grid-column:1/-1">
       A carregar…
     </div>
   </div>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 
 <script>
 
@@ -351,12 +430,6 @@ var SUPABASE_KEY =
 
 var $ = function(i){
   return document.getElementById(i);
-};
-
-var cur = {
-  c:0,
-  a:0,
-  j:0
 };
 
 var teachers = [];
@@ -381,55 +454,77 @@ function esc(s){
 
   var d = document.createElement("div");
 
-  d.textContent = s;
+  d.textContent = s == null ? "" : s;
 
   return d.innerHTML;
 }
 
-$("enter").onclick=function(){
-  $("splash").classList.add("hide");
-};
+var SKEY = "ecl-session";
 
-document.querySelectorAll(".stars").forEach(function(box){
+function getSession(){
 
-  var k = box.dataset.k;
+  try{
+    var s = JSON.parse(localStorage.getItem(SKEY));
+    if(s && s.token && Number(s.exp) * 1000 > Date.now())
+      return s;
+  }catch(e){}
 
-  for(var i=1;i<=5;i++){
+  return null;
 
-    (function(i){
+}
 
-      var s = document.createElement("span");
+function endSession(){
+  localStorage.removeItem(SKEY);
+}
 
-      s.textContent = "★";
+function doLogout(){
 
-      s.onclick = function(){
+  var s = getSession();
 
-        cur[k] = i;
+  if(s && sb){
+    sb.rpc("logout",{ p_token:s.token });
+  }
 
-        paint(box,i);
+  endSession();
 
-      };
+  paintAcct();
 
-      box.appendChild(s);
+}
 
-    })(i);
+function paintAcct(){
+
+  var el = $("acct");
+  var s = getSession();
+
+  if(s){
+
+    el.innerHTML =
+      'Olá, <b>' + esc(s.username) + '</b> · ' +
+      '<a href="#" id="acctOut">Sair</a>';
+
+    $("acctOut").onclick = function(e){
+      e.preventDefault();
+      doLogout();
+    };
+
+  }else{
+
+    el.innerHTML = '<a href="auth.html">Entrar</a>';
 
   }
 
-});
-
-function paint(box,n){
-
-  box.querySelectorAll("span").forEach(function(s,i){
-
-    s.classList.toggle(
-      "on",
-      i<n
-    );
-
-  });
-
 }
+
+paintAcct();
+
+if(sessionStorage.getItem("ecl-splash") === "1"){
+  $("splash").classList.add("hide");
+}
+
+$("enter").onclick=function(){
+  $("splash").classList.add("hide");
+  sessionStorage.setItem("ecl-splash","1");
+};
 
 function avg(list,k){
 
@@ -444,40 +539,62 @@ function avg(list,k){
 
 }
 
+function totals(r){
+
+  var c = avg(r,"clareza");
+  var a = avg(r,"apoio");
+  var j = avg(r,"justica");
+
+  return {
+    c:c,
+    a:a,
+    j:j,
+    t:(c + a + j) / 3
+  };
+
+}
+
+function initials(name){
+
+  var parts = String(name).trim().split(/\s+/);
+
+  var out = (parts[0] || "").charAt(0);
+
+  if(parts.length > 1){
+    out += parts[parts.length - 1].charAt(0);
+  }
+
+  return out.toUpperCase();
+}
+
+function bar(label,v){
+
+  return '<div class="bar">' +
+    '<span>' + label + '</span>' +
+    '<span class="track">' +
+      '<span class="fill" style="width:' +
+      Math.round((v / 5) * 100) +
+      '%"></span>' +
+    '</span>' +
+    '<b>' +
+    (v ? v.toFixed(1) : "—") +
+    '</b>' +
+    '</div>';
+
+}
+
 function render(){
 
-  var sel = $("sel");
-
-  var v = sel.value;
-
-  sel.innerHTML =
-    '<option value="">— Escolha um professor —</option>' +
-    teachers.map(function(t){
-
-      return '<option value="' +
-        t.id +
-        '">' +
-        esc(t.name) +
-        ' (' +
-        esc(t.subject) +
-        ')</option>';
-
-    }).join("");
-
-  sel.value = v;
-
   var q = $("q").value.toLowerCase();
+  var sort = $("sort").value;
 
-  var out = "";
+  var rows = teachers.filter(function(t){
 
-  teachers.forEach(function(t){
-
-    if(
-      (t.name + " " + t.subject)
+    return (t.name + " " + t.subject)
       .toLowerCase()
-      .indexOf(q) < 0
-    )
-      return;
+      .indexOf(q) >= 0;
+
+  }).map(function(t){
 
     var r = ratings.filter(function(x){
 
@@ -485,92 +602,99 @@ function render(){
 
     });
 
-    var tot =
-      (
-        avg(r,"clareza") +
-        avg(r,"apoio") +
-        avg(r,"justica")
-      ) / 3;
+    return {
+      t:t,
+      r:r,
+      n:r.length,
+      v:totals(r)
+    };
 
-    out +=
-      '<div class="card">' +
+  });
 
-      '<div class="t">' +
+  rows.sort(function(a,b){
 
-      '<div>' +
+    if(sort === "rating"){
+      return b.v.t - a.v.t || a.t.name.localeCompare(b.t.name);
+    }
 
-      '<strong>' +
-      esc(t.name) +
-      '</strong>' +
+    if(sort === "count"){
+      return b.n - a.n || a.t.name.localeCompare(b.t.name);
+    }
+
+    return a.t.name.localeCompare(b.t.name);
+
+  });
+
+  if(!rows.length){
+
+    $("list").innerHTML =
+      '<div class="card mut" style="grid-column:1/-1">' +
+      (teachers.length
+        ? "Nenhum professor corresponde à pesquisa."
+        : "Ainda não há professores.") +
+      '</div>';
+
+    return;
+
+  }
+
+  $("list").innerHTML = rows.map(function(x){
+
+    return '<a class="card tcard" href="teacher.html?id=' +
+      x.t.id +
+      '">' +
+
+      '<div class="avatar">' +
+      esc(initials(x.t.name)) +
+      '</div>' +
+
+      '<div class="tinfo">' +
+
+      '<div class="tname">' +
+      esc(x.t.name) +
+      '</div>' +
 
       '<div class="mut">' +
-      esc(t.subject) +
+      esc(x.t.subject) +
       ' · ' +
-      r.length +
+      x.n +
       ' avaliaç' +
-      (r.length===1 ? 'ão' : 'ões') +
+      (x.n === 1 ? 'ão' : 'ões') +
       '</div>' +
+
+      (
+        x.n
+        ?
+        '<div class="bars">' +
+          bar("Clareza",x.v.c) +
+          bar("Apoio",x.v.a) +
+          bar("Justiça",x.v.j) +
+        '</div>'
+        :
+        '<div class="mut" style="margin-top:6px">Sem avaliações</div>'
+      ) +
 
       '</div>' +
 
       '<div class="avg">' +
-      (r.length ? "★ " + tot.toFixed(1) : "—") +
+      (x.n ? '<span class="stars">★</span> ' + x.v.t.toFixed(1) : "—") +
       '</div>' +
 
-      '</div>' +
+      '</a>';
 
-      (
-        r.length
-        ?
-        '<div class="mut">' +
-        'Clareza ' +
-        avg(r,"clareza").toFixed(1) +
-        ' · Apoio ' +
-        avg(r,"apoio").toFixed(1) +
-        ' · Justiça ' +
-        avg(r,"justica").toFixed(1) +
-        '</div>'
-        :
-        ""
-      ) +
-
-      r
-      .filter(function(x){
-
-        return x.comment;
-
-      })
-      .slice(-5)
-      .reverse()
-      .map(function(x){
-
-        return '<div class="cm">"' +
-          esc(x.comment) +
-          '"</div>';
-
-      })
-      .join("") +
-
-      '</div>';
-
-  });
-
-  $("list").innerHTML =
-    out ||
-    '<div class="card mut">' +
-    'Ainda não há professores.' +
-    '</div>';
+  }).join("");
 
 }
 
 $("q").oninput = render;
+$("sort").onchange = render;
 
 function loadAll(){
 
   if(!configured){
 
     $("list").innerHTML =
-      '<div class="card mut">' +
+      '<div class="card mut" style="grid-column:1/-1">' +
       'Configure a base de dados para ver e enviar avaliações partilhadas.' +
       '</div>';
 
@@ -592,18 +716,13 @@ function loadAll(){
 
     if(res[0].error || res[1].error){
 
-      $("msg").textContent =
-        "Erro a carregar dados.";
+      console.error("TEACHERS:", res[0].error);
+      console.error("RATINGS:", res[1].error);
 
-      console.error(
-        "TEACHERS:",
-        res[0].error
-      );
-
-      console.error(
-        "RATINGS:",
-        res[1].error
-      );
+      $("list").innerHTML =
+        '<div class="card mut" style="grid-column:1/-1">' +
+        'Erro a carregar dados.' +
+        '</div>';
 
       return;
     }
@@ -617,87 +736,12 @@ function loadAll(){
 
 }
 
-$("send").onclick=function(){
-
-  if(!configured)
-    return;
-
-  var id = $("sel").value;
-  var m = $("msg");
-
-  if(!id){
-
-    m.textContent =
-      "Escolha um professor.";
-
-    return;
-
-  }
-
-  if(!cur.c || !cur.a || !cur.j){
-
-    m.textContent =
-      "Dê uma nota em todos os critérios.";
-
-    return;
-
-  }
-
-  sb
-    .from("ratings")
-    .insert({
-
-      teacher_id:Number(id),
-      clareza:cur.c,
-      apoio:cur.a,
-      justica:cur.j,
-      comment:$("cm").value.trim()
-
-    })
-    .then(function(r){
-
-      if(r.error){
-
-        m.textContent =
-          "Erro ao enviar.";
-
-        console.error(r.error);
-
-        return;
-
-      }
-
-      cur = {
-        c:0,
-        a:0,
-        j:0
-      };
-
-      document
-        .querySelectorAll(".stars")
-        .forEach(function(b){
-
-          paint(b,0);
-
-        });
-
-      $("cm").value = "";
-
-      m.textContent =
-        "Obrigado pela sua avaliação!";
-
-      loadAll();
-
-    });
-
-};
-
 loadAll();
 
 if(configured){
 
   sb
-    .channel("public:changes")
+    .channel("public:changes-index")
 
     .on(
       "postgres_changes",

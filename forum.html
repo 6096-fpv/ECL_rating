@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Fórum de Professores – Escola Comércio Lisboa</title>
+
+<style>
+:root{
+  --bg:#f1f1ef;
+  --card:#fff;
+  --tx:#222;
+  --mut:#6b6b6b;
+  --ac:#1f3a68;
+  --ac-soft:#e7ecf5;
+  --bd:#d4d4d0;
+  --star:#c98a00;
+  --track:#e6e6e2;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#171717;
+    --card:#212121;
+    --tx:#e8e8e6;
+    --mut:#a0a0a0;
+    --ac:#8fb0e8;
+    --ac-soft:#243044;
+    --bd:#3a3a3a;
+    --star:#e0a526;
+    --track:#2e2e2e;
+  }
+}
+
+:root[data-theme="dark"]{
+  --bg:#171717;
+  --card:#212121;
+  --tx:#e8e8e6;
+  --mut:#a0a0a0;
+  --ac:#8fb0e8;
+  --ac-soft:#243044;
+  --bd:#3a3a3a;
+  --star:#e0a526;
+  --track:#2e2e2e;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font:15px/1.45 Arial,Helvetica,sans-serif;
+}
+
+.top{
+  background:#1f3a68;
+  color:#fff;
+  padding:12px 16px;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.top nav{
+  margin-left:auto;
+  display:flex;
+  gap:18px;
+}
+
+.top a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.top a:hover,
+.top a.on{
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+.acct{
+  font-weight:400;
+}
+
+.badge{
+  display:inline-block;
+  padding:1px 7px;
+  border-radius:10px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  vertical-align:middle;
+}
+
+.b-owner{background:#f0b429;color:#3d2c00}
+.b-admin{background:#1f3a68;color:#fff}
+.b-moderator{background:#1f7a4d;color:#fff}
+.b-user{background:var(--ac-soft);color:var(--ac)}
+
+.wrap{
+  max-width:820px;
+  margin:0 auto;
+  padding:16px 16px 40px;
+}
+
+h1{
+  font-size:20px;
+  margin:6px 0 4px;
+  font-weight:700;
+}
+
+.intro{
+  margin:0 0 4px;
+  color:var(--mut);
+}
+
+a{
+  color:var(--ac);
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:8px;
+  padding:14px;
+  margin-top:12px;
+}
+
+h2{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  color:var(--mut);
+  margin:0 0 10px;
+  font-weight:700;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:9px 10px;
+  border:1px solid var(--bd);
+  border-radius:6px;
+  background:var(--card);
+  color:var(--tx);
+  font:inherit;
+  margin-bottom:8px;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible,
+a:focus-visible{
+  outline:2px solid var(--ac);
+  outline-offset:1px;
+}
+
+button{
+  font:inherit;
+  cursor:pointer;
+  border:0;
+  border-radius:6px;
+  padding:9px 16px;
+  background:var(--ac);
+  color:#fff;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+.delete{
+  background:#a83232;
+  color:#fff;
+}
+
+:root:not([data-theme="light"]) button.delete{
+  color:#fff;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+:root:not([data-theme="light"]) button{
+  color:#111;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.row input,
+.row select{
+  margin-bottom:0;
+}
+
+.topic{
+  display:block;
+  text-decoration:none;
+  color:inherit;
+  margin-top:10px;
+  transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;
+}
+
+.topic:first-of-type{
+  margin-top:0;
+}
+
+.topic:hover{
+  transform:translateY(-2px);
+  border-color:var(--ac);
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+.topic .t-title{
+  font-weight:700;
+  font-size:15px;
+}
+
+.tag{
+  display:inline-block;
+  background:var(--ac-soft);
+  color:var(--ac);
+  border-radius:20px;
+  padding:2px 10px;
+  font-size:12px;
+  font-weight:700;
+  text-decoration:none;
+}
+
+a.tag:hover{
+  text-decoration:underline;
+}
+
+.mut{
+  color:var(--mut);
+  font-size:13px;
+}
+
+.thread-op{
+  border-bottom:1px solid var(--bd);
+  padding-bottom:12px;
+  margin-bottom:4px;
+}
+
+.post{
+  border-top:1px solid var(--bd);
+  padding:12px 0 0;
+  margin-top:12px;
+}
+
+.post:first-child{
+  border-top:0;
+  padding-top:0;
+  margin-top:0;
+}
+
+.post .body{
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+  margin-top:4px;
+}
+
+.counter{
+  text-align:right;
+  font-size:12px;
+  color:var(--mut);
+  margin:-4px 0 8px;
+}
+
+.msg{
+  display:inline-block;
+  margin-left:10px;
+  font-size:13px;
+  color:var(--mut);
+}
+
+.back{
+  display:inline-block;
+  margin-top:14px;
+  font-size:13px;
+}
+
+.hide{
+  display:none!important;
+}
+
+.warn{
+  background:#fff3cd;
+  color:#7a5b00;
+  border:1px solid #f0d67a;
+  padding:10px 12px;
+  font-size:13px;
+  border-radius:6px;
+  margin-top:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <b>Escola Comércio Lisboa</b> · Avaliação de professores
+  <nav>
+    <a href="index.html">Professores</a>
+    <a href="forum.html" class="on">Fórum</a>
+    <span id="acct" class="acct"></span>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <div id="cfgWarn" class="warn hide">
+    A base de dados ainda não está configurada.
+  </div>
+
+  <div id="setupWarn" class="warn hide">
+    O fórum ainda não está configurado. Corra o script de
+    configuração do fórum no editor SQL do Supabase e recarregue esta página.
+  </div>
+
+  <!-- LISTA DE TÓPICOS -->
+
+  <div id="listView">
+
+    <h1>Fórum de Professores</h1>
+
+    <p class="intro">
+      Discussões sobre os professores da
+      <a
+        href="https://escolacomerciolisboa.pt/"
+        target="_blank"
+        rel="noopener"
+      >
+        Escola Comércio Lisboa
+      </a>.
+      Seja respeitador e construtivo. As mensagens são públicas.
+    </p>
+
+    <div id="ntCard" class="card hide">
+
+      <h2>Novo tópico</h2>
+
+      <select id="ntTeacher">
+        <option value="">— Sem professor associado —</option>
+      </select>
+
+      <input
+        id="ntTitle"
+        maxlength="120"
+        placeholder="Título do tópico (3 a 120 caracteres)"
+      >
+
+      <textarea
+        id="ntBody"
+        rows="4"
+        maxlength="2000"
+        placeholder="Mensagem (até 2000 caracteres)"
+      ></textarea>
+
+      <div class="counter"><span id="ntLen">0</span>/2000</div>
+
+      <button id="ntSend">Criar tópico</button>
+
+      <span id="ntMsg" class="msg"></span>
+
+    </div>
+
+    <div id="ntAnon" class="card mut hide">
+      Inicia sessão para criar tópicos.
+      <a href="auth.html?next=forum.html">Entrar ou criar conta</a>.
+    </div>
+
+    <div class="card">
+
+      <h2>Tópicos</h2>
+
+      <div class="row" style="margin-bottom:10px">
+        <input
+          id="q"
+          placeholder="Pesquisar tópicos"
+          autocomplete="off"
+        >
+      </div>
+
+      <div id="topics">
+        <div class="mut">A carregar…</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- VISTA DE TÓPICO -->
+
+  <div id="topicView" class="hide">
+
+    <a class="back" href="#forum">← Voltar aos tópicos</a>
+
+    <div class="card">
+
+      <div class="thread-op" id="op"></div>
+
+      <div id="replies"></div>
+
+    </div>
+
+    <div id="rpCard" class="card hide">
+
+      <h2>Responder</h2>
+
+      <textarea
+        id="rpBody"
+        rows="4"
+        maxlength="2000"
+        placeholder="Mensagem (até 2000 caracteres)"
+      ></textarea>
+
+      <div class="counter"><span id="rpLen">0</span>/2000</div>
+
+      <button id="rpSend">Enviar resposta</button>
+
+      <span id="rpMsg" class="msg"></span>
+
+    </div>
+
+    <div id="rpAnon" class="card mut hide">
+      Inicia sessão para responder.
+      <a href="auth.html" id="rpAnonLink">Entrar ou criar conta</a>.
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
+
+<script>
+
+var SUPABASE_URL =
+"https://qsnncbwoybwkhwyepaai.supabase.co";
+
+var SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
+
+(function(){
+
+var $ = function(i){
+  return document.getElementById(i);
+};
+
+var posts = [];
+var teachers = [];
+var profiles = [];
+var setupNeeded = false;
+var loaded = false;
+
+var configured =
+  SUPABASE_URL.indexOf("http") === 0 &&
+  SUPABASE_KEY.length > 20;
+
+var sb = configured
+  ? window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    )
+  : null;
+
+if(!configured){
+  $("cfgWarn").classList.remove("hide");
+}
+
+function esc(s){
+
+  var d = document.createElement("div");
+
+  d.textContent = s == null ? "" : s;
+
+  return d.innerHTML;
+
+}
+
+var SKEY = "ecl-session";
+
+function getSession(){
+
+  try{
+    var s = JSON.parse(localStorage.getItem(SKEY));
+    if(s && s.token && Number(s.exp) * 1000 > Date.now())
+      return s;
+  }catch(e){}
+
+  return null;
+
+}
+
+function endSession(){
+  localStorage.removeItem(SKEY);
+}
+
+var onAuthChange = null;
+
+function doLogout(){
+
+  var s = getSession();
+
+  if(s && sb){
+    sb.rpc("logout",{ p_token:s.token });
+  }
+
+  endSession();
+
+  paintAcct();
+
+  if(onAuthChange)
+    onAuthChange();
+
+}
+
+function paintAcct(){
+
+  var el = $("acct");
+  var s = getSession();
+
+  if(s){
+
+    el.innerHTML =
+      'Olá, <b>' + esc(s.username) + '</b> · ' +
+      '<a href="#" id="acctOut">Sair</a>';
+
+    $("acctOut").onclick = function(e){
+      e.preventDefault();
+      doLogout();
+    };
+
+  }else{
+
+    el.innerHTML = '<a href="auth.html?next=forum.html">Entrar</a>';
+
+  }
+
+}
+
+var ROLE_LABEL = {
+  user:"USER",
+  moderator:"MODERATOR",
+  admin:"ADMIN",
+  owner:"OWNER"
+};
+
+function badgeHtml(role){
+
+  if(!role)
+    return "";
+
+  return '<span class="badge b-' + esc(role) + '">' +
+    esc(ROLE_LABEL[role] || String(role).toUpperCase()) +
+    '</span>';
+
+}
+
+function profById(id){
+
+  if(!id)
+    return null;
+
+  return profiles.find(function(p){
+    return String(p.id) === String(id);
+  }) || null;
+
+}
+
+function authorHtml(p){
+
+  var pr = profById(p.user_id);
+
+  if(pr)
+    return esc(pr.username) + ' ' + badgeHtml(pr.role);
+
+  if(p.author_name && p.author_name !== "Anónimo")
+    return esc(p.author_name);
+
+  if(p.user_id)
+    return "utilizador removido";
+
+  return "Anónimo";
+
+}
+
+function canMod(){
+
+  var s = getSession();
+
+  return !!s && ["moderator","admin","owner"].indexOf(s.role) >= 0;
+
+}
+
+function renderForms(){
+
+  var s = !!getSession();
+
+  $("ntCard").classList.toggle("hide", !s);
+  $("ntAnon").classList.toggle("hide", s);
+
+  $("rpCard").classList.toggle("hide", !s);
+  $("rpAnon").classList.toggle("hide", s);
+
+  var back = "forum.html" + location.hash;
+
+  $("rpAnonLink").setAttribute(
+    "href",
+    "auth.html?next=" + encodeURIComponent(back)
+  );
+
+}
+
+function authFail(msg){
+
+  endSession();
+  paintAcct();
+
+  if(onAuthChange)
+    onAuthChange();
+
+  return msg || "Sessão expirada. Volte a iniciar sessão.";
+
+}
+
+paintAcct();
+renderForms();
+onAuthChange = renderForms;
+
+function fmtDate(v){
+
+  if(!v)
+    return "";
+
+  var d = new Date(v);
+
+  if(isNaN(d))
+    return "";
+
+  return d.toLocaleString("pt-PT",{
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+
+}
+
+function teacherById(id){
+
+  return teachers.find(function(t){
+    return Number(t.id) === Number(id);
+  });
+
+}
+
+function topicId(){
+
+  var h = location.hash.replace("#","");
+  var m = h.match(/^topico-(\d+)$/);
+
+  return m ? Number(m[1]) : 0;
+
+}
+
+function route(){
+
+  var id = topicId();
+
+  $("listView").classList.toggle("hide", !!id);
+  $("topicView").classList.toggle("hide", !id);
+
+  if(id){
+    renderTopic(id);
+  }else{
+    renderTopics();
+  }
+
+  window.scrollTo(0,0);
+
+}
+
+window.addEventListener("hashchange", route);
+
+$("ntBody").oninput = function(){
+  $("ntLen").textContent = $("ntBody").value.length;
+};
+
+$("rpBody").oninput = function(){
+  $("rpLen").textContent = $("rpBody").value.length;
+};
+
+function lastActivity(topic, replies){
+
+  var t = topic.created_at;
+
+  replies.forEach(function(r){
+    if(r.created_at > t){
+      t = r.created_at;
+    }
+  });
+
+  return t;
+
+}
+
+function renderTopics(){
+
+  if(!configured){
+
+    $("topics").innerHTML =
+      '<div class="mut">Configure a base de dados para usar o fórum.</div>';
+
+    return;
+  }
+
+  if(setupNeeded)
+    return;
+
+  if(!loaded){
+
+    $("topics").innerHTML =
+      '<div class="mut">A carregar…</div>';
+
+    return;
+  }
+
+  var q = $("q").value.toLowerCase();
+
+  var topics = posts.filter(function(p){
+    return !p.parent_id;
+  });
+
+  var rows = topics.map(function(t){
+
+    var replies = posts.filter(function(p){
+      return Number(p.parent_id) === Number(t.id);
+    });
+
+    var name = teacherById(t.teacher_id);
+
+    return {
+      t:t,
+      n:replies.length,
+      when:lastActivity(t,replies),
+      name:name
+    };
+
+  }).filter(function(x){
+
+    var hay =
+      x.t.title + " " +
+      (x.t.content || "") + " " +
+      (x.name ? x.name.name + " " + x.name.subject : "");
+
+    return hay.toLowerCase().indexOf(q) >= 0;
+
+  }).sort(function(a,b){
+    return String(b.when).localeCompare(String(a.when));
+  });
+
+  if(!rows.length){
+
+    $("topics").innerHTML =
+      '<div class="mut">' +
+      (posts.length
+        ? "Nenhum tópico corresponde à pesquisa."
+        : "Ainda não há tópicos. Cria o primeiro!") +
+      '</div>';
+
+    return;
+
+  }
+
+  $("topics").innerHTML = rows.map(function(x){
+
+    return '<a class="card topic" href="#topico-' + x.t.id + '">' +
+
+      '<div class="t-title">' +
+      esc(x.t.title) +
+      '</div>' +
+
+      '<div class="mut" style="margin-top:4px">' +
+      authorHtml(x.t) +
+      ' · ' +
+      fmtDate(x.when) +
+      ' · ' +
+      x.n +
+      ' resposta' +
+      (x.n === 1 ? '' : 's') +
+      '</div>' +
+
+      (
+        x.name
+        ? '<div style="margin-top:8px"><span class="tag">' +
+          esc(x.name.name) +
+          '</span></div>'
+        : ""
+      ) +
+
+      '</a>';
+
+  }).join("");
+
+}
+
+function renderTopic(id){
+
+  var t = posts.find(function(p){
+    return Number(p.id) === id && !p.parent_id;
+  });
+
+  if(!t){
+    $("op").innerHTML =
+      '<div class="mut">Tópico não encontrado.</div>';
+    $("replies").innerHTML = "";
+    return;
+  }
+
+  var name = teacherById(t.teacher_id);
+
+  var delBtn = canMod()
+    ? ' <button class="delete" data-del="' + t.id + '" style="padding:1px 8px;font-size:12px">Apagar</button>'
+    : "";
+
+  $("op").innerHTML =
+    '<div class="t-title" style="font-size:17px">' +
+    esc(t.title) +
+    '</div>' +
+
+    '<div class="mut" style="margin-top:4px">' +
+    authorHtml(t) +
+    ' · ' +
+    fmtDate(t.created_at) +
+    delBtn +
+    '</div>' +
+
+    (
+      name
+      ? '<div style="margin-top:8px">' +
+        '<a class="tag" href="teacher.html?id=' + name.id + '">' +
+        esc(name.name) +
+        ' · ver perfil' +
+        '</a></div>'
+      : ""
+    ) +
+
+    '<div class="body" style="margin-top:8px">' +
+    esc(t.content) +
+    '</div>';
+
+  var replies = posts.filter(function(p){
+    return Number(p.parent_id) === id;
+  });
+
+  $("replies").innerHTML = replies.length
+    ? replies.map(function(r){
+
+        var del = canMod()
+          ? ' <button class="delete" data-del="' + r.id + '" style="padding:1px 8px;font-size:12px">Apagar</button>'
+          : "";
+
+        return '<div class="post">' +
+          '<div class="mut">' +
+          authorHtml(r) +
+          ' · ' +
+          fmtDate(r.created_at) +
+          del +
+          '</div>' +
+          '<div class="body">' +
+          esc(r.content) +
+          '</div>' +
+          '</div>';
+
+      }).join("")
+    : '<div class="mut" style="margin-top:12px">Ainda não há respostas.</div>';
+
+}
+
+function showSetup(){
+
+  setupNeeded = true;
+  $("setupWarn").classList.remove("hide");
+  $("topics").innerHTML =
+    '<div class="mut">Fórum por configurar.</div>';
+
+}
+
+function loadAll(){
+
+  if(!configured)
+    return;
+
+  Promise.all([
+
+    sb
+      .from("forum_posts")
+      .select("*")
+      .order("id"),
+
+    sb
+      .from("teachers")
+      .select("*")
+      .order("name"),
+
+    sb
+      .from("profiles")
+      .select("id,username,role")
+
+  ]).then(function(res){
+
+    if(res[0].error || res[1].error){
+
+      var e0 = res[0].error;
+      var e1 = res[1].error;
+
+      console.error(e0);
+      console.error(e1);
+
+      if(
+        (e0 && e0.code === "42P01") ||
+        (e1 && e1.code === "42P01")
+      ){
+        showSetup();
+      }else{
+        $("topics").innerHTML =
+          '<div class="mut">Erro a carregar dados.</div>';
+      }
+
+      return;
+    }
+
+    posts = res[0].data || [];
+    teachers = res[1].data || [];
+    profiles = res[2].data || [];
+    loaded = true;
+
+    var sel = $("ntTeacher");
+    var prev = sel.value;
+
+    sel.innerHTML =
+      '<option value="">— Sem professor associado —</option>' +
+      teachers.map(function(t){
+        return '<option value="' + t.id + '">' +
+          esc(t.name) +
+          ' (' +
+          esc(t.subject) +
+          ')</option>';
+      }).join("");
+
+    sel.value = prev;
+
+    route();
+
+  });
+
+}
+
+function sendPost(rpcName, params, msgEl, clearFn, btn){
+
+  if(!configured)
+    return;
+
+  var s = getSession();
+
+  if(!s){
+    location.href =
+      "auth.html?next=" + encodeURIComponent("forum.html" + location.hash);
+    return;
+  }
+
+  btn.disabled = true;
+
+  params.p_token = s.token;
+
+  sb
+    .rpc(rpcName, params)
+    .then(function(r){
+
+      btn.disabled = false;
+
+      if(r.error){
+
+        console.error(r.error);
+
+        var em = r.error.message || "Erro ao enviar.";
+
+        if(/sess.o/i.test(em)){
+          msgEl.textContent = authFail();
+          return;
+        }
+
+        if(r.error.code === "42P01"){
+          msgEl.textContent = "Fórum por configurar.";
+          return;
+        }
+
+        msgEl.textContent = em;
+        return;
+
+      }
+
+      msgEl.textContent = "Enviado!";
+      clearFn();
+      loadAll();
+
+    });
+
+}
+
+$("ntSend").onclick=function(){
+
+  var m = $("ntMsg");
+
+  var title = $("ntTitle").value.trim();
+  var body = $("ntBody").value.trim();
+  var tid = $("ntTeacher").value;
+
+  if(title.length < 3){
+
+    m.textContent = "O título tem de ter pelo menos 3 caracteres.";
+    return;
+
+  }
+
+  if(!body){
+
+    m.textContent = "Escreva uma mensagem.";
+    return;
+
+  }
+
+  if(body.length > 2000){
+
+    m.textContent = "A mensagem pode ter no máximo 2000 caracteres.";
+    return;
+
+  }
+
+  m.textContent = "";
+
+  sendPost(
+    "forum_create",
+    {
+      p_title:title,
+      p_content:body,
+      p_teacher_id: tid ? Number(tid) : null
+    },
+    m,
+    function(){
+      $("ntTitle").value = "";
+      $("ntBody").value = "";
+      $("ntLen").textContent = "0";
+    },
+    $("ntSend")
+  );
+
+};
+
+$("rpSend").onclick=function(){
+
+  var id = topicId();
+  var m = $("rpMsg");
+
+  if(!id){
+    m.textContent = "Tópico inválido.";
+    return;
+  }
+
+  var body = $("rpBody").value.trim();
+
+  if(!body){
+    m.textContent = "Escreva uma mensagem.";
+    return;
+
+  }
+
+  if(body.length > 2000){
+
+    m.textContent = "A mensagem pode ter no máximo 2000 caracteres.";
+    return;
+
+  }
+
+  m.textContent = "";
+
+  sendPost(
+    "forum_reply",
+    {
+      p_parent_id:id,
+      p_content:body
+    },
+    m,
+    function(){
+      $("rpBody").value = "";
+      $("rpLen").textContent = "0";
+    },
+    $("rpSend")
+  );
+
+};
+
+$("topicView").addEventListener("click", function(e){
+
+  var b = e.target.closest("[data-del]");
+
+  if(!b)
+    return;
+
+  var id = Number(b.getAttribute("data-del"));
+
+  if(!id)
+    return;
+
+  if(!confirm("Apagar esta mensagem?"))
+    return;
+
+  var s = getSession();
+
+  if(!s)
+    return;
+
+  b.disabled = true;
+
+  sb.rpc("forum_delete",{
+    p_token:s.token,
+    p_id:id
+  }).then(function(r){
+
+    if(r.error){
+
+      console.error(r.error);
+
+      var em = r.error.message || "Erro ao apagar.";
+
+      if(/sess.o/i.test(em)){
+        alert(authFail());
+        return;
+      }
+
+      alert(em);
+      return;
+
+    }
+
+    loadAll();
+
+  });
+
+});
+
+loadAll();
+
+if(configured){
+
+  sb
+    .channel("public:forum-changes")
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"forum_posts"
+      },
+      loadAll
+    )
+
+    .subscribe();
+
+}
+
+route();
+
+})();
+
+</script>
+
+</body>
+</html>

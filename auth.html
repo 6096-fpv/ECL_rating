@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Conta – Avaliação de Professores</title>
+
+<style>
+:root{
+  --bg:#f1f1ef;
+  --card:#fff;
+  --tx:#222;
+  --mut:#6b6b6b;
+  --ac:#1f3a68;
+  --ac-soft:#e7ecf5;
+  --bd:#d4d4d0;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#171717;
+    --card:#212121;
+    --tx:#e8e8e6;
+    --mut:#a0a0a0;
+    --ac:#8fb0e8;
+    --ac-soft:#243044;
+    --bd:#3a3a3a;
+  }
+}
+
+:root[data-theme="dark"]{
+  --bg:#171717;
+  --card:#212121;
+  --tx:#e8e8e6;
+  --mut:#a0a0a0;
+  --ac:#8fb0e8;
+  --ac-soft:#243044;
+  --bd:#3a3a3a;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font:15px/1.45 Arial,Helvetica,sans-serif;
+}
+
+.top{
+  background:#1f3a68;
+  color:#fff;
+  padding:12px 16px;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.top nav{
+  margin-left:auto;
+  display:flex;
+  gap:18px;
+}
+
+.top a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.top a:hover,
+.top a.on{
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+.wrap{
+  max-width:440px;
+  margin:0 auto;
+  padding:16px 16px 40px;
+}
+
+h1{
+  font-size:20px;
+  margin:6px 0 4px;
+  font-weight:700;
+}
+
+.mut{
+  color:var(--mut);
+  font-size:13px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:8px;
+  padding:14px;
+  margin-top:12px;
+}
+
+h2{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  color:var(--mut);
+  margin:0 0 10px;
+  font-weight:700;
+}
+
+input{
+  width:100%;
+  padding:9px 10px;
+  border:1px solid var(--bd);
+  border-radius:6px;
+  background:var(--card);
+  color:var(--tx);
+  font:inherit;
+  margin-bottom:8px;
+}
+
+input:focus,
+button:focus-visible,
+a:focus-visible{
+  outline:2px solid var(--ac);
+  outline-offset:1px;
+}
+
+button{
+  font:inherit;
+  cursor:pointer;
+  border:0;
+  border-radius:6px;
+  padding:9px 16px;
+  background:var(--ac);
+  color:#fff;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+:root:not([data-theme="light"]) button{
+  color:#111;
+}
+
+a{
+  color:var(--ac);
+}
+
+.modes{
+  display:flex;
+  gap:16px;
+  margin-bottom:12px;
+  border-bottom:1px solid var(--bd);
+  padding-bottom:8px;
+}
+
+.modes a{
+  text-decoration:none;
+  font-weight:700;
+  color:var(--mut);
+}
+
+.modes a.on{
+  color:var(--ac);
+}
+
+.message{
+  margin-top:8px;
+  font-size:13px;
+  color:#a83232;
+  min-height:18px;
+}
+
+.rules{
+  margin-top:10px;
+}
+
+.badge{
+  display:inline-block;
+  padding:1px 7px;
+  border-radius:10px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  vertical-align:middle;
+}
+
+.b-owner{background:#f0b429;color:#3d2c00}
+.b-admin{background:#1f3a68;color:#fff}
+.b-moderator{background:#1f7a4d;color:#fff}
+.b-user{background:var(--ac-soft);color:var(--ac)}
+
+.hide{
+  display:none!important;
+}
+
+.warn{
+  background:#fff3cd;
+  color:#7a5b00;
+  border:1px solid #f0d67a;
+  padding:10px 12px;
+  font-size:13px;
+  border-radius:6px;
+  margin-top:12px;
+}
+
+.continue{
+  display:inline-block;
+  margin-right:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <b>Escola Comércio Lisboa</b> · Avaliação de professores
+  <nav>
+    <a href="index.html">Professores</a>
+    <a href="forum.html">Fórum</a>
+    <a href="auth.html" class="on">Conta</a>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <h1>A tua conta</h1>
+
+  <div id="cfgWarn" class="warn hide">
+    A base de dados ainda não está configurada.
+  </div>
+
+  <div id="loggedCard" class="card hide">
+
+    <h2>Sessão iniciada</h2>
+
+    <p style="margin:0 0 12px">
+      Olá, <b id="lgName"></b> <span id="lgBadge"></span>
+    </p>
+
+    <a id="lgContinue" class="continue" href="index.html">Continuar</a>
+
+    <button id="lgOut">Sair</button>
+
+  </div>
+
+  <div id="authCard" class="card">
+
+    <div class="modes">
+      <a href="#" id="modeLogin" class="on">Entrar</a>
+      <a href="#" id="modeReg">Criar conta</a>
+    </div>
+
+    <h2 id="authTitle">Entrar</h2>
+
+    <input
+      id="auUser"
+      placeholder="Username"
+      autocomplete="username"
+      autocapitalize="none"
+      spellcheck="false"
+      maxlength="20"
+    >
+
+    <input
+      id="auPass"
+      type="password"
+      placeholder="Password (mín. 8 caracteres)"
+      autocomplete="current-password"
+    >
+
+    <input
+      id="auPass2"
+      type="password"
+      placeholder="Repetir password"
+      autocomplete="new-password"
+      class="hide"
+    >
+
+    <button id="auBtn">Entrar</button>
+
+    <div id="auMsg" class="message"></div>
+
+    <div class="mut rules">
+      Username: 3 a 20 caracteres (a-z, 0-9, _).
+      Password: 8 a 72 caracteres. Não são usados emails.
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
+
+<script>
+
+var SUPABASE_URL =
+"https://qsnncbwoybwkhwyepaai.supabase.co";
+
+var SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
+
+(function(){
+
+var $ = function(i){
+  return document.getElementById(i);
+};
+
+var SKEY = "ecl-session";
+
+function getSession(){
+  try{
+    var s = JSON.parse(localStorage.getItem(SKEY));
+    if(s && s.token && Number(s.exp) * 1000 > Date.now())
+      return s;
+  }catch(e){}
+  return null;
+}
+
+function saveSession(s){
+  localStorage.setItem(SKEY, JSON.stringify(s));
+}
+
+function endSession(){
+  localStorage.removeItem(SKEY);
+}
+
+function esc(s){
+
+  var d = document.createElement("div");
+
+  d.textContent = s == null ? "" : s;
+
+  return d.innerHTML;
+}
+
+var ROLE_LABEL = {
+  user:"USER",
+  moderator:"MODERATOR",
+  admin:"ADMIN",
+  owner:"OWNER"
+};
+
+function badgeHtml(role){
+
+  if(!role)
+    return "";
+
+  return '<span class="badge b-' + esc(role) + '">' +
+    esc(ROLE_LABEL[role] || String(role).toUpperCase()) +
+    '</span>';
+
+}
+
+var configured =
+  SUPABASE_URL.indexOf("http") === 0 &&
+  SUPABASE_KEY.length > 20;
+
+var sb = configured
+  ? window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    )
+  : null;
+
+if(!configured){
+  $("cfgWarn").classList.remove("hide");
+}
+
+var next = "index.html";
+
+try{
+  var q = new URLSearchParams(location.search).get("next");
+  if(q && /^(index|forum|teacher|admin)\.html([?#].*)?$/.test(q)){
+    next = q;
+  }
+}catch(e){}
+
+var mode = "login";
+
+function setMode(m){
+
+  mode = m;
+
+  $("authTitle").textContent = m === "login" ? "Entrar" : "Criar conta";
+  $("auBtn").textContent = m === "login" ? "Entrar" : "Criar conta";
+  $("auPass2").classList.toggle("hide", m === "login");
+  $("auPass").setAttribute(
+    "autocomplete",
+    m === "login" ? "current-password" : "new-password"
+  );
+
+  $("modeLogin").classList.toggle("on", m === "login");
+  $("modeReg").classList.toggle("on", m === "reg");
+
+}
+
+$("modeLogin").onclick = function(e){
+  e.preventDefault();
+  setMode("login");
+};
+
+$("modeReg").onclick = function(e){
+  e.preventDefault();
+  setMode("reg");
+};
+
+$("auUser").oninput = function(){
+  this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g,"");
+};
+
+function showLogged(){
+
+  var s = getSession();
+
+  if(!s)
+    return false;
+
+  $("loggedCard").classList.remove("hide");
+  $("authCard").classList.add("hide");
+
+  $("lgName").textContent = s.username;
+  $("lgBadge").innerHTML = badgeHtml(s.role);
+  $("lgContinue").setAttribute("href", next);
+
+  return true;
+}
+
+$("lgOut").onclick = function(){
+
+  var s = getSession();
+
+  if(s && sb){
+    sb.rpc("logout",{ p_token:s.token });
+  }
+
+  endSession();
+
+  $("loggedCard").classList.add("hide");
+  $("authCard").classList.remove("hide");
+
+};
+
+function submit(){
+
+  var m = $("auMsg");
+
+  var u = $("auUser").value.trim().toLowerCase();
+  var p = $("auPass").value;
+  var p2 = $("auPass2").value;
+
+  m.textContent = "";
+
+  if(!configured){
+    m.textContent = "A base de dados ainda não está configurada.";
+    return;
+  }
+
+  if(!/^[a-z0-9_]{3,20}$/.test(u)){
+    m.textContent = "Username: 3 a 20 caracteres (a-z, 0-9, _).";
+    return;
+  }
+
+  if(p.length < 8 || p.length > 72){
+    m.textContent = "A password deve ter 8 a 72 caracteres.";
+    return;
+  }
+
+  if(mode === "reg" && p !== p2){
+    m.textContent = "As passwords não coincidem.";
+    return;
+  }
+
+  var btn = $("auBtn");
+
+  btn.disabled = true;
+
+  var job = mode === "login"
+    ? sb.rpc("login",{
+        p_username:u,
+        p_password:p
+      })
+    : sb.rpc("register",{
+        p_username:u,
+        p_password:p
+      }).then(function(r){
+        if(r.error)
+          return r;
+        return sb.rpc("login",{
+          p_username:u,
+          p_password:p
+        });
+      });
+
+  Promise.resolve(job).then(function(r){
+
+    btn.disabled = false;
+
+    if(r.error || !r.data || !r.data.token){
+
+      m.textContent =
+        (r.error && r.error.message) ||
+        "Erro ao entrar. Tenta novamente.";
+
+      return;
+
+    }
+
+    saveSession(r.data);
+
+    location.href = next;
+
+  }).catch(function(){
+    btn.disabled = false;
+    m.textContent = "Erro de rede.";
+  });
+
+}
+
+$("auBtn").onclick = submit;
+
+[$("auUser"),$("auPass"),$("auPass2")].forEach(function(el){
+  el.onkeydown = function(e){
+    if(e.key === "Enter")
+      submit();
+  };
+});
+
+if(!showLogged()){
+  setMode("login");
+}
+
+})();
+
+</script>
+
+</body>
+</html>

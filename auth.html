@@ -399,6 +399,7 @@ a{
   <span class="sub">· Avaliação de professores</span>
   <nav>
     <a href="index.html">Professores</a>
+    <a href="top.html">Top</a>
     <a href="forum.html">Fórum</a>
     <a href="auth.html" class="on">Conta</a>
   </nav>
@@ -553,7 +554,7 @@ var next = "index.html";
 
 try{
   var q = new URLSearchParams(location.search).get("next");
-  if(q && /^(index|forum|teacher|admin)\.html([?#].*)?$/.test(q)){
+  if(q && /^(index|forum|teacher|admin|top|conta)\.html([?#].*)?$/.test(q)){
     next = q;
   }
 }catch(e){}

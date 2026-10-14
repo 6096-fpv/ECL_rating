@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>A minha conta – Escola Comércio Lisboa</title>
+
+<style>
+:root{
+  --bg:#f1f1ef;
+  --card:#fff;
+  --tx:#222;
+  --mut:#6b6b6b;
+  --ac:#1f3a68;
+  --ac-soft:#e7ecf5;
+  --bd:#d4d4d0;
+  --star:#c98a00;
+  --track:#e6e6e2;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d0f14;
+    --card:rgba(255,255,255,.06);
+    --tx:#e8ecf4;
+    --mut:#9aa3b2;
+    --ac:#8fb0e8;
+    --ac-soft:rgba(143,176,232,.16);
+    --bd:rgba(255,255,255,.12);
+    --star:#e0a526;
+    --track:rgba(255,255,255,.08);
+  }
+}
+
+:root[data-theme="dark"]{
+  --bg:#0d0f14;
+  --card:rgba(255,255,255,.06);
+  --tx:#e8ecf4;
+  --mut:#9aa3b2;
+  --ac:#8fb0e8;
+  --ac-soft:rgba(143,176,232,.16);
+  --bd:rgba(255,255,255,.12);
+  --star:#e0a526;
+  --track:rgba(255,255,255,.08);
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) body::before,
+  :root:not([data-theme="light"]) body::after{
+    content:"";
+    position:fixed;
+    z-index:-1;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:.45;
+    pointer-events:none;
+  }
+  :root:not([data-theme="light"]) body::before{
+    width:540px;
+    height:540px;
+    top:-150px;
+    right:-130px;
+    background:radial-gradient(circle,#2a4a8f 0%,transparent 70%);
+  }
+  :root:not([data-theme="light"]) body::after{
+    width:500px;
+    height:500px;
+    bottom:-170px;
+    left:-150px;
+    background:radial-gradient(circle,#5b3a8f 0%,transparent 70%);
+  }
+}
+
+:root[data-theme="dark"] body::before,
+:root[data-theme="dark"] body::after{
+  content:"";
+  position:fixed;
+  z-index:-1;
+  border-radius:50%;
+  filter:blur(90px);
+  opacity:.45;
+  pointer-events:none;
+}
+
+:root[data-theme="dark"] body::before{
+  width:540px;
+  height:540px;
+  top:-150px;
+  right:-130px;
+  background:radial-gradient(circle,#2a4a8f 0%,transparent 70%);
+}
+
+:root[data-theme="dark"] body::after{
+  width:500px;
+  height:500px;
+  bottom:-170px;
+  left:-150px;
+  background:radial-gradient(circle,#5b3a8f 0%,transparent 70%);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--tx);
+  font:15.5px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+.top{
+  position:sticky;
+  top:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:10px 18px;
+  font-size:14px;
+  color:var(--tx);
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(16px) saturate(1.8);
+  backdrop-filter:blur(16px) saturate(1.8);
+  border-bottom:1px solid var(--bd);
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .top{
+    background:rgba(13,15,20,.65);
+    border-bottom-color:rgba(255,255,255,.1);
+  }
+}
+
+:root[data-theme="dark"] .top{
+  background:rgba(13,15,20,.65);
+  border-bottom-color:rgba(255,255,255,.1);
+}
+
+.top nav{
+  margin-left:auto;
+  display:flex;
+  gap:4px;
+  align-items:center;
+}
+
+.top b{
+  font-weight:800;
+  letter-spacing:-.2px;
+}
+
+.top .sub{
+  color:var(--mut);
+}
+
+.top a,
+.top .acct a{
+  color:var(--tx);
+  text-decoration:none;
+  font-weight:600;
+  padding:7px 14px;
+  border-radius:999px;
+  transition:background .15s ease,color .15s ease;
+}
+
+.top a:hover,
+.top .acct a:hover{
+  background:var(--ac-soft);
+  color:var(--ac);
+  text-decoration:none;
+}
+
+.acct{
+  font-weight:400;
+}
+
+.badge{
+  display:inline-block;
+  padding:1px 7px;
+  border-radius:10px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  vertical-align:middle;
+}
+
+.b-owner{background:#f0b429;color:#3d2c00}
+.b-admin{background:#1f3a68;color:#fff}
+.b-moderator{background:#1f7a4d;color:#fff}
+.b-user{background:var(--ac-soft);color:var(--ac)}
+
+.wrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:16px 16px 40px;
+}
+
+h1{
+  font-size:26px;
+  margin:10px 0 6px;
+  font-weight:800;
+  letter-spacing:-.4px;
+}
+
+.intro{
+  margin:0 0 4px;
+  color:var(--mut);
+}
+
+a{
+  color:var(--ac);
+}
+
+.card{
+  background:var(--card);
+  border:0;
+  border-radius:16px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px rgba(0,0,0,.07);
+  padding:18px;
+  margin-top:14px;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .card{
+    border:1px solid var(--bd);
+    -webkit-backdrop-filter:blur(18px) saturate(1.4);
+    backdrop-filter:blur(18px) saturate(1.4);
+    box-shadow:0 1px 2px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.07);
+  }
+}
+
+:root[data-theme="dark"] .card{
+  border:1px solid var(--bd);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);
+  backdrop-filter:blur(18px) saturate(1.4);
+  box-shadow:0 1px 2px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+h2{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  color:var(--mut);
+  margin:0 0 10px;
+  font-weight:700;
+}
+
+input,
+textarea{
+  width:100%;
+  padding:11px 14px;
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--card);
+  color:var(--tx);
+  font:inherit;
+  margin-bottom:10px;
+  transition:border-color .15s ease,box-shadow .15s ease;
+}
+
+input:focus,
+textarea:focus{
+  outline:none;
+  border-color:var(--ac);
+  box-shadow:0 0 0 3px var(--ac-soft);
+}
+
+button{
+  font:inherit;
+  font-weight:600;
+  cursor:pointer;
+  border:0;
+  border-radius:999px;
+  padding:10px 20px;
+  background:linear-gradient(135deg,#1f3a68 0%,#3565a8 100%);
+  color:#fff;
+  box-shadow:0 1px 3px rgba(31,58,104,.35);
+  transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease;
+}
+
+button:hover{
+  opacity:1;
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(31,58,104,.35);
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+}
+
+.abtn{
+  background:none;
+  color:var(--mut);
+  padding:4px 10px;
+  font-size:13px;
+  font-weight:700;
+  border-radius:999px;
+  box-shadow:none;
+}
+
+.abtn:hover{
+  background:var(--ac-soft);
+  color:var(--ac);
+  opacity:1;
+  transform:none;
+  box-shadow:none;
+}
+
+.mut{
+  color:var(--mut);
+  font-size:13px;
+}
+
+.counter{
+  text-align:right;
+  font-size:12px;
+  color:var(--mut);
+  margin:-4px 0 8px;
+}
+
+.msg{
+  display:inline-block;
+  margin-left:10px;
+  font-size:13px;
+  color:var(--mut);
+}
+
+.hide{
+  display:none!important;
+}
+
+.warn{
+  background:#fff3cd;
+  color:#7a5b00;
+  border:1px solid #f0d67a;
+  padding:10px 12px;
+  font-size:13px;
+  border-radius:12px;
+  margin-top:12px;
+}
+
+.mrow{
+  border-top:1px solid var(--bd);
+  padding:14px 0;
+}
+
+.mrow:first-of-type{
+  border-top:0;
+  padding-top:0;
+}
+
+.mrow .meta{
+  font-size:12px;
+  color:var(--mut);
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.mrow .cmt{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  margin:6px 0;
+}
+
+.stars{
+  color:var(--star);
+  letter-spacing:1px;
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <b>Escola Comércio Lisboa</b>
+  <span class="sub">· Avaliação de professores</span>
+  <nav>
+    <a href="index.html">Professores</a>
+    <a href="top.html">Top</a>
+    <a href="forum.html">Fórum</a>
+    <span id="acct" class="acct"></span>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <div id="cfgWarn" class="warn hide">
+    A base de dados ainda não está configurada.
+  </div>
+
+  <h1>A minha conta</h1>
+
+  <div class="card">
+
+    <h2>Sessão</h2>
+
+    <p style="margin:0 0 8px">
+      <b id="cName">…</b> <span id="cBadge"></span>
+    </p>
+
+    <div class="mut" id="cSince"></div>
+
+    <div style="margin-top:12px">
+      <button id="cOut">Terminar sessão</button>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>As minhas avaliações</h2>
+
+    <div id="myList">
+      <div class="mut">A carregar…</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
+
+<script>
+
+var SUPABASE_URL =
+"https://qsnncbwoybwkhwyepaai.supabase.co";
+
+var SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
+
+(function(){
+
+var $ = function(i){
+  return document.getElementById(i);
+};
+
+var mine = [];
+var teachers = [];
+var editing = 0;
+
+var configured =
+  SUPABASE_URL.indexOf("http") === 0 &&
+  SUPABASE_KEY.length > 20;
+
+var sb = configured
+  ? window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    )
+  : null;
+
+if(!configured){
+  $("cfgWarn").classList.remove("hide");
+}
+
+function esc(s){
+
+  var d = document.createElement("div");
+
+  d.textContent = s == null ? "" : s;
+
+  return d.innerHTML;
+
+}
+
+var SKEY = "ecl-session";
+
+function getSession(){
+
+  try{
+    var s = JSON.parse(localStorage.getItem(SKEY));
+    if(s && s.token && Number(s.exp) * 1000 > Date.now())
+      return s;
+  }catch(e){}
+
+  return null;
+
+}
+
+function endSession(){
+  localStorage.removeItem(SKEY);
+}
+
+var sess = getSession();
+
+if(!sess){
+  location.replace("auth.html?next=conta.html");
+  return;
+}
+
+function fmtDate(v){
+
+  if(!v)
+    return "";
+
+  var d = new Date(v);
+
+  if(isNaN(d))
+    return "";
+
+  return d.toLocaleDateString("pt-PT",{
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric"
+  });
+
+}
+
+function starsHtml(t){
+
+  var full = Math.round(t);
+
+  return "★★★★★".slice(0,full) + "☆☆☆☆☆".slice(0,5-full);
+
+}
+
+function teacherById(id){
+
+  return teachers.find(function(t){
+    return Number(t.id) === Number(id);
+  });
+
+}
+
+var ROLE_LABEL = {
+  user:"USER",
+  moderator:"MODERATOR",
+  admin:"ADMIN",
+  owner:"OWNER"
+};
+
+function badgeHtml(role){
+
+  if(!role)
+    return "";
+
+  return '<span class="badge b-' + esc(role) + '">' +
+    esc(ROLE_LABEL[role] || String(role).toUpperCase()) +
+    '</span>';
+
+}
+
+function paintHead(){
+
+  $("cName").textContent = sess.username;
+  $("cBadge").innerHTML = badgeHtml(sess.role);
+  $("cSince").textContent =
+    "Membro desde " + fmtDate(sess.created_at);
+
+}
+
+function rowHtml(r){
+
+  var t = teacherById(r.teacher_id);
+
+  var name = t
+    ? '<a href="teacher.html?id=' + t.id + '">' + esc(t.name) + '</a>'
+    : "Professor removido";
+
+  if(editing === Number(r.id)){
+
+    return '<div class="mrow" data-row="' + r.id + '">' +
+
+      '<div class="meta">' + name + '</div>' +
+
+      '<div class="mut" style="margin:6px 0">' +
+        'Clareza ' + r.clareza +
+        ' · Apoio ' + r.apoio +
+        ' · Justiça ' + r.justica +
+      '</div>' +
+
+      '<textarea data-edit="' + r.id + '" rows="3" maxlength="1000">' +
+        esc(r.comment || "") +
+      '</textarea>' +
+
+      '<div class="counter">' +
+        '<span data-len="' + r.id + '">' +
+          (r.comment || "").length +
+        '</span>/1000' +
+      '</div>' +
+
+      '<button data-save="' + r.id + '">Guardar</button>' +
+      '<button class="abtn" data-cancel="' + r.id + '">Cancelar</button>' +
+      '<span class="msg" data-msg="' + r.id + '"></span>' +
+
+    '</div>';
+
+  }
+
+  var avg = (Number(r.clareza) + Number(r.apoio) + Number(r.justica)) / 3;
+
+  return '<div class="mrow" data-row="' + r.id + '">' +
+
+    '<div class="meta">' +
+      name +
+      ' · ' +
+      '<span class="stars">' + starsHtml(avg) + '</span> ' +
+      avg.toFixed(1) +
+      ' · ' +
+      'Clareza ' + r.clareza +
+      ' · Apoio ' + r.apoio +
+      ' · Justiça ' + r.justica +
+      ' · ' +
+      fmtDate(r.created_at) +
+    '</div>' +
+
+    (
+      r.comment
+      ? '<div class="cmt">' + esc(r.comment) + '</div>'
+      : '<div class="mut" style="margin:6px 0">Sem comentário.</div>'
+    ) +
+
+    '<button class="abtn" data-edit-btn="' + r.id + '">Editar</button>' +
+
+  '</div>';
+
+}
+
+function renderList(){
+
+  if(!mine.length){
+
+    $("myList").innerHTML =
+      '<div class="mut">' +
+      'Ainda não tens avaliações. ' +
+      '<a href="index.html">Avalia um professor</a>!' +
+      '</div>';
+
+    return;
+
+  }
+
+  $("myList").innerHTML = mine.map(rowHtml).join("");
+
+}
+
+function loadMine(){
+
+  if(!configured)
+    return;
+
+  sb.rpc("my_ratings",{ p_token:sess.token }).then(function(r){
+
+    if(r.error){
+
+      console.error(r.error);
+
+      var em = r.error.message || "Erro ao carregar.";
+
+      if(/sess.o/i.test(em)){
+        endSession();
+        location.replace("auth.html?next=conta.html");
+        return;
+      }
+
+      $("myList").innerHTML =
+        '<div class="mut">' + esc(em) + '</div>';
+
+      return;
+
+    }
+
+    mine = r.data || [];
+
+    renderList();
+
+  });
+
+}
+
+$("myList").addEventListener("input", function(e){
+
+  var ta = e.target.closest("[data-edit]");
+
+  if(!ta)
+    return;
+
+  var len = document.querySelector(
+    '[data-len="' + ta.getAttribute("data-edit") + '"]'
+  );
+
+  if(len)
+    len.textContent = ta.value.length;
+
+});
+
+$("myList").addEventListener("click", function(e){
+
+  var ed = e.target.closest("[data-edit-btn]");
+
+  if(ed){
+    editing = Number(ed.getAttribute("data-edit-btn"));
+    renderList();
+    return;
+  }
+
+  var ca = e.target.closest("[data-cancel]");
+
+  if(ca){
+    editing = 0;
+    renderList();
+    return;
+  }
+
+  var sv = e.target.closest("[data-save]");
+
+  if(sv){
+
+    var id = Number(sv.getAttribute("data-save"));
+
+    var ta = document.querySelector('[data-edit="' + id + '"]');
+    var me = document.querySelector('[data-msg="' + id + '"]');
+
+    if(!ta || !me)
+      return;
+
+    var text = ta.value.trim();
+
+    if(text.length > 1000){
+      me.textContent = "O comentário pode ter no máximo 1000 caracteres.";
+      return;
+    }
+
+    var r = mine.find(function(x){
+      return Number(x.id) === id;
+    });
+
+    if(!r)
+      return;
+
+    sv.disabled = true;
+    me.textContent = "";
+
+    sb.rpc("rating_update",{
+      p_token:sess.token,
+      p_id:id,
+      p_clareza:Number(r.clareza),
+      p_apoio:Number(r.apoio),
+      p_justica:Number(r.justica),
+      p_comment:text
+    }).then(function(res){
+
+      sv.disabled = false;
+
+      if(res.error){
+
+        console.error(res.error);
+
+        var em = res.error.message || "Erro ao guardar.";
+
+        if(/sess.o/i.test(em)){
+          endSession();
+          location.replace("auth.html?next=conta.html");
+          return;
+
+        }
+
+        me.textContent = em;
+        return;
+
+      }
+
+      r.comment = text || null;
+
+      editing = 0;
+
+      renderList();
+
+    });
+
+  }
+
+});
+
+$("cOut").onclick = function(){
+
+  sb.rpc("logout",{ p_token:sess.token });
+
+  endSession();
+
+  location.replace("index.html");
+
+};
+
+paintHead();
+
+if(configured && sb){
+
+  sb
+    .from("teachers")
+    .select("*")
+    .order("name")
+    .then(function(res){
+
+      if(!res.error)
+        teachers = res.data || [];
+
+      loadMine();
+
+    });
+
+}else{
+
+  $("myList").innerHTML =
+    '<div class="mut">Configure a base de dados.</div>';
+
+}
+
+})();
+
+</script>
+
+</body>
+</html>

@@ -467,6 +467,17 @@ button:disabled{
   display:none!important;
 }
 
+.continue{
+  display:inline-block;
+  padding:10px 20px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#1f3a68 0%,#3565a8 100%);
+  color:#fff;
+  font-weight:600;
+  text-decoration:none;
+  box-shadow:0 1px 3px rgba(31,58,104,.35);
+}
+
 .warn{
   background:#fff3cd;
   color:#7a5b00;
@@ -486,6 +497,7 @@ button:disabled{
   <span class="sub">· Avaliação de professores</span>
   <nav>
     <a href="index.html">Professores</a>
+    <a href="top.html">Top</a>
     <a href="forum.html">Fórum</a>
     <span id="acct" class="acct"></span>
   </nav>
@@ -523,28 +535,37 @@ button:disabled{
 
       <h2>Deixar uma avaliação</h2>
 
-      <div class="mut">Clareza nas explicações</div>
-      <div class="stars" data-k="c"></div>
+      <div id="rateForm">
+        <div class="mut">Clareza nas explicações</div>
+        <div class="stars" data-k="c"></div>
 
-      <div class="mut" style="margin-top:8px">Apoio aos alunos</div>
-      <div class="stars" data-k="a"></div>
+        <div class="mut" style="margin-top:8px">Apoio aos alunos</div>
+        <div class="stars" data-k="a"></div>
 
-      <div class="mut" style="margin-top:8px">Justiça na avaliação</div>
-      <div class="stars" data-k="j"></div>
+        <div class="mut" style="margin-top:8px">Justiça na avaliação</div>
+        <div class="stars" data-k="j"></div>
 
-      <textarea
-        id="cm"
-        rows="4"
-        maxlength="1000"
-        placeholder="Comentário (opcional, até 1000 caracteres)"
-        style="margin-top:12px"
-      ></textarea>
+        <textarea
+          id="cm"
+          rows="4"
+          maxlength="1000"
+          placeholder="Comentário (opcional, até 1000 caracteres)"
+          style="margin-top:12px"
+        ></textarea>
 
-      <div class="counter"><span id="cmLen">0</span>/1000</div>
+        <div class="counter"><span id="cmLen">0</span>/1000</div>
 
-      <button id="send">Enviar avaliação</button>
+        <button id="send">Enviar avaliação</button>
 
-      <span id="msg" class="msg"></span>
+        <span id="msg" class="msg"></span>
+      </div>
+
+      <div id="rateGate" class="hide">
+        <p class="mut" style="margin:0 0 12px">
+          Entra na tua conta para avaliar este professor.
+        </p>
+        <a id="rateLogin" class="continue" href="auth.html">Entrar / Criar conta</a>
+      </div>
 
     </div>
 
@@ -655,6 +676,26 @@ function doLogout(){
 
 }
 
+function paintRateGate(){
+
+  var s = getSession();
+
+  $("rateForm").classList.toggle("hide", !s);
+  $("rateGate").classList.toggle("hide", !!s);
+
+  if(!s){
+
+    $("rateLogin").setAttribute(
+      "href",
+      "auth.html?next=" +
+      encodeURIComponent("teacher.html?id=" + (isFinite(TEACHER_ID) ? TEACHER_ID : ""))
+    );
+
+  }
+
+}
+
+
 function paintAcct(){
 
   var el = $("acct");
@@ -663,7 +704,7 @@ function paintAcct(){
   if(s){
 
     el.innerHTML =
-      'Olá, <b>' + esc(s.username) + '</b> · ' +
+      'Olá, <a href="conta.html"><b>' + esc(s.username) + '</b></a> · ' +
       '<a href="#" id="acctOut">Sair</a>';
 
     $("acctOut").onclick = function(e){
@@ -679,6 +720,8 @@ function paintAcct(){
       '">Entrar</a>';
 
   }
+
+  paintRateGate();
 
 }
 
@@ -934,6 +977,13 @@ $("send").onclick=function(){
 
   var m = $("msg");
 
+  var sess = getSession();
+
+  if(!sess){
+    paintRateGate();
+    return;
+  }
+
   if(!cur.c || !cur.a || !cur.j){
 
     m.textContent = "Dê uma nota em todos os critérios.";
@@ -954,11 +1004,9 @@ $("send").onclick=function(){
 
   btn.disabled = true;
 
-  var sess = getSession();
-
   sb.rpc("rating_create",{
 
-    p_token: sess ? sess.token : null,
+    p_token: sess.token,
     p_teacher_id: teacher.id,
     p_clareza: cur.c,
     p_apoio: cur.a,
@@ -995,7 +1043,9 @@ $("send").onclick=function(){
       $("cm").value = "";
       $("cmLen").textContent = "0";
 
-      m.textContent = "Obrigado pela sua avaliação!";
+      m.textContent = r.data && r.data.updated
+        ? "Avaliação atualizada, obrigado!"
+        : "Obrigado pela sua avaliação!";
 
       loadAll();
 

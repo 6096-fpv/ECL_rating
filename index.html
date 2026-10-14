@@ -522,6 +522,7 @@ button:disabled{
   <span class="sub">· Avaliação de professores</span>
   <nav>
     <a href="index.html" class="on">Professores</a>
+    <a href="top.html">Top</a>
     <a href="forum.html">Fórum</a>
     <span id="acct" class="acct"></span>
   </nav>
@@ -653,7 +654,7 @@ function paintAcct(){
   if(s){
 
     el.innerHTML =
-      'Olá, <b>' + esc(s.username) + '</b> · ' +
+      'Olá, <a href="conta.html"><b>' + esc(s.username) + '</b></a> · ' +
       '<a href="#" id="acctOut">Sair</a>';
 
     $("acctOut").onclick = function(e){

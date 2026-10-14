@@ -906,7 +906,8 @@ function paintWho(){
     var s = getSession();
 
     document.getElementById("admWho").innerHTML = s
-        ? esc(s.username) + ' ' + badgeHtml(s.role)
+        ? '<a href="conta.html">' + esc(s.username) + '</a> ' +
+          badgeHtml(s.role)
         : "";
 
 }
@@ -1366,24 +1367,26 @@ function editTeacher(id){
 
 
     sb
-        .from("teachers")
-        .update({
-
-            name:name,
-            subject:subject
-
+        .rpc("teacher_update",{
+            p_token:getSession().token,
+            p_id:id,
+            p_name:name,
+            p_subject:subject
         })
-        .eq("id",id)
         .then(function(result){
 
             if(result.error){
 
                 console.error(result.error);
 
-                alert("Erro ao editar professor.");
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
+                alert(result.error.message || "Erro ao editar professor.");
 
                 return;
-
             }
 
 
@@ -1423,48 +1426,29 @@ function deleteTeacher(id){
 
 
     sb
-        .from("ratings")
-        .delete()
-        .eq("teacher_id",id)
+        .rpc("teacher_delete",{
+            p_token:getSession().token,
+            p_id:id
+        })
         .then(function(result){
 
             if(result.error){
 
                 console.error(result.error);
 
-                alert(
-                    "Erro ao apagar avaliações."
-                );
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
+                alert(result.error.message || "Erro ao apagar professor.");
 
                 return;
 
             }
 
 
-            sb
-                .from("teachers")
-                .delete()
-                .eq("id",id)
-                .then(function(result2){
-
-                    if(result2.error){
-
-                        console.error(
-                            result2.error
-                        );
-
-                        alert(
-                            "Erro ao apagar professor."
-                        );
-
-                        return;
-
-                    }
-
-
-                    loadData();
-
-                });
+            loadData();
 
         });
 
@@ -1504,12 +1488,10 @@ function addTeacher(){
 
 
     sb
-        .from("teachers")
-        .insert({
-
-            name:name,
-            subject:subject
-
+        .rpc("teacher_add",{
+            p_token:getSession().token,
+            p_name:name,
+            p_subject:subject
         })
         .then(function(result){
 
@@ -1517,8 +1499,13 @@ function addTeacher(){
 
                 console.error(result.error);
 
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
                 message.textContent =
-                    "Erro ao adicionar professor.";
+                    result.error.message || "Erro ao adicionar professor.";
 
                 return;
 
@@ -1601,7 +1588,7 @@ function renderRatings(){
     }
 
 
-    list.innerHTML =
+        list.innerHTML =
         filtered.map(function(r){
 
             var teacher =
@@ -1618,6 +1605,23 @@ function renderRatings(){
                 : "Professor desconhecido";
 
 
+            var author =
+                r.user_id
+                ? profiles.find(function(p){
+
+                      return p.id === r.user_id;
+
+                  })
+                : null;
+
+
+            var authorLabel = author
+                ? esc(author.username)
+                : (r.user_id
+                    ? "Utilizador"
+                    : "Anónimo");
+
+
             return (
 
                 '<div class="rating">' +
@@ -1629,6 +1633,8 @@ function renderRatings(){
                 '<div class="mut">' +
                 'Avaliação #' +
                 r.id +
+                ' · por ' +
+                authorLabel +
                 '</div>' +
 
                 '<p>' +
@@ -1752,23 +1758,26 @@ function saveRating(id){
 
 
     sb
-        .from("ratings")
-        .update({
-
-            clareza:clareza,
-            apoio:apoio,
-            justica:justica,
-            comment:comment
-
+        .rpc("rating_update",{
+            p_token:getSession().token,
+            p_id:id,
+            p_clareza:clareza,
+            p_apoio:apoio,
+            p_justica:justica,
+            p_comment:comment
         })
-        .eq("id",id)
         .then(function(result){
 
             if(result.error){
 
                 console.error(result.error);
 
-                alert("Erro ao editar avaliação.");
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
+                alert(result.error.message || "Erro ao editar avaliação.");
 
                 return;
 
@@ -1798,16 +1807,22 @@ function deleteRating(id){
 
 
     sb
-        .from("ratings")
-        .delete()
-        .eq("id",id)
+        .rpc("rating_delete",{
+            p_token:getSession().token,
+            p_id:id
+        })
         .then(function(result){
 
             if(result.error){
 
                 console.error(result.error);
 
-                alert("Erro ao apagar avaliação.");
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
+                alert(result.error.message || "Erro ao apagar avaliação.");
 
                 return;
 
@@ -1995,16 +2010,22 @@ function deleteForumPost(id){
 
 
     sb
-        .from("forum_posts")
-        .delete()
-        .eq("id",id)
+        .rpc("forum_delete",{
+            p_token:getSession().token,
+            p_id:id
+        })
         .then(function(result){
 
             if(result.error){
 
                 console.error(result.error);
 
-                alert("Erro ao apagar mensagem.");
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
+                alert(result.error.message || "Erro ao apagar mensagem.");
 
                 return;
 
@@ -2014,6 +2035,177 @@ function deleteForumPost(id){
             loadData();
 
         });
+
+}
+
+
+/* USERS */
+
+function setUserRole(id, role, sel){
+
+    var me = getSession();
+
+    if(!me)
+        return;
+
+
+    sel.disabled = true;
+
+
+    sb
+        .rpc("user_set_role",{
+            p_token:me.token,
+            p_id:id,
+            p_role:role
+        })
+        .then(function(result){
+
+            sel.disabled = false;
+
+            if(result.error){
+
+                console.error(result.error);
+
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
+                alert(result.error.message || "Erro ao alterar cargo.");
+
+                loadData();
+
+                return;
+
+            }
+
+
+            loadData();
+
+        });
+
+}
+
+
+function renderUsers(){
+
+    var list =
+        document.getElementById("usersList");
+
+
+    if(!profiles.length){
+
+        list.innerHTML =
+            '<div class="mut">' +
+            'Nenhum utilizador encontrado.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    var me = getSession();
+
+
+    list.innerHTML =
+        profiles
+        .slice()
+        .sort(function(a,b){
+            return String(a.username).localeCompare(String(b.username));
+        })
+        .map(function(p){
+
+            var isMe = me && p.id === me.id;
+
+            var roles = ["user","moderator","admin","owner"];
+
+            var options =
+                roles.map(function(r){
+
+                    return '<option value="' + r + '"' +
+                        (p.role === r ? " selected" : "") +
+                        '>' +
+                        (ROLE_LABEL[r] || r) +
+                        '</option>';
+
+                }).join("");
+
+
+            return (
+                '<div class="rating">' +
+
+                '<strong>' +
+                esc(p.username) +
+                '</strong> ' +
+                badgeHtml(p.role) +
+
+                '<div class="mut">' +
+                (isMe ? "Tu" : "ID " + esc(String(p.id).slice(0,8))) +
+                '</div>' +
+
+                (
+                    isMe
+                    ? '<div class="mut">Não podes alterar o teu próprio cargo.</div>'
+                    : (
+                        '<div class="actions">' +
+                        '<select data-role-sel="' + esc(p.id) + '">' +
+                        options +
+                        '</select>' +
+                        '<button data-role-save="' + esc(p.id) + '">' +
+                        'Guardar' +
+                        '</button>' +
+                        '</div>'
+                    )
+                ) +
+
+                '</div>'
+
+            );
+
+        }).join("");
+
+
+    list.querySelectorAll("[data-role-save]").forEach(function(btn){
+
+        btn.onclick = function(){
+
+            var id = btn.getAttribute("data-role-save");
+
+            var sel = list.querySelector(
+                '[data-role-sel="' + id + '"]'
+            );
+
+            if(!sel)
+                return;
+
+            var role = sel.value;
+
+            var p = profiles.find(function(x){
+                return String(x.id) === String(id);
+            });
+
+            if(p && p.role === role)
+                return;
+
+
+            if(!confirm(
+                "Alterar o cargo de \"" +
+                (p ? p.username : "?") +
+                "\" para " +
+                (ROLE_LABEL[role] || role) +
+                "?"
+            )){
+                loadData();
+                return;
+            }
+
+
+            setUserRole(id, role, sel);
+
+        };
+
+    });
 
 }
 

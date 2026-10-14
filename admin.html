@@ -21,26 +21,113 @@
 
 @media (prefers-color-scheme:dark){
     :root:not([data-theme="light"]){
-        --bg:#171717;
-        --card:#212121;
-        --tx:#e8e8e6;
-        --mut:#a0a0a0;
+        --bg:#0d0f14;
+        --card:rgba(255,255,255,.06);
+        --tx:#e8ecf4;
+        --mut:#9aa3b2;
         --ac:#8fb0e8;
-        --ac-soft:#243044;
-        --bd:#3a3a3a;
-        --track:#2e2e2e;
+        --ac-soft:rgba(143,176,232,.16);
+        --bd:rgba(255,255,255,.12);
+        --track:rgba(255,255,255,.08);
     }
 }
 
 :root[data-theme="dark"]{
-    --bg:#171717;
-    --card:#212121;
-    --tx:#e8e8e6;
-    --mut:#a0a0a0;
+    --bg:#0d0f14;
+    --card:rgba(255,255,255,.06);
+    --tx:#e8ecf4;
+    --mut:#9aa3b2;
     --ac:#8fb0e8;
-    --ac-soft:#243044;
-    --bd:#3a3a3a;
-    --track:#2e2e2e;
+    --ac-soft:rgba(143,176,232,.16);
+    --bd:rgba(255,255,255,.12);
+    --track:rgba(255,255,255,.08);
+}
+
+@media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) body::before,
+    :root:not([data-theme="light"]) body::after{
+        content:"";
+        position:fixed;
+        z-index:-1;
+        border-radius:50%;
+        filter:blur(90px);
+        opacity:.45;
+        pointer-events:none;
+    }
+    :root:not([data-theme="light"]) body::before{
+        width:540px;
+        height:540px;
+        top:-150px;
+        right:-130px;
+        background:radial-gradient(circle,#2a4a8f 0%,transparent 70%);
+    }
+    :root:not([data-theme="light"]) body::after{
+        width:500px;
+        height:500px;
+        bottom:-170px;
+        left:-150px;
+        background:radial-gradient(circle,#5b3a8f 0%,transparent 70%);
+    }
+}
+
+:root[data-theme="dark"] body::before,
+:root[data-theme="dark"] body::after{
+    content:"";
+    position:fixed;
+    z-index:-1;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:.45;
+    pointer-events:none;
+}
+
+:root[data-theme="dark"] body::before{
+    width:540px;
+    height:540px;
+    top:-150px;
+    right:-130px;
+    background:radial-gradient(circle,#2a4a8f 0%,transparent 70%);
+}
+
+:root[data-theme="dark"] body::after{
+    width:500px;
+    height:500px;
+    bottom:-170px;
+    left:-150px;
+    background:radial-gradient(circle,#5b3a8f 0%,transparent 70%);
+}
+
+@media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .card,
+    :root:not([data-theme="light"]) .stat,
+    :root:not([data-theme="light"]) .rating{
+        border:1px solid var(--bd);
+        -webkit-backdrop-filter:blur(18px) saturate(1.4);
+        backdrop-filter:blur(18px) saturate(1.4);
+        box-shadow:0 1px 2px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.07);
+    }
+    :root:not([data-theme="light"]) input,
+    :root:not([data-theme="light"]) textarea,
+    :root:not([data-theme="light"]) select{
+        background:rgba(255,255,255,.05);
+        border-color:rgba(255,255,255,.14);
+    }
+}
+
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .stat,
+:root[data-theme="dark"] .rating{
+    border:1px solid var(--bd);
+    -webkit-backdrop-filter:blur(18px) saturate(1.4);
+    backdrop-filter:blur(18px) saturate(1.4);
+    box-shadow:0 1px 2px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select{
+    background:rgba(255,255,255,.05);
+    border-color:rgba(255,255,255,.14);
 }
 
 *{
@@ -74,12 +161,14 @@ body{
 
 @media (prefers-color-scheme:dark){
     :root:not([data-theme="light"]) .top{
-        background:rgba(28,28,28,.72);
+        background:rgba(13,15,20,.65);
+        border-bottom-color:rgba(255,255,255,.1);
     }
 }
 
 :root[data-theme="dark"] .top{
-    background:rgba(28,28,28,.72);
+    background:rgba(13,15,20,.65);
+    border-bottom-color:rgba(255,255,255,.1);
 }
 
 .top b{
@@ -837,7 +926,7 @@ function applyRole(role){
 
         });
 
-    var staff = lvl >= 1;
+    var staff = lvl >= 2;
 
     document.querySelector(".tabs").style.display = staff ? "" : "none";
     document.getElementById("noPerms").classList.toggle("hide", staff);

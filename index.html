@@ -53,36 +53,83 @@ body{
   margin:0;
   background:var(--bg);
   color:var(--tx);
-  font:15px/1.45 Arial,Helvetica,sans-serif;
+  font:15.5px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
 }
 
 .top{
-  background:#1f3a68;
-  color:#fff;
-  padding:12px 16px;
-  font-size:14px;
+  position:sticky;
+  top:0;
+  z-index:50;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
   flex-wrap:wrap;
+  padding:10px 18px;
+  font-size:14px;
+  color:var(--tx);
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(16px) saturate(1.8);
+  backdrop-filter:blur(16px) saturate(1.8);
+  border-bottom:1px solid var(--bd);
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .top{
+    background:rgba(28,28,28,.72);
+  }
+}
+
+:root[data-theme="dark"] .top{
+  background:rgba(28,28,28,.72);
 }
 
 .top nav{
   margin-left:auto;
   display:flex;
-  gap:18px;
+  gap:4px;
+  align-items:center;
 }
 
-.top a{
-  color:#fff;
+.top b{
+  font-weight:800;
+  letter-spacing:-.2px;
+}
+
+.top .sub{
+  color:var(--mut);
+}
+
+.top a,
+.top .acct a{
+  color:var(--tx);
   text-decoration:none;
-  font-weight:bold;
+  font-weight:600;
+  padding:7px 14px;
+  border-radius:999px;
+  transition:background .15s ease,color .15s ease;
 }
 
 .top a:hover,
+.top .acct a:hover{
+  background:var(--ac-soft);
+  color:var(--ac);
+  text-decoration:none;
+}
+
 .top a.on{
-  text-decoration:underline;
-  text-underline-offset:3px;
+  background:var(--ac);
+  color:#fff;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .top a.on{
+    color:#111;
+  }
+}
+
+:root[data-theme="dark"] .top a.on{
+  color:#111;
 }
 
 .acct{
@@ -96,9 +143,10 @@ body{
 }
 
 h1{
-  font-size:20px;
-  margin:6px 0 4px;
-  font-weight:700;
+  font-size:26px;
+  margin:10px 0 6px;
+  font-weight:800;
+  letter-spacing:-.4px;
 }
 
 .intro{
@@ -112,9 +160,10 @@ a{
 
 .card{
   background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:8px;
-  padding:12px 14px;
+  border:0;
+  border-radius:16px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px rgba(0,0,0,.07);
+  padding:14px 16px;
   margin-top:12px;
 }
 
@@ -131,18 +180,24 @@ input,
 select,
 textarea{
   width:100%;
-  padding:9px 10px;
+  padding:11px 14px;
   border:1px solid var(--bd);
-  border-radius:6px;
+  border-radius:12px;
   background:var(--card);
   color:var(--tx);
   font:inherit;
-  margin-bottom:8px;
+  margin-bottom:10px;
+  transition:border-color .15s ease,box-shadow .15s ease;
 }
 
 input:focus,
 select:focus,
-textarea:focus,
+textarea:focus{
+  outline:none;
+  border-color:var(--ac);
+  box-shadow:0 0 0 3px var(--ac-soft);
+}
+
 button:focus-visible,
 a:focus-visible{
   outline:2px solid var(--ac);
@@ -151,20 +206,32 @@ a:focus-visible{
 
 button{
   font:inherit;
+  font-weight:600;
   cursor:pointer;
   border:0;
-  border-radius:6px;
-  padding:9px 16px;
-  background:var(--ac);
+  border-radius:999px;
+  padding:10px 20px;
+  background:linear-gradient(135deg,#1f3a68 0%,#3565a8 100%);
   color:#fff;
+  box-shadow:0 1px 3px rgba(31,58,104,.35);
+  transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease;
 }
 
 button:hover{
-  opacity:.9;
+  opacity:1;
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(31,58,104,.35);
 }
 
-:root:not([data-theme="light"]) button{
-  color:#111;
+button:active{
+  transform:translateY(0);
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
 }
 
 .toolbar{
@@ -202,8 +269,7 @@ button:hover{
 
 .tcard:hover{
   transform:translateY(-2px);
-  border-color:var(--ac);
-  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  box-shadow:0 2px 4px rgba(0,0,0,.05),0 16px 36px rgba(0,0,0,.1);
 }
 
 .avatar{
@@ -316,7 +382,7 @@ button:hover{
   margin:0 0 24px;
   padding:12px 16px;
   border:1px solid rgba(255,255,255,.35);
-  border-radius:6px;
+  border-radius:12px;
   color:#fff;
   font-size:14px;
   line-height:1.5;
@@ -345,7 +411,7 @@ button:hover{
   border:1px solid #f0d67a;
   padding:10px 12px;
   font-size:13px;
-  border-radius:6px;
+  border-radius:12px;
   margin-top:12px;
 }
 </style>
@@ -365,7 +431,8 @@ button:hover{
 </div>
 
 <div class="top">
-  <b>Escola Comércio Lisboa</b> · Avaliação de professores
+  <b>Escola Comércio Lisboa</b>
+  <span class="sub">· Avaliação de professores</span>
   <nav>
     <a href="index.html" class="on">Professores</a>
     <a href="forum.html">Fórum</a>

@@ -53,36 +53,83 @@ body{
   margin:0;
   background:var(--bg);
   color:var(--tx);
-  font:15px/1.45 Arial,Helvetica,sans-serif;
+  font:15.5px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
 }
 
 .top{
-  background:#1f3a68;
-  color:#fff;
-  padding:12px 16px;
-  font-size:14px;
+  position:sticky;
+  top:0;
+  z-index:50;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
   flex-wrap:wrap;
+  padding:10px 18px;
+  font-size:14px;
+  color:var(--tx);
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(16px) saturate(1.8);
+  backdrop-filter:blur(16px) saturate(1.8);
+  border-bottom:1px solid var(--bd);
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .top{
+    background:rgba(28,28,28,.72);
+  }
+}
+
+:root[data-theme="dark"] .top{
+  background:rgba(28,28,28,.72);
 }
 
 .top nav{
   margin-left:auto;
   display:flex;
-  gap:18px;
+  gap:4px;
+  align-items:center;
 }
 
-.top a{
-  color:#fff;
+.top b{
+  font-weight:800;
+  letter-spacing:-.2px;
+}
+
+.top .sub{
+  color:var(--mut);
+}
+
+.top a,
+.top .acct a{
+  color:var(--tx);
   text-decoration:none;
-  font-weight:bold;
+  font-weight:600;
+  padding:7px 14px;
+  border-radius:999px;
+  transition:background .15s ease,color .15s ease;
 }
 
 .top a:hover,
+.top .acct a:hover{
+  background:var(--ac-soft);
+  color:var(--ac);
+  text-decoration:none;
+}
+
 .top a.on{
-  text-decoration:underline;
-  text-underline-offset:3px;
+  background:var(--ac);
+  color:#fff;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .top a.on{
+    color:#111;
+  }
+}
+
+:root[data-theme="dark"] .top a.on{
+  color:#111;
 }
 
 .acct{
@@ -112,9 +159,10 @@ body{
 }
 
 h1{
-  font-size:20px;
-  margin:6px 0 4px;
-  font-weight:700;
+  font-size:26px;
+  margin:10px 0 6px;
+  font-weight:800;
+  letter-spacing:-.4px;
 }
 
 .intro{
@@ -128,10 +176,11 @@ a{
 
 .card{
   background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:8px;
-  padding:14px;
-  margin-top:12px;
+  border:0;
+  border-radius:16px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px rgba(0,0,0,.07);
+  padding:18px;
+  margin-top:14px;
 }
 
 h2{
@@ -147,18 +196,24 @@ input,
 select,
 textarea{
   width:100%;
-  padding:9px 10px;
+  padding:11px 14px;
   border:1px solid var(--bd);
-  border-radius:6px;
+  border-radius:12px;
   background:var(--card);
   color:var(--tx);
   font:inherit;
-  margin-bottom:8px;
+  margin-bottom:10px;
+  transition:border-color .15s ease,box-shadow .15s ease;
 }
 
 input:focus,
 select:focus,
-textarea:focus,
+textarea:focus{
+  outline:none;
+  border-color:var(--ac);
+  box-shadow:0 0 0 3px var(--ac-soft);
+}
+
 button:focus-visible,
 a:focus-visible{
   outline:2px solid var(--ac);
@@ -167,34 +222,38 @@ a:focus-visible{
 
 button{
   font:inherit;
+  font-weight:600;
   cursor:pointer;
   border:0;
-  border-radius:6px;
-  padding:9px 16px;
-  background:var(--ac);
+  border-radius:999px;
+  padding:10px 20px;
+  background:linear-gradient(135deg,#1f3a68 0%,#3565a8 100%);
   color:#fff;
+  box-shadow:0 1px 3px rgba(31,58,104,.35);
+  transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease;
 }
 
 button:hover{
-  opacity:.9;
+  opacity:1;
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(31,58,104,.35);
 }
 
-.delete{
-  background:#a83232;
-  color:#fff;
-}
-
-:root:not([data-theme="light"]) button.delete{
-  color:#fff;
+button:active{
+  transform:translateY(0);
 }
 
 button:disabled{
   opacity:.55;
   cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
 }
 
-:root:not([data-theme="light"]) button{
-  color:#111;
+.delete{
+  background:linear-gradient(135deg,#a83232 0%,#c94b4b 100%);
+  color:#fff!important;
+  box-shadow:0 1px 3px rgba(168,50,50,.35);
 }
 
 .row{
@@ -209,35 +268,12 @@ button:disabled{
   margin-bottom:0;
 }
 
-.topic{
-  display:block;
-  text-decoration:none;
-  color:inherit;
-  margin-top:10px;
-  transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;
-}
-
-.topic:first-of-type{
-  margin-top:0;
-}
-
-.topic:hover{
-  transform:translateY(-2px);
-  border-color:var(--ac);
-  box-shadow:0 4px 14px rgba(0,0,0,.08);
-}
-
-.topic .t-title{
-  font-weight:700;
-  font-size:15px;
-}
-
 .tag{
   display:inline-block;
   background:var(--ac-soft);
   color:var(--ac);
-  border-radius:20px;
-  padding:2px 10px;
+  border-radius:999px;
+  padding:3px 12px;
   font-size:12px;
   font-weight:700;
   text-decoration:none;
@@ -250,30 +286,6 @@ a.tag:hover{
 .mut{
   color:var(--mut);
   font-size:13px;
-}
-
-.thread-op{
-  border-bottom:1px solid var(--bd);
-  padding-bottom:12px;
-  margin-bottom:4px;
-}
-
-.post{
-  border-top:1px solid var(--bd);
-  padding:12px 0 0;
-  margin-top:12px;
-}
-
-.post:first-child{
-  border-top:0;
-  padding-top:0;
-  margin-top:0;
-}
-
-.post .body{
-  overflow-wrap:anywhere;
-  white-space:pre-wrap;
-  margin-top:4px;
 }
 
 .counter{
@@ -290,12 +302,6 @@ a.tag:hover{
   color:var(--mut);
 }
 
-.back{
-  display:inline-block;
-  margin-top:14px;
-  font-size:13px;
-}
-
 .hide{
   display:none!important;
 }
@@ -306,8 +312,215 @@ a.tag:hover{
   border:1px solid #f0d67a;
   padding:10px 12px;
   font-size:13px;
-  border-radius:6px;
+  border-radius:12px;
   margin-top:12px;
+}
+
+.sortrow{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin:14px 0 0;
+  flex-wrap:wrap;
+}
+
+.sortbtn{
+  background:var(--card);
+  color:var(--mut);
+  border:1px solid var(--bd);
+  padding:7px 16px;
+  font-size:13px;
+  font-weight:700;
+  box-shadow:none;
+}
+
+.sortbtn:hover{
+  opacity:1;
+  transform:none;
+  box-shadow:none;
+  color:var(--ac);
+  border-color:var(--ac);
+}
+
+.sortbtn.on{
+  background:linear-gradient(135deg,#1f3a68 0%,#3565a8 100%);
+  color:#fff;
+  border-color:transparent;
+  box-shadow:0 1px 3px rgba(31,58,104,.35);
+}
+
+.sortbtn.on:hover{
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(31,58,104,.35);
+}
+
+.sortrow input{
+  margin-bottom:0;
+  max-width:260px;
+}
+
+.post-card{
+  display:flex;
+  gap:10px;
+  background:var(--card);
+  border:0;
+  border-radius:16px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px rgba(0,0,0,.07);
+  padding:14px;
+  margin-top:14px;
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+
+.post-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 2px 4px rgba(0,0,0,.05),0 16px 36px rgba(0,0,0,.1);
+}
+
+.votes{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  min-width:34px;
+}
+
+.vbtn{
+  background:none;
+  color:var(--mut);
+  padding:2px 6px;
+  font-size:14px;
+  border-radius:4px;
+  line-height:1;
+}
+
+.vbtn:hover{
+  background:var(--ac-soft);
+  color:var(--ac);
+  opacity:1;
+}
+
+.vbtn.on{
+  color:var(--ac);
+  font-weight:700;
+}
+
+:root:not([data-theme="light"]) .vbtn{
+  color:var(--mut);
+}
+
+:root:not([data-theme="light"]) .vbtn:hover,
+:root:not([data-theme="light"]) .vbtn.on{
+  color:var(--ac);
+}
+
+.score{
+  font-weight:700;
+  font-size:13px;
+}
+
+.score.neg{
+  color:#a83232;
+}
+
+.pcontent{
+  flex:1;
+  min-width:0;
+}
+
+.pmeta{
+  font-size:12px;
+  color:var(--mut);
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.ptitle{
+  font-size:16px;
+  font-weight:700;
+  margin:4px 0;
+  line-height:1.3;
+}
+
+.pbody{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.post-card:not(.open) .pbody{
+  max-height:130px;
+  overflow:hidden;
+}
+
+.pact{
+  margin-top:8px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.abtn{
+  background:none;
+  color:var(--mut);
+  padding:4px 8px;
+  font-size:13px;
+  font-weight:700;
+  border-radius:4px;
+}
+
+.abtn:hover{
+  background:var(--ac-soft);
+  color:var(--ac);
+  opacity:1;
+}
+
+:root:not([data-theme="light"]) .abtn{
+  color:var(--mut);
+}
+
+:root:not([data-theme="light"]) .abtn:hover{
+  color:var(--ac);
+}
+
+.mini{
+  font-size:12px;
+  padding:2px 6px;
+}
+
+.thread{
+  margin-top:10px;
+  border-top:1px solid var(--bd);
+  padding-top:10px;
+}
+
+.cmt{
+  margin-top:10px;
+  font-size:14px;
+}
+
+.cmt .cbody{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  margin:3px 0;
+}
+
+.cmt-kids{
+  border-left:2px solid var(--bd);
+  padding-left:6px;
+}
+
+.minivotes{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  margin-right:6px;
+  vertical-align:middle;
+}
+
+.rbox{
+  margin-top:10px;
 }
 </style>
 </head>
@@ -315,7 +528,8 @@ a.tag:hover{
 <body>
 
 <div class="top">
-  <b>Escola Comércio Lisboa</b> · Avaliação de professores
+  <b>Escola Comércio Lisboa</b>
+  <span class="sub">· Avaliação de professores</span>
   <nav>
     <a href="index.html">Professores</a>
     <a href="forum.html" class="on">Fórum</a>
@@ -331,119 +545,73 @@ a.tag:hover{
 
   <div id="setupWarn" class="warn hide">
     O fórum ainda não está configurado. Corra o script de
-    configuração do fórum no editor SQL do Supabase e recarregue esta página.
+    configuração no editor SQL do Supabase e recarregue esta página.
   </div>
 
-  <!-- LISTA DE TÓPICOS -->
+  <h1>Fórum de Professores</h1>
 
-  <div id="listView">
+  <p class="intro">
+    Discussões sobre os professores da
+    <a
+      href="https://escolacomerciolisboa.pt/"
+      target="_blank"
+      rel="noopener"
+    >
+      Escola Comércio Lisboa
+    </a>.
+    Vote, comente e seja construtivo. As mensagens são públicas.
+  </p>
 
-    <h1>Fórum de Professores</h1>
+  <div id="ntCard" class="card hide">
 
-    <p class="intro">
-      Discussões sobre os professores da
-      <a
-        href="https://escolacomerciolisboa.pt/"
-        target="_blank"
-        rel="noopener"
-      >
-        Escola Comércio Lisboa
-      </a>.
-      Seja respeitador e construtivo. As mensagens são públicas.
-    </p>
+    <h2>Criar publicação</h2>
 
-    <div id="ntCard" class="card hide">
+    <select id="ntTeacher">
+      <option value="">— Sem professor associado —</option>
+    </select>
 
-      <h2>Novo tópico</h2>
+    <input
+      id="ntTitle"
+      maxlength="120"
+      placeholder="Título (3 a 120 caracteres)"
+    >
 
-      <select id="ntTeacher">
-        <option value="">— Sem professor associado —</option>
-      </select>
+    <textarea
+      id="ntBody"
+      rows="4"
+      maxlength="2000"
+      placeholder="Texto (até 2000 caracteres)"
+    ></textarea>
 
-      <input
-        id="ntTitle"
-        maxlength="120"
-        placeholder="Título do tópico (3 a 120 caracteres)"
-      >
+    <div class="counter"><span id="ntLen">0</span>/2000</div>
 
-      <textarea
-        id="ntBody"
-        rows="4"
-        maxlength="2000"
-        placeholder="Mensagem (até 2000 caracteres)"
-      ></textarea>
+    <button id="ntSend">Publicar</button>
 
-      <div class="counter"><span id="ntLen">0</span>/2000</div>
-
-      <button id="ntSend">Criar tópico</button>
-
-      <span id="ntMsg" class="msg"></span>
-
-    </div>
-
-    <div id="ntAnon" class="card mut hide">
-      Inicia sessão para criar tópicos.
-      <a href="auth.html?next=forum.html">Entrar ou criar conta</a>.
-    </div>
-
-    <div class="card">
-
-      <h2>Tópicos</h2>
-
-      <div class="row" style="margin-bottom:10px">
-        <input
-          id="q"
-          placeholder="Pesquisar tópicos"
-          autocomplete="off"
-        >
-      </div>
-
-      <div id="topics">
-        <div class="mut">A carregar…</div>
-      </div>
-
-    </div>
+    <span id="ntMsg" class="msg"></span>
 
   </div>
 
-  <!-- VISTA DE TÓPICO -->
+  <div id="ntAnon" class="card mut hide">
+    Inicia sessão para publicar e votar.
+    <a href="auth.html?next=forum.html">Entrar ou criar conta</a>.
+  </div>
 
-  <div id="topicView" class="hide">
+  <div class="sortrow">
 
-    <a class="back" href="#forum">← Voltar aos tópicos</a>
+    <button id="sortNew" class="sortbtn on">Novos</button>
+    <button id="sortTop" class="sortbtn">Melhores</button>
 
-    <div class="card">
+    <input
+      id="q"
+      placeholder="Pesquisar"
+      autocomplete="off"
+      style="max-width:220px"
+    >
 
-      <div class="thread-op" id="op"></div>
+  </div>
 
-      <div id="replies"></div>
-
-    </div>
-
-    <div id="rpCard" class="card hide">
-
-      <h2>Responder</h2>
-
-      <textarea
-        id="rpBody"
-        rows="4"
-        maxlength="2000"
-        placeholder="Mensagem (até 2000 caracteres)"
-      ></textarea>
-
-      <div class="counter"><span id="rpLen">0</span>/2000</div>
-
-      <button id="rpSend">Enviar resposta</button>
-
-      <span id="rpMsg" class="msg"></span>
-
-    </div>
-
-    <div id="rpAnon" class="card mut hide">
-      Inicia sessão para responder.
-      <a href="auth.html" id="rpAnonLink">Entrar ou criar conta</a>.
-    </div>
-
+  <div id="feed">
+    <div class="mut" style="margin-top:14px">A carregar…</div>
   </div>
 
 </div>
@@ -467,8 +635,12 @@ var $ = function(i){
 var posts = [];
 var teachers = [];
 var profiles = [];
+var myVotes = {};
+var expanded = {};
+var replyTo = {};
 var setupNeeded = false;
 var loaded = false;
+var sortMode = "new";
 
 var configured =
   SUPABASE_URL.indexOf("http") === 0 &&
@@ -617,22 +789,13 @@ function renderForms(){
   $("ntCard").classList.toggle("hide", !s);
   $("ntAnon").classList.toggle("hide", s);
 
-  $("rpCard").classList.toggle("hide", !s);
-  $("rpAnon").classList.toggle("hide", s);
-
-  var back = "forum.html" + location.hash;
-
-  $("rpAnonLink").setAttribute(
-    "href",
-    "auth.html?next=" + encodeURIComponent(back)
-  );
-
 }
 
 function authFail(msg){
 
   endSession();
   paintAcct();
+  myVotes = {};
 
   if(onAuthChange)
     onAuthChange();
@@ -643,7 +806,11 @@ function authFail(msg){
 
 paintAcct();
 renderForms();
-onAuthChange = renderForms;
+onAuthChange = function(){
+  renderForms();
+  loadMyVotes();
+  renderFeed();
+};
 
 function fmtDate(v){
 
@@ -665,11 +832,65 @@ function fmtDate(v){
 
 }
 
+function fmtWhen(v){
+
+  if(!v)
+    return "";
+
+  var d = new Date(v);
+
+  if(isNaN(d))
+    return "";
+
+  var s = (Date.now() - d.getTime()) / 1000;
+
+  if(s < 60)
+    return "agora";
+
+  if(s < 3600)
+    return "há " + Math.floor(s / 60) + " min";
+
+  if(s < 86400)
+    return "há " + Math.floor(s / 3600) + " h";
+
+  if(s < 86400 * 30)
+    return "há " + Math.floor(s / 86400) + " d";
+
+  return fmtDate(d);
+
+}
+
 function teacherById(id){
 
   return teachers.find(function(t){
     return Number(t.id) === Number(id);
   });
+
+}
+
+function byId(id){
+
+  return posts.find(function(p){
+    return Number(p.id) === Number(id);
+  }) || null;
+
+}
+
+function kidsOf(id){
+
+  return posts.filter(function(p){
+    return Number(p.parent_id) === Number(id);
+  });
+
+}
+
+function descendants(id){
+
+  var k = kidsOf(id);
+
+  return k.reduce(function(n,c){
+    return n + 1 + descendants(c.id);
+  }, 0);
 
 }
 
@@ -682,53 +903,234 @@ function topicId(){
 
 }
 
-function route(){
+function updateVoteUi(id){
 
-  var id = topicId();
+  var mine = myVotes[Number(id)] || 0;
 
-  $("listView").classList.toggle("hide", !!id);
-  $("topicView").classList.toggle("hide", !id);
+  var p = byId(id);
+  var sc = p ? Number(p.score) || 0 : 0;
 
-  if(id){
-    renderTopic(id);
-  }else{
-    renderTopics();
+  document
+    .querySelectorAll('[data-score="' + id + '"]')
+    .forEach(function(el){
+      el.textContent = sc;
+      el.classList.toggle("neg", sc < 0);
+    });
+
+  document
+    .querySelectorAll('[data-vote="' + id + '"]')
+    .forEach(function(el){
+      el.classList.toggle(
+        "on",
+        Number(el.getAttribute("data-dir")) === mine
+      );
+    });
+
+}
+
+function votesHtml(id, mini){
+
+  var mine = myVotes[Number(id)] || 0;
+  var p = byId(id);
+  var sc = p ? Number(p.score) || 0 : 0;
+
+  return '<span class="minivotes">' +
+    '<button class="vbtn' + (mini ? " mini" : "") +
+      (mine === 1 ? " on" : "") +
+      '" data-vote="' + id + '" data-dir="1">▲</button>' +
+    '<span class="score' + (sc < 0 ? " neg" : "") +
+      '" data-score="' + id + '">' + sc + '</span>' +
+    '<button class="vbtn' + (mini ? " mini" : "") +
+      (mine === -1 ? " on" : "") +
+      '" data-vote="' + id + '" data-dir="-1">▼</button>' +
+  '</span>';
+
+}
+
+function cmtHtml(c, depth, tid){
+
+  var kids = kidsOf(c.id);
+
+  var del = canMod()
+    ? ' · <button class="delete mini" data-del="' + c.id + '">apagar</button>'
+    : "";
+
+  var html =
+    '<div class="cmt" style="padding-left:' +
+      (Math.min(depth, 4) * 14) + 'px">' +
+
+    '<div class="pmeta">' +
+      votesHtml(c.id, true) +
+      authorHtml(c) +
+      ' · ' +
+      fmtWhen(c.created_at) +
+      del +
+    '</div>' +
+
+    '<div class="cbody">' +
+      esc(c.content) +
+    '</div>' +
+
+    '<div>' +
+      '<button class="abtn mini" data-reply="' + c.id +
+        '" data-topic="' + tid + '">responder</button>' +
+    '</div>';
+
+  if(kids.length){
+
+    html += depth < 4
+      ? '<div class="cmt-kids">' +
+          kids.map(function(k){
+            return cmtHtml(k, depth + 1, tid);
+          }).join("") +
+        '</div>'
+      : kids.map(function(k){
+          return cmtHtml(k, depth + 1, tid);
+        }).join("");
+
   }
 
-  window.scrollTo(0,0);
+  html += '</div>';
+
+  return html;
 
 }
 
-window.addEventListener("hashchange", route);
+function threadHtml(t){
 
-$("ntBody").oninput = function(){
-  $("ntLen").textContent = $("ntBody").value.length;
-};
+  var kids = kidsOf(t.id);
+  var s = getSession();
 
-$("rpBody").oninput = function(){
-  $("rpLen").textContent = $("rpBody").value.length;
-};
+  var list = kids.length
+    ? kids.map(function(k){
+        return cmtHtml(k, 1, t.id);
+      }).join("")
+    : '<div class="mut">Ainda não há comentários.</div>';
 
-function lastActivity(topic, replies){
+  var box;
 
-  var t = topic.created_at;
+  if(s){
 
-  replies.forEach(function(r){
-    if(r.created_at > t){
-      t = r.created_at;
-    }
-  });
+    var target = replyTo[t.id] || t.id;
+    var tp = byId(target);
 
-  return t;
+    var ctx = replyTo[t.id] && tp
+      ? '<div class="mut" style="margin-bottom:4px">' +
+          'A responder a <b>' +
+          (profById(tp.user_id)
+            ? esc(profById(tp.user_id).username)
+            : esc(tp.author_name || "Anónimo")) +
+          '</b> · ' +
+          '<button class="abtn mini" data-cancelreply="' + t.id +
+            '">cancelar</button>' +
+        '</div>'
+      : "";
+
+    box =
+      '<div class="rbox">' +
+        ctx +
+        '<textarea data-rpbody="' + t.id + '" rows="2" maxlength="2000" ' +
+          'placeholder="Comentar…"></textarea>' +
+        '<div>' +
+          '<button class="mini" data-rpsend="' + t.id + '">Enviar</button>' +
+          '<span class="msg" data-rpmsg="' + t.id + '"></span>' +
+        '</div>' +
+      '</div>';
+
+  }else{
+
+    box =
+      '<div class="mut" style="margin-top:10px">' +
+        'Inicia sessão para comentar. ' +
+        '<a href="auth.html?next=' +
+          encodeURIComponent("forum.html#topico-" + t.id) +
+        '">Entrar ou criar conta</a>.' +
+      '</div>';
+
+  }
+
+  return '<div class="thread">' + list + box + '</div>';
 
 }
 
-function renderTopics(){
+function cardHtml(t){
+
+  var open = !!expanded[t.id];
+  var n = descendants(t.id);
+  var name = teacherById(t.teacher_id);
+
+  var del = canMod()
+    ? ' · <button class="delete mini" data-del="' + t.id + '">apagar</button>'
+    : "";
+
+  return '<div class="post-card' + (open ? " open" : "") +
+      '" data-post="' + t.id + '">' +
+
+    '<div class="votes">' +
+      '<button class="vbtn' +
+        (myVotes[t.id] === 1 ? " on" : "") +
+        '" data-vote="' + t.id + '" data-dir="1">▲</button>' +
+      '<span class="score' +
+        ((Number(t.score) || 0) < 0 ? " neg" : "") +
+        '" data-score="' + t.id + '">' +
+        (Number(t.score) || 0) +
+      '</span>' +
+      '<button class="vbtn' +
+        (myVotes[t.id] === -1 ? " on" : "") +
+        '" data-vote="' + t.id + '" data-dir="-1">▼</button>' +
+    '</div>' +
+
+    '<div class="pcontent">' +
+
+      '<div class="pmeta">' +
+        authorHtml(t) +
+        ' · ' +
+        fmtWhen(t.created_at) +
+        del +
+      '</div>' +
+
+      '<div class="ptitle">' +
+        esc(t.title) +
+      '</div>' +
+
+      (
+        name
+        ? '<div style="margin:2px 0 6px">' +
+            '<a class="tag" href="teacher.html?id=' + name.id + '">' +
+            esc(name.name) +
+            '</a>' +
+          '</div>'
+        : ""
+      ) +
+
+      '<div class="pbody">' +
+        esc(t.content) +
+      '</div>' +
+
+      '<div class="pact">' +
+        '<button class="abtn" data-expand="' + t.id + '">' +
+          (open
+            ? "fechar"
+            : "💬 " + n + " comentário" + (n === 1 ? "" : "s")) +
+        '</button>' +
+      '</div>' +
+
+      (open ? threadHtml(t) : "") +
+
+    '</div>' +
+
+  '</div>';
+
+}
+
+function renderFeed(){
 
   if(!configured){
 
-    $("topics").innerHTML =
-      '<div class="mut">Configure a base de dados para usar o fórum.</div>';
+    $("feed").innerHTML =
+      '<div class="mut" style="margin-top:14px">' +
+      'Configure a base de dados para usar o fórum.' +
+      '</div>';
 
     return;
   }
@@ -738,161 +1140,49 @@ function renderTopics(){
 
   if(!loaded){
 
-    $("topics").innerHTML =
-      '<div class="mut">A carregar…</div>';
+    $("feed").innerHTML =
+      '<div class="mut" style="margin-top:14px">A carregar…</div>';
 
     return;
   }
 
   var q = $("q").value.toLowerCase();
 
-  var topics = posts.filter(function(p){
+  var rows = posts.filter(function(p){
     return !p.parent_id;
-  });
-
-  var rows = topics.map(function(t){
-
-    var replies = posts.filter(function(p){
-      return Number(p.parent_id) === Number(t.id);
-    });
+  }).filter(function(t){
 
     var name = teacherById(t.teacher_id);
 
-    return {
-      t:t,
-      n:replies.length,
-      when:lastActivity(t,replies),
-      name:name
-    };
-
-  }).filter(function(x){
-
     var hay =
-      x.t.title + " " +
-      (x.t.content || "") + " " +
-      (x.name ? x.name.name + " " + x.name.subject : "");
+      t.title + " " +
+      (t.content || "") + " " +
+      (name ? name.name + " " + name.subject : "");
 
     return hay.toLowerCase().indexOf(q) >= 0;
 
   }).sort(function(a,b){
-    return String(b.when).localeCompare(String(a.when));
+
+    if(sortMode === "top"){
+
+      var d = (Number(b.score) || 0) - (Number(a.score) || 0);
+
+      if(d)
+        return d;
+
+    }
+
+    return String(b.created_at).localeCompare(String(a.created_at));
+
   });
 
-  if(!rows.length){
-
-    $("topics").innerHTML =
-      '<div class="mut">' +
+  $("feed").innerHTML = rows.length
+    ? rows.map(cardHtml).join("")
+    : '<div class="mut" style="margin-top:14px">' +
       (posts.length
-        ? "Nenhum tópico corresponde à pesquisa."
-        : "Ainda não há tópicos. Cria o primeiro!") +
+        ? "Nada corresponde à pesquisa."
+        : "Ainda não há publicações. Cria a primeira!") +
       '</div>';
-
-    return;
-
-  }
-
-  $("topics").innerHTML = rows.map(function(x){
-
-    return '<a class="card topic" href="#topico-' + x.t.id + '">' +
-
-      '<div class="t-title">' +
-      esc(x.t.title) +
-      '</div>' +
-
-      '<div class="mut" style="margin-top:4px">' +
-      authorHtml(x.t) +
-      ' · ' +
-      fmtDate(x.when) +
-      ' · ' +
-      x.n +
-      ' resposta' +
-      (x.n === 1 ? '' : 's') +
-      '</div>' +
-
-      (
-        x.name
-        ? '<div style="margin-top:8px"><span class="tag">' +
-          esc(x.name.name) +
-          '</span></div>'
-        : ""
-      ) +
-
-      '</a>';
-
-  }).join("");
-
-}
-
-function renderTopic(id){
-
-  var t = posts.find(function(p){
-    return Number(p.id) === id && !p.parent_id;
-  });
-
-  if(!t){
-    $("op").innerHTML =
-      '<div class="mut">Tópico não encontrado.</div>';
-    $("replies").innerHTML = "";
-    return;
-  }
-
-  var name = teacherById(t.teacher_id);
-
-  var delBtn = canMod()
-    ? ' <button class="delete" data-del="' + t.id + '" style="padding:1px 8px;font-size:12px">Apagar</button>'
-    : "";
-
-  $("op").innerHTML =
-    '<div class="t-title" style="font-size:17px">' +
-    esc(t.title) +
-    '</div>' +
-
-    '<div class="mut" style="margin-top:4px">' +
-    authorHtml(t) +
-    ' · ' +
-    fmtDate(t.created_at) +
-    delBtn +
-    '</div>' +
-
-    (
-      name
-      ? '<div style="margin-top:8px">' +
-        '<a class="tag" href="teacher.html?id=' + name.id + '">' +
-        esc(name.name) +
-        ' · ver perfil' +
-        '</a></div>'
-      : ""
-    ) +
-
-    '<div class="body" style="margin-top:8px">' +
-    esc(t.content) +
-    '</div>';
-
-  var replies = posts.filter(function(p){
-    return Number(p.parent_id) === id;
-  });
-
-  $("replies").innerHTML = replies.length
-    ? replies.map(function(r){
-
-        var del = canMod()
-          ? ' <button class="delete" data-del="' + r.id + '" style="padding:1px 8px;font-size:12px">Apagar</button>'
-          : "";
-
-        return '<div class="post">' +
-          '<div class="mut">' +
-          authorHtml(r) +
-          ' · ' +
-          fmtDate(r.created_at) +
-          del +
-          '</div>' +
-          '<div class="body">' +
-          esc(r.content) +
-          '</div>' +
-          '</div>';
-
-      }).join("")
-    : '<div class="mut" style="margin-top:12px">Ainda não há respostas.</div>';
 
 }
 
@@ -900,8 +1190,35 @@ function showSetup(){
 
   setupNeeded = true;
   $("setupWarn").classList.remove("hide");
-  $("topics").innerHTML =
-    '<div class="mut">Fórum por configurar.</div>';
+  $("feed").innerHTML =
+    '<div class="mut" style="margin-top:14px">Fórum por configurar.</div>';
+
+}
+
+function loadMyVotes(){
+
+  myVotes = {};
+
+  if(!configured || !sb)
+    return;
+
+  var s = getSession();
+
+  if(!s)
+    return;
+
+  sb.rpc("my_votes",{ p_token:s.token }).then(function(r){
+
+    if(r.error || !r.data)
+      return;
+
+    Object.keys(r.data).forEach(function(k){
+      myVotes[Number(k)] = Number(r.data[k]) || 0;
+    });
+
+    renderFeed();
+
+  });
 
 }
 
@@ -909,6 +1226,8 @@ function loadAll(){
 
   if(!configured)
     return;
+
+  var s = getSession();
 
   Promise.all([
 
@@ -942,8 +1261,10 @@ function loadAll(){
       ){
         showSetup();
       }else{
-        $("topics").innerHTML =
-          '<div class="mut">Erro a carregar dados.</div>';
+        $("feed").innerHTML =
+          '<div class="mut" style="margin-top:14px">' +
+          'Erro a carregar dados.' +
+          '</div>';
       }
 
       return;
@@ -953,6 +1274,16 @@ function loadAll(){
     teachers = res[1].data || [];
     profiles = res[2].data || [];
     loaded = true;
+
+    Object.keys(expanded).forEach(function(k){
+      if(!byId(k))
+        delete expanded[k];
+    });
+
+    var hid = topicId();
+
+    if(hid && byId(hid))
+      expanded[hid] = true;
 
     var sel = $("ntTeacher");
     var prev = sel.value;
@@ -969,7 +1300,17 @@ function loadAll(){
 
     sel.value = prev;
 
-    route();
+    renderFeed();
+    loadMyVotes();
+
+    if(hid && byId(hid)){
+
+      var el = document.querySelector('[data-post="' + hid + '"]');
+
+      if(el)
+        el.scrollIntoView({ block:"start" });
+
+    }
 
   });
 
@@ -984,7 +1325,7 @@ function sendPost(rpcName, params, msgEl, clearFn, btn){
 
   if(!s){
     location.href =
-      "auth.html?next=" + encodeURIComponent("forum.html" + location.hash);
+      "auth.html?next=" + encodeURIComponent("forum.html");
     return;
   }
 
@@ -1026,6 +1367,10 @@ function sendPost(rpcName, params, msgEl, clearFn, btn){
     });
 
 }
+
+$("ntBody").oninput = function(){
+  $("ntLen").textContent = $("ntBody").value.length;
+};
 
 $("ntSend").onclick=function(){
 
@@ -1076,81 +1421,46 @@ $("ntSend").onclick=function(){
 
 };
 
-$("rpSend").onclick=function(){
-
-  var id = topicId();
-  var m = $("rpMsg");
-
-  if(!id){
-    m.textContent = "Tópico inválido.";
-    return;
-  }
-
-  var body = $("rpBody").value.trim();
-
-  if(!body){
-    m.textContent = "Escreva uma mensagem.";
-    return;
-
-  }
-
-  if(body.length > 2000){
-
-    m.textContent = "A mensagem pode ter no máximo 2000 caracteres.";
-    return;
-
-  }
-
-  m.textContent = "";
-
-  sendPost(
-    "forum_reply",
-    {
-      p_parent_id:id,
-      p_content:body
-    },
-    m,
-    function(){
-      $("rpBody").value = "";
-      $("rpLen").textContent = "0";
-    },
-    $("rpSend")
-  );
-
+$("sortNew").onclick = function(){
+  sortMode = "new";
+  $("sortNew").classList.add("on");
+  $("sortTop").classList.remove("on");
+  renderFeed();
 };
 
-$("topicView").addEventListener("click", function(e){
+$("sortTop").onclick = function(){
+  sortMode = "top";
+  $("sortTop").classList.add("on");
+  $("sortNew").classList.remove("on");
+  renderFeed();
+};
 
-  var b = e.target.closest("[data-del]");
+$("q").oninput = renderFeed;
 
-  if(!b)
-    return;
-
-  var id = Number(b.getAttribute("data-del"));
-
-  if(!id)
-    return;
-
-  if(!confirm("Apagar esta mensagem?"))
-    return;
+function doVote(id, dir){
 
   var s = getSession();
 
-  if(!s)
+  if(!s){
+    location.href =
+      "auth.html?next=" + encodeURIComponent("forum.html" + location.hash);
+    return;
+  }
+
+  if(!configured)
     return;
 
-  b.disabled = true;
-
-  sb.rpc("forum_delete",{
+  sb.rpc("forum_vote",{
     p_token:s.token,
-    p_id:id
+    p_id:Number(id),
+    p_value:Number(dir)
   }).then(function(r){
 
     if(r.error){
 
       console.error(r.error);
 
-      var em = r.error.message || "Erro ao apagar.";
+      var em = r.error.message || "Erro ao votar.";
 
       if(/sess.o/i.test(em)){
         alert(authFail());
@@ -1162,9 +1472,189 @@ $("topicView").addEventListener("click", function(e){
 
     }
 
-    loadAll();
+    myVotes[Number(id)] = Number(r.data.mine) || 0;
+
+    if(!myVotes[Number(id)])
+      delete myVotes[Number(id)];
+
+    var p = byId(id);
+
+    if(p)
+      p.score = r.data.score;
+
+    updateVoteUi(id);
 
   });
+
+}
+
+$("feed").addEventListener("click", function(e){
+
+  var v = e.target.closest("[data-vote]");
+
+  if(v){
+    doVote(
+      v.getAttribute("data-vote"),
+      v.getAttribute("data-dir")
+    );
+    return;
+  }
+
+  var x = e.target.closest("[data-expand]");
+
+  if(x){
+
+    var id = x.getAttribute("data-expand");
+
+    expanded[id] = !expanded[id];
+
+    renderFeed();
+
+    if(expanded[id]){
+
+      var el = document.querySelector('[data-post="' + id + '"]');
+
+      if(el)
+        el.scrollIntoView({ block:"nearest" });
+
+    }
+
+    return;
+  }
+
+  var rp = e.target.closest("[data-reply]");
+
+  if(rp){
+
+    replyTo[rp.getAttribute("data-topic")] =
+      Number(rp.getAttribute("data-reply"));
+
+    renderFeed();
+
+    var box = document.querySelector(
+      '[data-rpbody="' + rp.getAttribute("data-topic") + '"]'
+    );
+
+    if(box)
+      box.focus();
+
+    return;
+  }
+
+  var cr = e.target.closest("[data-cancelreply]");
+
+  if(cr){
+    delete replyTo[cr.getAttribute("data-cancelreply")];
+    renderFeed();
+    return;
+  }
+
+  var rs = e.target.closest("[data-rpsend]");
+
+  if(rs){
+
+    var tid = rs.getAttribute("data-rpsend");
+    var ta = document.querySelector('[data-rpbody="' + tid + '"]');
+    var me = document.querySelector('[data-rpmsg="' + tid + '"]');
+
+    if(!ta || !me)
+      return;
+
+    var body = ta.value.trim();
+
+    if(!body){
+      me.textContent = "Escreva uma mensagem.";
+      return;
+    }
+
+    if(body.length > 2000){
+      me.textContent = "A mensagem pode ter no máximo 2000 caracteres.";
+      return;
+    }
+
+    me.textContent = "";
+
+    sendPost(
+      "forum_reply",
+      {
+        p_parent_id: replyTo[tid] || Number(tid),
+        p_content: body
+      },
+      me,
+      function(){
+        ta.value = "";
+        delete replyTo[tid];
+      },
+      rs
+    );
+
+    return;
+  }
+
+  var d = e.target.closest("[data-del]");
+
+  if(d){
+
+    var id2 = Number(d.getAttribute("data-del"));
+
+    if(!id2)
+      return;
+
+    if(!confirm("Apagar esta mensagem?"))
+      return;
+
+    var s = getSession();
+
+    if(!s)
+      return;
+
+    d.disabled = true;
+
+    sb.rpc("forum_delete",{
+      p_token:s.token,
+      p_id:id2
+    }).then(function(r){
+
+      if(r.error){
+
+        console.error(r.error);
+
+        var em = r.error.message || "Erro ao apagar.";
+
+        if(/sess.o/i.test(em)){
+          alert(authFail());
+          return;
+        }
+
+        alert(em);
+        return;
+
+      }
+
+      loadAll();
+
+    });
+
+  }
+
+});
+
+window.addEventListener("hashchange", function(){
+
+  var id = topicId();
+
+  if(id && byId(id)){
+
+    expanded[id] = true;
+
+    renderFeed();
+
+    var el = document.querySelector('[data-post="' + id + '"]');
+
+    if(el)
+      el.scrollIntoView({ block:"start" });
+
+  }
 
 });
 
@@ -1189,7 +1679,7 @@ if(configured){
 
 }
 
-route();
+renderFeed();
 
 })();
 

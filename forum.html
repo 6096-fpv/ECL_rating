@@ -467,6 +467,159 @@ a.tag:hover{
   max-width:260px;
 }
 
+.fgrid{
+  display:flex;
+  gap:18px;
+  align-items:flex-start;
+}
+
+.fmain{
+  flex:1;
+  min-width:0;
+}
+
+.side{
+  flex:0 0 224px;
+  position:sticky;
+  top:14px;
+}
+
+.sideCard{
+  background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:16px;
+  padding:10px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px rgba(0,0,0,.07);
+}
+
+.sideTitle{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--mut);
+  padding:4px 8px 8px;
+}
+
+.sideItem{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  text-align:left;
+  background:none;
+  border:0;
+  border-radius:10px;
+  padding:8px 10px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--mut);
+  cursor:pointer;
+  box-shadow:none;
+}
+
+.sideItem:hover{
+  opacity:1;
+  transform:none;
+  box-shadow:none;
+  background:var(--ac-soft);
+  color:var(--ac);
+}
+
+.sideItem.on{
+  background:linear-gradient(135deg,#1f3a68 0%,#3565a8 100%);
+  color:#fff;
+}
+
+.sideItem.on:hover{
+  color:#fff;
+}
+
+.sideItem .cnt{
+  font-size:11px;
+  font-weight:700;
+  opacity:.7;
+}
+
+.sideCreate{
+  border-top:1px solid var(--bd);
+  margin-top:8px;
+  padding-top:10px;
+}
+
+.sideCreate input{
+  margin-bottom:6px;
+}
+
+.sideCreate .msg{
+  font-size:12px;
+  margin-top:6px;
+}
+
+#sideBtn{
+  display:none;
+}
+
+.sideBd{
+  display:none;
+}
+
+@media (max-width:960px){
+
+  .fgrid{
+    display:block;
+  }
+
+  #sideBtn{
+    display:block;
+  }
+
+  .side{
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    width:min(78vw,300px);
+    z-index:60;
+    transform:translateX(-105%);
+    transition:transform .2s ease;
+    overflow:auto;
+    background:var(--card);
+    border-right:1px solid var(--bd);
+    padding:14px;
+    box-shadow:0 0 40px rgba(0,0,0,.35);
+  }
+
+  .side.open{
+    transform:none;
+  }
+
+  .sideCard{
+    background:none;
+    border:0;
+    padding:0;
+    box-shadow:none;
+  }
+
+  .sideBd{
+    display:block;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:59;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+  }
+
+  .sideBd.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+}
+
 .post-card{
   display:flex;
   gap:10px;
@@ -670,12 +823,30 @@ a.tag:hover{
     Vote, comente e seja construtivo. As mensagens são públicas.
   </p>
 
+<div class="fgrid">
+
+  <div id="sideBd"></div>
+
+  <aside id="side">
+    <div class="sideCard">
+      <div class="sideTitle">Comunidades</div>
+      <div id="sideList"></div>
+      <div id="sideCreate" class="sideCreate"></div>
+    </div>
+  </aside>
+
+  <div class="fmain">
+
   <div id="ntCard" class="card hide">
 
     <h2>Criar publicação</h2>
 
     <select id="ntTeacher">
       <option value="">— Sem professor associado —</option>
+    </select>
+
+    <select id="ntBranch">
+      <option value="0">Comunidade: Geral</option>
     </select>
 
     <input
@@ -716,11 +887,17 @@ a.tag:hover{
       style="max-width:220px"
     >
 
+    <button id="sideBtn" class="sortbtn">☰ Comunidades</button>
+
   </div>
 
   <div id="feed">
     <div class="mut" style="margin-top:14px">A carregar…</div>
   </div>
+
+  </div>
+
+</div>
 
 </div>
 
@@ -749,6 +926,8 @@ var replyTo = {};
 var setupNeeded = false;
 var loaded = false;
 var sortMode = "new";
+var branches = [];
+var selBranch = -1;
 
 var configured =
   SUPABASE_URL.indexOf("http") === 0 &&
@@ -956,6 +1135,147 @@ function renderForms(){
 
 }
 
+function branchName(id){
+
+  if(!id)
+    return "Geral";
+
+  var b = branches.find(function(x){
+    return Number(x.id) === Number(id);
+  });
+
+  return b ? b.name : "Geral";
+
+}
+
+function topicCount(bid){
+
+  var b = Number(bid) || 0;
+
+  return posts.filter(function(t){
+    return !t.parent_id && (Number(t.branch_id) || 0) === b;
+  }).length;
+
+}
+
+function sideItem(id, name, n){
+
+  return '<button class="sideItem' +
+      (selBranch === id ? " on" : "") +
+      '" data-branch="' + id + '">' +
+      '<span>' + esc(name) + '</span>' +
+      '<span class="cnt">' + n + '</span>' +
+    '</button>';
+
+}
+
+function wireCreate(){
+
+  $("scSend").onclick = function(){
+
+    var m = $("scMsg");
+    var name = $("scName").value.trim();
+    var s = getSession();
+
+    if(!configured || !sb){
+      m.textContent = "Base de dados por configurar.";
+      return;
+    }
+
+    if(!s){
+      location.href =
+        "auth.html?next=" + encodeURIComponent("forum.html");
+      return;
+    }
+
+    if(name.length < 2 || name.length > 40){
+      m.textContent = "O nome deve ter de 2 a 40 caracteres.";
+      return;
+    }
+
+    m.textContent = "";
+    $("scSend").disabled = true;
+
+    sb.rpc("branch_create",{
+      p_token:s.token,
+      p_name:name
+    }).then(function(r){
+
+      if($("scSend"))
+        $("scSend").disabled = false;
+
+      if(r.error){
+
+        console.error(r.error);
+
+        var em = r.error.message || "Erro ao criar.";
+
+        if(/sess.o/i.test(em)){
+          m.textContent = authFail();
+          renderSide();
+          return;
+        }
+
+        m.textContent = em;
+        return;
+
+      }
+
+      selBranch = Number(r.data.id);
+      loadAll();
+
+    });
+
+  };
+
+}
+
+function renderSide(){
+
+  var h = "";
+
+  h += sideItem(
+    -1,
+    "Todas",
+    posts.filter(function(t){ return !t.parent_id; }).length
+  );
+
+  h += sideItem(0, "Geral", topicCount(0));
+
+  branches.forEach(function(b){
+    h += sideItem(Number(b.id), b.name, topicCount(b.id));
+  });
+
+  $("sideList").innerHTML = h;
+
+  var s = getSession();
+
+  $("sideCreate").innerHTML = s
+    ? '<div class="mut" style="margin-bottom:6px">' +
+        'Cria a tua comunidade</div>' +
+      '<input id="scName" maxlength="40" ' +
+        'placeholder="Nome (2 a 40 caracteres)">' +
+      '<button id="scSend" class="sortbtn">+ Nova comunidade</button>' +
+      '<div id="scMsg" class="msg"></div>'
+    : '<div class="mut">Inicia sessão para criar comunidades.</div>' +
+      '<div style="margin-top:6px">' +
+      '<a href="auth.html?next=forum.html">Entrar ou criar conta</a></div>';
+
+  if(s)
+    wireCreate();
+
+}
+
+function openSide(){
+  $("side").classList.add("open");
+  $("sideBd").classList.add("open");
+}
+
+function closeSide(){
+  $("side").classList.remove("open");
+  $("sideBd").classList.remove("open");
+}
+
 function authFail(msg){
 
   endSession();
@@ -971,8 +1291,35 @@ function authFail(msg){
 
 paintAcct();
 renderForms();
+renderSide();
+
+$("sideList").addEventListener("click", function(e){
+
+  var b = e.target.closest("[data-branch]");
+
+  if(!b)
+    return;
+
+  selBranch = Number(b.getAttribute("data-branch"));
+
+  renderSide();
+  renderFeed();
+  closeSide();
+
+});
+
+$("sideBtn").onclick = function(){
+  if($("side").classList.contains("open"))
+    closeSide();
+  else
+    openSide();
+};
+
+$("sideBd").onclick = closeSide;
+
 onAuthChange = function(){
   renderForms();
+  renderSide();
   loadMyVotes();
   renderFeed();
 };
@@ -1254,6 +1601,17 @@ function cardHtml(t){
         del +
       '</div>' +
 
+      (
+        Number(t.branch_id)
+        ? '<div style="margin:4px 0 2px">' +
+            '<a class="tag" href="#" data-gobranch="' +
+              Number(t.branch_id) + '">' +
+              esc(branchName(t.branch_id)) +
+            '</a>' +
+          '</div>'
+        : ""
+      ) +
+
       '<div class="ptitle">' +
         esc(t.title) +
       '</div>' +
@@ -1317,6 +1675,13 @@ function renderFeed(){
     return !p.parent_id;
   }).filter(function(t){
 
+    if(selBranch === -1)
+      return true;
+
+    return (Number(t.branch_id) || 0) === selBranch;
+
+  }).filter(function(t){
+
     var name = teacherById(t.teacher_id);
 
     var hay =
@@ -1345,7 +1710,9 @@ function renderFeed(){
     ? rows.map(cardHtml).join("")
     : '<div class="mut" style="margin-top:14px">' +
       (posts.length
-        ? "Nada corresponde à pesquisa."
+        ? (selBranch === -1
+            ? "Nada corresponde à pesquisa."
+            : "Ainda não há publicações nesta comunidade.")
         : "Ainda não há publicações. Cria a primeira!") +
       '</div>';
 
@@ -1408,21 +1775,35 @@ function loadAll(){
 
     sb
       .from("profiles")
-      .select("id,username,role")
+      .select("id,username,role"),
+
+    sb
+      .from("forum_branches")
+      .select("*")
+      .order("name")
 
   ]).then(function(res){
 
-    if(res[0].error || res[1].error){
+    if(
+      res[0].error ||
+      res[1].error ||
+      (res[3] && res[3].error)
+    ){
 
       var e0 = res[0].error;
       var e1 = res[1].error;
+      var e3 = res[3] && res[3].error;
 
       console.error(e0);
       console.error(e1);
 
+      if(e3)
+        console.error(e3);
+
       if(
         (e0 && e0.code === "42P01") ||
-        (e1 && e1.code === "42P01")
+        (e1 && e1.code === "42P01") ||
+        (e3 && e3.code === "42P01")
       ){
         showSetup();
       }else{
@@ -1438,7 +1819,17 @@ function loadAll(){
     posts = res[0].data || [];
     teachers = res[1].data || [];
     profiles = res[2].data || [];
+    branches = res[3].data || [];
     loaded = true;
+
+    if(
+      selBranch > 0 &&
+      !branches.some(function(b){
+        return Number(b.id) === selBranch;
+      })
+    ){
+      selBranch = -1;
+    }
 
     Object.keys(expanded).forEach(function(k){
       if(!byId(k))
@@ -1465,6 +1856,37 @@ function loadAll(){
 
     sel.value = prev;
 
+    var sel2 = $("ntBranch");
+    var prev2 = sel2.value;
+    var nbv = "0";
+
+    if(
+      prev2 && Number(prev2) > 0 &&
+      branches.some(function(b){
+        return Number(b.id) === Number(prev2);
+      })
+    ){
+      nbv = prev2;
+    }else if(
+      selBranch > 0 &&
+      branches.some(function(b){
+        return Number(b.id) === selBranch;
+      })
+    ){
+      nbv = String(selBranch);
+    }
+
+    sel2.innerHTML =
+      '<option value="0">Comunidade: Geral</option>' +
+      branches.map(function(b){
+        return '<option value="' + b.id + '">' +
+          esc(b.name) +
+          '</option>';
+      }).join("");
+
+    sel2.value = nbv;
+
+    renderSide();
     renderFeed();
     loadMyVotes();
 
@@ -1573,7 +1995,8 @@ $("ntSend").onclick=function(){
     {
       p_title:title,
       p_content:body,
-      p_teacher_id: tid ? Number(tid) : null
+      p_teacher_id: tid ? Number(tid) : null,
+      p_branch_id: Number($("ntBranch").value) || null
     },
     m,
     function(){
@@ -1654,6 +2077,22 @@ function doVote(id, dir){
 }
 
 $("feed").addEventListener("click", function(e){
+
+  var gb = e.target.closest("[data-gobranch]");
+
+  if(gb){
+
+    e.preventDefault();
+
+    selBranch = Number(gb.getAttribute("data-gobranch"));
+
+    renderSide();
+    renderFeed();
+
+    window.scrollTo({ top:0 });
+
+    return;
+  }
 
   var v = e.target.closest("[data-vote]");
 

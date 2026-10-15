@@ -471,6 +471,7 @@ a.tag:hover{
   display:flex;
   gap:18px;
   align-items:flex-start;
+  position:relative;
 }
 
 .fmain{
@@ -561,10 +562,6 @@ a.tag:hover{
   display:none;
 }
 
-.sideBd{
-  display:none;
-}
-
 @media (max-width:960px){
 
   .fgrid{
@@ -576,23 +573,30 @@ a.tag:hover{
   }
 
   .side{
-    position:fixed;
+    position:absolute;
     top:0;
     left:0;
-    bottom:0;
-    width:min(78vw,300px);
-    z-index:60;
-    transform:translateX(-105%);
-    transition:transform .2s ease;
+    width:min(86vw,320px);
+    max-height:65vh;
     overflow:auto;
+    z-index:60;
     background:var(--card);
-    border-right:1px solid var(--bd);
-    padding:14px;
-    box-shadow:0 0 40px rgba(0,0,0,.35);
+    border:1px solid var(--bd);
+    border-radius:16px;
+    padding:10px;
+    box-shadow:0 18px 44px rgba(0,0,0,.3);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-8px);
+    transition:opacity .15s ease,transform .15s ease,
+               visibility 0s linear .15s;
   }
 
   .side.open{
+    opacity:1;
+    visibility:visible;
     transform:none;
+    transition:opacity .15s ease,transform .15s ease;
   }
 
   .sideCard{
@@ -600,22 +604,6 @@ a.tag:hover{
     border:0;
     padding:0;
     box-shadow:none;
-  }
-
-  .sideBd{
-    display:block;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.45);
-    z-index:59;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .2s ease;
-  }
-
-  .sideBd.open{
-    opacity:1;
-    pointer-events:auto;
   }
 
 }
@@ -824,8 +812,6 @@ a.tag:hover{
   </p>
 
 <div class="fgrid">
-
-  <div id="sideBd"></div>
 
   <aside id="side">
     <div class="sideCard">
@@ -1267,13 +1253,37 @@ function renderSide(){
 }
 
 function openSide(){
-  $("side").classList.add("open");
-  $("sideBd").classList.add("open");
+
+  var el = $("side");
+
+  if(
+    window.matchMedia &&
+    window.matchMedia("(max-width:960px)").matches
+  ){
+
+    var r = $("sideBtn").getBoundingClientRect();
+    var g = el.parentElement.getBoundingClientRect();
+
+    el.style.top = (r.bottom - g.top + 8) + "px";
+    el.style.left = Math.max(0, r.left - g.left) + "px";
+
+  }else{
+    el.style.top = "";
+    el.style.left = "";
+  }
+
+  el.classList.add("open");
+
 }
 
 function closeSide(){
-  $("side").classList.remove("open");
-  $("sideBd").classList.remove("open");
+
+  var el = $("side");
+
+  el.classList.remove("open");
+  el.style.top = "";
+  el.style.left = "";
+
 }
 
 function authFail(msg){
@@ -1315,7 +1325,25 @@ $("sideBtn").onclick = function(){
     openSide();
 };
 
-$("sideBd").onclick = closeSide;
+document.addEventListener("click", function(e){
+
+  if(!$("side").classList.contains("open"))
+    return;
+
+  if(
+    e.target.closest("#side") ||
+    e.target.closest("#sideBtn")
+  )
+    return;
+
+  closeSide();
+
+});
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape")
+    closeSide();
+});
 
 onAuthChange = function(){
   renderForms();

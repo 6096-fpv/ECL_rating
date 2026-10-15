@@ -8,6 +8,7 @@
 
 <style>
 :root{
+  color-scheme:light;
   --bg:#f1f1ef;
   --card:#fff;
   --tx:#222;
@@ -21,6 +22,7 @@
 
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
+    color-scheme:dark;
     --bg:#0d0f14;
     --card:rgba(255,255,255,.06);
     --tx:#e8ecf4;
@@ -34,6 +36,7 @@
 }
 
 :root[data-theme="dark"]{
+  color-scheme:dark;
   --bg:#0d0f14;
   --card:rgba(255,255,255,.06);
   --tx:#e8ecf4;
@@ -299,6 +302,23 @@ textarea:focus{
   outline:none;
   border-color:var(--ac);
   box-shadow:0 0 0 3px var(--ac-soft);
+}
+
+option{
+  background:#fff;
+  color:#222;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) option{
+    background:#14171d;
+    color:#e8ecf4;
+  }
+}
+
+:root[data-theme="dark"] option{
+  background:#14171d;
+  color:#e8ecf4;
 }
 
 button:focus-visible,

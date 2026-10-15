@@ -809,7 +809,8 @@ button:disabled{
                 </div>
 
                 <div class="message">
-                    Só o owner altera cargos.
+                    Admins alteram apenas users e moderadores.
+                    Owners alteram todos, exceto o owner.
                     Não podes alterar o teu próprio cargo.
                     Remover contas é feito no painel do Supabase.
                 </div>
@@ -1946,6 +1947,18 @@ function renderForum(){
     list.innerHTML =
         filtered.map(function(p){
 
+            var myLvl = ROLE_LEVEL[(getSession() || {}).role] || 0;
+
+            var aPr = p.user_id
+                ? profiles.find(function(x){
+                      return String(x.id) === String(p.user_id);
+                  })
+                : null;
+
+            var aLvl = aPr ? (ROLE_LEVEL[aPr.role] || 0) : 0;
+
+            var canDelPost = myLvl >= 3 || aLvl < 3;
+
             var teacher =
                 teachers.find(function(t){
 
@@ -2001,11 +2014,13 @@ function renderForum(){
                       '\'">Abrir no fórum</button>'
                 ) +
 
-                '<button class="delete" onclick="deleteForumPost(' +
-                p.id +
-                ')">' +
-                'Apagar' +
-                '</button>' +
+                (
+                    canDelPost
+                    ? '<button class="delete" onclick="deleteForumPost(' +
+                      p.id +
+                      ')">Apagar</button>'
+                    : ""
+                ) +
 
                 '</div>' +
 
@@ -2126,6 +2141,11 @@ function renderUsers(){
 
 
     var me = getSession();
+    var myLvl = ROLE_LEVEL[me && me.role] || 0;
+
+    var roles = myLvl >= 3
+        ? ["user","moderator","admin"]
+        : ["user","moderator"];
 
 
     list.innerHTML =
@@ -2138,7 +2158,18 @@ function renderUsers(){
 
             var isMe = me && p.id === me.id;
 
-            var roles = ["user","moderator","admin","owner"];
+            var isOwnerRow = p.role === "owner";
+
+            var locked =
+                isMe ||
+                isOwnerRow ||
+                (myLvl < 3 && p.role === "admin");
+
+            var note = isMe
+                ? "Não podes alterar o teu próprio cargo."
+                : (isOwnerRow
+                    ? "Ninguém altera o cargo do owner."
+                    : "Só o owner altera admins.");
 
             var options =
                 roles.map(function(r){
@@ -2165,8 +2196,8 @@ function renderUsers(){
                 '</div>' +
 
                 (
-                    isMe
-                    ? '<div class="mut">Não podes alterar o teu próprio cargo.</div>'
+                    locked
+                    ? '<div class="mut">' + note + '</div>'
                     : (
                         '<div class="actions">' +
                         '<select data-role-sel="' + esc(p.id) + '">' +

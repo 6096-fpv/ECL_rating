@@ -146,6 +146,121 @@ font-size:16px;
 .ravg .stars{
 font-size:12px;
 }
+
+/* podium: top 3 centered, visual order 2-1-3, sheet continues at 4th */
+.podium{
+display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:12px;
+  margin-top:12px;
+}
+
+.p-card{
+flex:1 1 0;
+  min-width:0;
+  max-width:250px;
+  min-height:158px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:4px;
+  padding:18px 14px;
+  background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:var(--r-sheet);
+  text-decoration:none;
+  color:inherit;
+}
+
+.p-card[data-pos="2"]{
+order:1;
+}
+
+.p-card[data-pos="1"]{
+order:2;
+}
+
+.p-card[data-pos="3"]{
+order:3;
+}
+
+.p-card:hover{
+background:var(--ac-soft);
+  text-decoration:none;
+  color:inherit;
+}
+
+.p-card .pnum{
+font-size:30px;
+  font-weight:700;
+  line-height:1;
+  color:var(--tx);
+  font-variant-numeric:tabular-nums;
+}
+
+.p-card .rname{
+text-align:center;
+  overflow-wrap:anywhere;
+}
+
+.p-card .ravg{
+margin-top:2px;
+}
+
+.p-card.first{
+min-height:196px;
+  background:var(--ac);
+  border-color:var(--ac);
+  color:var(--on-ac);
+}
+
+.p-card.first:hover{
+background:var(--ac);
+  color:var(--on-ac);
+}
+
+.p-card.first .pnum{
+font-size:44px;
+  color:var(--on-ac);
+}
+
+.p-card.first .rname,
+.p-card.first .ravg{
+color:var(--on-ac);
+}
+
+.p-card.first .fchip{
+background:transparent;
+  border-color:transparent;
+  color:var(--on-ac);
+}
+
+.p-card.first .mut{
+color:var(--on-ac);
+  opacity:.75;
+}
+
+@media (max-width:560px){
+  .podium{
+    gap:8px;
+  }
+  .p-card{
+    min-height:140px;
+    padding:14px 8px;
+  }
+  .p-card .pnum{
+    font-size:26px;
+  }
+  .p-card.first{
+    min-height:168px;
+  }
+  .p-card.first .pnum{
+    font-size:36px;
+  }
+}
 </style>
 </head>
 
@@ -331,7 +446,7 @@ function rowHtml(x,ranked){
         '<span class="stars">★</span> ' + v.toFixed(1) +
       '</div>' +
       '<div class="mut">' +
-        x.n + ' avaliação' + (x.n === 1 ? "" : "ões") +
+        x.n + ' avaliaç' + (x.n === 1 ? "ão" : "ões") +
       '</div>' +
     '</div>' +
 
@@ -345,6 +460,41 @@ function sheetHtml(rows,ranked){
       return rowHtml(x,ranked);
     }).join("") +
     '</div>';
+}
+
+function podiumHtml(list){
+
+  if(!list.length)
+    return "";
+
+  var html = '<div class="podium">';
+
+  list.forEach(function(x,i){
+
+    var pos = i + 1;
+    var v = val(x);
+
+    html +=
+      '<a class="p-card' + (pos === 1 ? " first" : "") +
+        '" data-pos="' + pos +
+        '" href="teacher.html?id=' + x.t.id + '">' +
+        '<div class="pnum">' + pos + '</div>' +
+        '<div class="rname">' + esc(x.t.name) + '</div>' +
+        '<div class="rmeta">' +
+          '<span class="fchip">' + esc(x.t.subject) + '</span>' +
+        '</div>' +
+        '<div class="ravg">' +
+          '<span class="stars">★</span> ' + v.toFixed(1) +
+        '</div>' +
+        '<div class="mut">' +
+          x.n + ' avaliaç' + (x.n === 1 ? "ão" : "ões") +
+        '</div>' +
+      '</a>';
+
+  });
+
+  return html + '</div>';
+
 }
 
 function renderChips(all){
@@ -452,6 +602,9 @@ function render(){
     x.pos = i + 1;
   });
 
+  var top3 = ranked.slice(0,3);
+  var rest = ranked.slice(3);
+
   $("list").innerHTML =
 
     '<h2 id="rankHdr">' +
@@ -459,7 +612,8 @@ function render(){
     '</h2>' +
 
     (ranked.length
-      ? sheetHtml(ranked,true)
+      ? podiumHtml(top3) +
+        (rest.length ? sheetHtml(rest,true) : "")
       : stateHtml("Ainda não há professores com 3 ou mais avaliações.")) +
 
     (few.length

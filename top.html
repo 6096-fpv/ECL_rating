@@ -81,14 +81,6 @@ font-size:11px;
   color:var(--mut);
 }
 
-.critlink{
-float:right;
-  font-size:11px;
-  text-transform:none;
-  letter-spacing:0;
-  font-weight:600;
-}
-
 /* ranking sheet: hairline rows, no cards */
 .sheet{
 background:var(--card);
@@ -154,17 +146,6 @@ font-size:16px;
 .ravg .stars{
 font-size:12px;
 }
-
-.footnote p{
-margin:0 0 9px;
-  font-size:13.5px;
-  color:var(--mut);
-  line-height:1.55;
-}
-
-.footnote p:last-child{
-margin-bottom:0;
-}
 </style>
 </head>
 
@@ -219,22 +200,6 @@ margin-bottom:0;
 
   <div id="list">
     <div class="state">A carregar…</div>
-  </div>
-
-  <h2 id="nota">Como calculamos</h2>
-
-  <div class="card footnote">
-    <p>
-      A <b>média</b> de um professor é a média simples das três dimensões que os
-      alunos avaliam — Clareza, Apoio e Justiça — sobre todas as avaliações
-      recebidas.
-    </p>
-    <p>
-      O ranking principal inclui apenas professores com <b>3 ou mais avaliações</b>.
-      Com 1 ou 2 aparecem em «Avaliados poucas vezes», sem posição: uma única
-      avaliação não sustenta uma média fiável.
-    </p>
-    <p id="notaStats" class="mut">—</p>
   </div>
 
 </div>
@@ -495,7 +460,6 @@ function render(){
 
     '<h2 id="rankHdr">' +
       esc(hdrText()) +
-      '<a class="critlink" href="#nota">como calculamos?</a>' +
     '</h2>' +
 
     (ranked.length
@@ -506,21 +470,6 @@ function render(){
       ? '<h2>Avaliados poucas vezes · sem posição</h2>' +
         sheetHtml(few,false)
       : "");
-
-}
-
-function noteStats(){
-
-  if(!loaded || !ratings.length)
-    return;
-
-  var latest = ratings.reduce(function(a,x){
-    return String(x.created_at) > String(a) ? x.created_at : a;
-  },"");
-
-  $("notaStats").textContent =
-    ratings.length + ' avaliações no total' +
-    (latest ? " · atualizado a " + ECL.fmtDate(latest) : "");
 
 }
 
@@ -570,7 +519,6 @@ function loadAll(){
     }
 
     render();
-    noteStats();
 
   });
 

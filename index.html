@@ -128,41 +128,6 @@ text-align:right;
   font-weight:600;
 }
 
-.notice{
-display:flex;
-  gap:12px;
-  align-items:flex-start;
-  justify-content:space-between;
-  margin-top:12px;
-  padding:10px 0;
-  border-top:1px solid var(--bd);
-  border-bottom:1px solid var(--bd);
-  font-size:13px;
-  line-height:1.5;
-  color:var(--mut);
-}
-
-.notice a{
-color:var(--ac);
-  font-weight:600;
-}
-
-.notice-x{
-background:none;
-  border:0;
-  color:var(--mut);
-  padding:0 6px;
-  font-size:16px;
-  line-height:1.4;
-  border-radius:4px;
-}
-
-.notice-x:hover{
-background:var(--ac-soft);
-  color:var(--ac);
-  opacity:1;
-}
-
 .clr{
 background:none;
   border:0;
@@ -223,19 +188,6 @@ color:var(--ac);
 <div class="wrap" id="main">
 
   <h1>Escolha um professor</h1>
-
-  <div id="notice" class="notice">
-    <span>
-      Em falta na lista? Pede a adição de um professor por email
-      <a href="mailto:6096@eclisboa.net">6096@eclisboa.net</a>.
-    </span>
-    <button
-      id="noticeOut"
-      class="notice-x"
-      type="button"
-      aria-label="Dispensar aviso"
-    >×</button>
-  </div>
 
   <div id="cfgWarn" class="warn hide">
     A base de dados ainda não está configurada.
@@ -299,15 +251,6 @@ var teachers = [];
 var ratings = [];
 
 ECL.paintAcct();
-
-if(sessionStorage.getItem("ecl-notice") === "1"){
-  $("notice").classList.add("hide");
-}
-
-$("noticeOut").onclick = function(){
-  $("notice").classList.add("hide");
-  sessionStorage.setItem("ecl-notice","1");
-};
 
 function avg(list,k){
 

@@ -154,11 +154,6 @@ h2{
   margin-top:14px;
 }
 
-.intro{
-  margin:0 0 4px;
-  color:var(--mut);
-}
-
 .mut{
   color:var(--mut);
   font-size:13px;

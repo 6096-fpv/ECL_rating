@@ -658,22 +658,6 @@ dialog.ecl-dialog::backdrop{
   left:8px;
 }
 
-/* theme toggle (nav-link look) */
-.ttgl{
-  background:none;
-  border:0;
-  padding:6px 12px;
-  font-weight:600;
-  color:var(--tx);
-  transition:background .15s ease,color .15s ease;
-}
-
-.ttgl:hover,
-.ttgl:focus-visible{
-  background:var(--ac-soft);
-  color:var(--ac);
-}
-
 /* theme switch (profile settings) */
 .tsw{
   display:inline-flex;

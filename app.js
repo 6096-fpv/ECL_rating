@@ -255,15 +255,6 @@ window.ECL = (function(){
 
       var cur = eff();
 
-      if(btn){
-        var next = cur === "dark" ? "light" : "dark";
-        btn.textContent = next === "dark" ? "Escuro" : "Claro";
-        btn.setAttribute(
-          "aria-label",
-          "Ativar modo " + (next === "dark" ? "escuro" : "claro")
-        );
-      }
-
       var sw = document.querySelectorAll("[data-themeswitch]");
       for(var i = 0; i < sw.length; i++){
         var on = sw[i].getAttribute("data-themeswitch") === cur;
@@ -279,33 +270,6 @@ window.ECL = (function(){
         localStorage.setItem("ecl-theme", next);
       }catch(e){}
       refresh();
-    }
-
-    var btn = null;
-    var top = document.querySelector(".top");
-
-    if(top && !$("themeTgl")){
-
-      btn = document.createElement("button");
-      btn.id = "themeTgl";
-      btn.type = "button";
-      btn.className = "ttgl";
-
-      btn.onclick = function(){
-        setTheme(eff() === "dark" ? "light" : "dark");
-      };
-
-      var nav = top.querySelector("nav");
-      if(nav){
-        nav.insertBefore(btn, nav.firstChild);
-      }else{
-        var who = $("admWho");
-        if(who && who.parentNode)
-          who.parentNode.insertBefore(btn, who.nextSibling);
-        else
-          top.appendChild(btn);
-      }
-
     }
 
     document.addEventListener("click", function(e){

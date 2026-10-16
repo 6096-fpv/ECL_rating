@@ -400,6 +400,14 @@ width:100%;
 
             <button
                 class="tab"
+                data-min="mod"
+                onclick="openTab('branchesTab',this)"
+            >
+                Comunidades
+            </button>
+
+            <button
+                class="tab"
                 data-min="owner"
                 onclick="openTab('usersTab',this)"
             >
@@ -587,6 +595,30 @@ width:100%;
         </div>
 
 
+        <!-- COMUNIDADES -->
+
+        <div id="branchesTab" class="tab-content">
+
+            <div class="card">
+
+                <h2>Comunidades</h2>
+
+                <div id="branchesList">
+                    A carregar...
+                </div>
+
+                <div class="message">
+                    O nível de escrita tem de ser igual ou mais
+                    restrito que o de visualização.
+                    Comunidades novas são criadas no fórum por
+                    moderadores.
+                </div>
+
+            </div>
+
+        </div>
+
+
         <!-- UTILIZADORES -->
 
         <div id="usersTab" class="tab-content">
@@ -633,6 +665,7 @@ var ROLE_LABEL = ECL.ROLE_LABEL;
 var teachers = [];
 var ratings = [];
 var forumPosts = [];
+var forumBranches = [];
 var profiles = [];
 var forumSetupNeeded = false;
 var editTid = 0;
@@ -861,6 +894,8 @@ function openTab(id,button){
 
 function loadData(){
 
+    var me = getSession();
+
     Promise.all([
 
         sb
@@ -873,10 +908,9 @@ function loadData(){
             .select("*")
             .order("id",{ascending:false}),
 
-        sb
-            .from("forum_posts")
-            .select("*")
-            .order("id",{ascending:false}),
+        sb.rpc("forum_feed",{
+            p_token:me ? me.token : null
+        }),
 
         sb
             .from("profiles")
@@ -913,6 +947,7 @@ function loadData(){
 
         forumSetupNeeded = false;
         forumPosts = [];
+        forumBranches = [];
 
         if(result[2].error){
 
@@ -923,7 +958,8 @@ function loadData(){
 
         }else{
 
-            forumPosts = result[2].data || [];
+            forumPosts = result[2].data.posts || [];
+            forumBranches = result[2].data.branches || [];
 
         }
 
@@ -947,6 +983,8 @@ function loadData(){
         renderRatings();
 
         renderForum();
+
+        renderBranches();
 
         renderUsers();
 
@@ -1839,6 +1877,187 @@ async function deleteForumPost(id){
             ECL.toast("Mensagem apagada.");
 
             loadData();
+
+        });
+
+}
+
+
+/* COMUNIDADES */
+
+var BR_VIEW_OPTS = [
+    ["all","Todos"],
+    ["user","Utilizadores"],
+    ["media","Media"],
+    ["moderator","Moderadores"],
+    ["admin","Admin"]
+];
+
+var BR_WRITE_OPTS = [
+    ["user","Utilizadores"],
+    ["media","Media"],
+    ["moderator","Moderadores"],
+    ["admin","Admin"]
+];
+
+function brSelect(id, opts, cur){
+
+    return '<select id="' + id + '">' +
+
+        opts.map(function(o){
+
+            return '<option value="' + o[0] + '"' +
+                (o[0] === cur ? " selected" : "") +
+                '>' + o[1] + '</option>';
+
+        }).join("") +
+
+        '</select>';
+
+}
+
+
+function renderBranches(){
+
+    var list =
+        document.getElementById("branchesList");
+
+
+    if(!forumBranches.length){
+
+        list.innerHTML =
+            '<div class="mut">' +
+            'Nenhuma comunidade criada.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        '<div class="twrap">' +
+        '<table class="tbl">' +
+        '<thead><tr>' +
+        '<th>Nome</th>' +
+        '<th>Quem pode ver</th>' +
+        '<th>Quem pode escrever</th>' +
+        '<th>Ações</th>' +
+        '</tr></thead><tbody>' +
+
+        forumBranches.map(function(b){
+
+            return (
+                '<tr>' +
+                '<td><strong>' +
+                esc(b.name) +
+                '</strong></td>' +
+
+                '<td>' +
+                brSelect(
+                    "bv" + b.id,
+                    BR_VIEW_OPTS,
+                    b.access_view || "all"
+                ) +
+                '</td>' +
+
+                '<td>' +
+                brSelect(
+                    "bw" + b.id,
+                    BR_WRITE_OPTS,
+                    b.access_write || "user"
+                ) +
+                '</td>' +
+
+                '<td><div class="actions">' +
+                '<button onclick="saveBranch(' +
+                b.id +
+                ')">Guardar</button>' +
+                '</div></td>' +
+                '</tr>'
+            );
+
+        }).join("") +
+
+        '</tbody></table></div>';
+
+}
+
+
+function saveBranch(id){
+
+    var me = getSession();
+
+    if(!me)
+        return;
+
+
+    var view =
+        document.getElementById("bv" + id).value;
+
+    var write =
+        document.getElementById("bw" + id).value;
+
+
+    var lv = {
+        all:0, user:1, media:2, moderator:3, admin:4
+    };
+
+
+    if((lv[write] || 0) < (lv[view] || 0)){
+
+        ECL.toast(
+            "Quem escreve tem de conseguir ver.",
+            "err"
+        );
+
+        return;
+
+    }
+
+
+    sb
+        .rpc("branch_access_update",{
+            p_token:me.token,
+            p_id:id,
+            p_view:view,
+            p_write:write
+        })
+        .then(function(result){
+
+            if(result.error){
+
+                console.error(result.error);
+
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
+                ECL.toast(
+                    result.error.message || "Erro ao guardar.",
+                    "err"
+                );
+
+                return;
+
+            }
+
+
+            ECL.toast("Acessos atualizados.");
+
+
+            var b = forumBranches.find(function(x){
+
+                return Number(x.id) === Number(id);
+
+            });
+
+
+            if(b){
+                b.access_view = view;
+                b.access_write = write;
+            }
 
         });
 

@@ -77,6 +77,8 @@ window.ECL = (function(){
 
   var ROLE_LABEL = {
     user:"USER",
+    media:"MEDIA",
+    vip:"VIP",
     moderator:"MODERATOR",
     admin:"ADMIN",
     owner:"OWNER"

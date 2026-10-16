@@ -628,6 +628,15 @@ function canCreateBranch(s){
   return ["moderator","admin","owner","vip"].indexOf(s.role) >= 0;
 }
 
+function accessLvl(r){
+  return { user:1, media:2, moderator:3, admin:4, owner:5 }[r] || 0;
+}
+
+function branchWritable(b){
+  var s = getSession();
+  return accessLvl(b.access_write || "user") <= accessLvl(s ? s.role : "");
+}
+
 function subLvlMax(rootId){
 
   var mx = 0;
@@ -762,12 +771,24 @@ function wireCreate(){
       return;
     }
 
+    var view = $("scView").value;
+    var write = $("scWrite").value;
+
+    var lv = { all:0, user:1, media:2, moderator:3, admin:4 };
+
+    if((lv[write] || 0) < (lv[view] || 0)){
+      m.textContent = "Quem escreve tem de conseguir ver.";
+      return;
+    }
+
     m.textContent = "";
     $("scSend").disabled = true;
 
     sb.rpc("branch_create",{
       p_token:s.token,
-      p_name:name
+      p_name:name,
+      p_view:view,
+      p_write:write
     }).then(function(r){
 
       if($("scSend"))
@@ -824,6 +845,21 @@ function renderSide(){
         'Cria a tua comunidade</div>' +
       '<input id="scName" maxlength="40" ' +
         'placeholder="Nome (2 a 40 caracteres)">' +
+      '<label class="mut" for="scView">Quem pode ver</label>' +
+      '<select id="scView">' +
+        '<option value="all">Todos</option>' +
+        '<option value="user">Utilizadores</option>' +
+        '<option value="media">Media</option>' +
+        '<option value="moderator">Moderadores</option>' +
+        '<option value="admin">Admin</option>' +
+      '</select>' +
+      '<label class="mut" for="scWrite">Quem pode escrever</label>' +
+      '<select id="scWrite">' +
+        '<option value="user">Utilizadores</option>' +
+        '<option value="media">Media</option>' +
+        '<option value="moderator">Moderadores</option>' +
+        '<option value="admin">Admin</option>' +
+      '</select>' +
       '<button id="scSend" class="sortbtn">+ Nova comunidade</button>' +
       '<div id="scMsg" class="msg"></div>'
     : '<div class="mut">Apenas moderadores criam comunidades.</div>';
@@ -1400,14 +1436,11 @@ function loadAll(){
     return;
 
   var s = getSession();
+  var token = s ? s.token : null;
 
   Promise.all([
 
-    sb
-      .from("forum_posts")
-      .select("*")
-      .order("id",{ascending:false})
-      .limit(1000),
+    sb.rpc("forum_feed",{p_token:token}),
 
     sb
       .from("teachers")
@@ -1418,37 +1451,19 @@ function loadAll(){
     sb
       .from("profiles")
       .select("id,username,role")
-      .limit(1000),
-
-    sb
-      .from("forum_branches")
-      .select("*")
-      .order("name")
       .limit(1000)
 
   ]).then(function(res){
 
-    if(
-      res[0].error ||
-      res[1].error ||
-      (res[3] && res[3].error)
-    ){
+    var fr = res[0];
+    var tr = res[1];
+    var pr = res[2];
 
-      var e0 = res[0].error;
-      var e1 = res[1].error;
-      var e3 = res[3] && res[3].error;
+    if(tr.error){
 
-      console.error(e0);
-      console.error(e1);
+      console.error(tr.error);
 
-      if(e3)
-        console.error(e3);
-
-      if(
-        (e0 && e0.code === "42P01") ||
-        (e1 && e1.code === "42P01") ||
-        (e3 && e3.code === "42P01")
-      ){
+      if(tr.error.code === "42P01"){
         showSetup();
       }else{
         $("feed").innerHTML =
@@ -1458,97 +1473,164 @@ function loadAll(){
       }
 
       return;
+
     }
 
-    posts = (res[0].data || []).slice().reverse();
-    teachers = res[1].data || [];
-    profiles = res[2].data || [];
-    branches = res[3].data || [];
-    loaded = true;
+    var feedOk = !fr.error && fr.data;
 
-    var tw = $("truncWarn");
-    if(tw){
-      tw.classList.toggle(
-        "hide",
-        posts.length < 1000 && teachers.length < 1000
-      );
+    if(!feedOk && fr.error && fr.error.code === "42P01"){
+      showSetup();
+      return;
     }
 
-    if(
-      selBranch > 0 &&
-      !branches.some(function(b){
-        return Number(b.id) === selBranch;
-      })
-    ){
-      selBranch = -1;
+    function restFeed(){
+
+      return Promise.all([
+
+        sb
+          .from("forum_posts")
+          .select("*")
+          .order("id",{ascending:false})
+          .limit(1000),
+
+        sb
+          .from("forum_branches")
+          .select("*")
+          .order("name")
+          .limit(1000)
+
+      ]).then(function(f){
+
+        if(f[0].error || f[1].error){
+
+          var e = f[0].error || f[1].error;
+
+          console.error(e);
+
+          if(e.code === "42P01"){
+            showSetup();
+          }else{
+            $("feed").innerHTML =
+              '<div class="state">' +
+              'Erro a carregar dados.' +
+              '</div>';
+          }
+
+          return null;
+        }
+
+        return {
+          posts:(f[0].data || []).slice().reverse(),
+          branches:f[1].data || []
+        };
+
+      });
+
     }
 
-    Object.keys(expanded).forEach(function(k){
-      if(!byId(k))
-        delete expanded[k];
+    var fp = feedOk
+      ? Promise.resolve({
+          posts:(fr.data.posts || []).slice().reverse(),
+          branches:fr.data.branches || []
+        })
+      : restFeed();
+
+    return fp.then(function(feed){
+
+      if(!feed)
+        return;
+
+      posts = feed.posts;
+      teachers = tr.data || [];
+      profiles = pr.data || [];
+      branches = feed.branches;
+      loaded = true;
+
+      var tw = $("truncWarn");
+      if(tw){
+        tw.classList.toggle(
+          "hide",
+          posts.length < 1000 && teachers.length < 1000
+        );
+      }
+
+      if(
+        selBranch > 0 &&
+        !branches.some(function(b){
+          return Number(b.id) === selBranch;
+        })
+      ){
+        selBranch = -1;
+      }
+
+      Object.keys(expanded).forEach(function(k){
+        if(!byId(k))
+          delete expanded[k];
+      });
+
+      Object.keys(cont).forEach(function(k){
+        if(!byId(k))
+          delete cont[k];
+      });
+
+      var hid = topicId();
+
+      if(hid && byId(hid))
+        expanded[hid] = true;
+
+      var sel = $("ntTeacher");
+      var prev = sel.value;
+
+      sel.innerHTML =
+        '<option value="">— Sem professor associado —</option>' +
+        teachers.map(function(t){
+          return '<option value="' + t.id + '">' +
+            esc(t.name) +
+            ' (' +
+            esc(t.subject) +
+            ')</option>';
+        }).join("");
+
+      sel.value = prev;
+
+      var sel2 = $("ntBranch");
+      var prev2 = sel2.value;
+      var nbv = "0";
+
+      if(
+        prev2 && Number(prev2) > 0 &&
+        branches.some(function(b){
+          return Number(b.id) === Number(prev2) && branchWritable(b);
+        })
+      ){
+        nbv = prev2;
+      }else if(
+        selBranch > 0 &&
+        branches.some(function(b){
+          return Number(b.id) === selBranch && branchWritable(b);
+        })
+      ){
+        nbv = String(selBranch);
+      }
+
+      sel2.innerHTML =
+        '<option value="0">Comunidade: Geral</option>' +
+        branches.filter(branchWritable).map(function(b){
+          return '<option value="' + b.id + '">' +
+            esc(b.name) +
+            '</option>';
+        }).join("");
+
+      sel2.value = nbv;
+
+      renderSide();
+      renderFeed();
+      loadMyVotes();
+
+      if(hid && byId(hid))
+        scrollToPost(hid);
+
     });
-
-    Object.keys(cont).forEach(function(k){
-      if(!byId(k))
-        delete cont[k];
-    });
-
-    var hid = topicId();
-
-    if(hid && byId(hid))
-      expanded[hid] = true;
-
-    var sel = $("ntTeacher");
-    var prev = sel.value;
-
-    sel.innerHTML =
-      '<option value="">— Sem professor associado —</option>' +
-      teachers.map(function(t){
-        return '<option value="' + t.id + '">' +
-          esc(t.name) +
-          ' (' +
-          esc(t.subject) +
-          ')</option>';
-      }).join("");
-
-    sel.value = prev;
-
-    var sel2 = $("ntBranch");
-    var prev2 = sel2.value;
-    var nbv = "0";
-
-    if(
-      prev2 && Number(prev2) > 0 &&
-      branches.some(function(b){
-        return Number(b.id) === Number(prev2);
-      })
-    ){
-      nbv = prev2;
-    }else if(
-      selBranch > 0 &&
-      branches.some(function(b){
-        return Number(b.id) === selBranch;
-      })
-    ){
-      nbv = String(selBranch);
-    }
-
-    sel2.innerHTML =
-      '<option value="0">Comunidade: Geral</option>' +
-      branches.map(function(b){
-        return '<option value="' + b.id + '">' +
-          esc(b.name) +
-          '</option>';
-      }).join("");
-
-    sel2.value = nbv;
-
-    renderSide();
-    renderFeed();
-    loadMyVotes();
-
-    if(hid && byId(hid))
-      scrollToPost(hid);
 
   });
 

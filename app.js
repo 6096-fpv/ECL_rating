@@ -235,8 +235,6 @@ window.ECL = (function(){
   }
 
   function initThemeToggle(){
-    var top = document.querySelector(".top");
-    if(!top || $("themeTgl")) return;
 
     var stored = null;
     try{
@@ -253,41 +251,72 @@ window.ECL = (function(){
         ? "dark" : "light";
     }
 
-    var btn = document.createElement("button");
-    btn.id = "themeTgl";
-    btn.type = "button";
-    btn.className = "ttgl";
+    function refresh(){
 
-    function paintTgl(){
-      var next = eff() === "dark" ? "light" : "dark";
-      btn.textContent = next === "dark" ? "Escuro" : "Claro";
-      btn.setAttribute(
-        "aria-label",
-        "Ativar modo " + (next === "dark" ? "escuro" : "claro")
-      );
+      var cur = eff();
+
+      if(btn){
+        var next = cur === "dark" ? "light" : "dark";
+        btn.textContent = next === "dark" ? "Escuro" : "Claro";
+        btn.setAttribute(
+          "aria-label",
+          "Ativar modo " + (next === "dark" ? "escuro" : "claro")
+        );
+      }
+
+      var sw = document.querySelectorAll("[data-themeswitch]");
+      for(var i = 0; i < sw.length; i++){
+        var on = sw[i].getAttribute("data-themeswitch") === cur;
+        sw[i].setAttribute("aria-pressed", String(on));
+        sw[i].classList.toggle("on", on);
+      }
+
     }
 
-    btn.onclick = function(){
-      var next = eff() === "dark" ? "light" : "dark";
+    function setTheme(next){
       document.documentElement.setAttribute("data-theme", next);
       try{
         localStorage.setItem("ecl-theme", next);
       }catch(e){}
-      paintTgl();
-    };
-
-    var nav = top.querySelector("nav");
-    if(nav){
-      nav.insertBefore(btn, nav.firstChild);
-    }else{
-      var who = $("admWho");
-      if(who && who.parentNode)
-        who.parentNode.insertBefore(btn, who.nextSibling);
-      else
-        top.appendChild(btn);
+      refresh();
     }
 
-    paintTgl();
+    var btn = null;
+    var top = document.querySelector(".top");
+
+    if(top && !$("themeTgl")){
+
+      btn = document.createElement("button");
+      btn.id = "themeTgl";
+      btn.type = "button";
+      btn.className = "ttgl";
+
+      btn.onclick = function(){
+        setTheme(eff() === "dark" ? "light" : "dark");
+      };
+
+      var nav = top.querySelector("nav");
+      if(nav){
+        nav.insertBefore(btn, nav.firstChild);
+      }else{
+        var who = $("admWho");
+        if(who && who.parentNode)
+          who.parentNode.insertBefore(btn, who.nextSibling);
+        else
+          top.appendChild(btn);
+      }
+
+    }
+
+    document.addEventListener("click", function(e){
+      var t = e.target && e.target.closest
+        ? e.target.closest("[data-themeswitch]")
+        : null;
+      if(t)
+        setTheme(t.getAttribute("data-themeswitch"));
+    });
+
+    refresh();
   }
 
   initThemeToggle();

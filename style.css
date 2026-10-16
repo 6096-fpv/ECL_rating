@@ -674,6 +674,44 @@ dialog.ecl-dialog::backdrop{
   color:var(--ac);
 }
 
+/* theme switch (profile settings) */
+.tsw{
+  display:inline-flex;
+  gap:4px;
+}
+
+.tsw button{
+  padding:5px 12px;
+  border:1px solid var(--bd);
+  border-radius:var(--r-chip);
+  background:var(--card);
+  color:var(--tx);
+  font:inherit;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .12s ease;
+}
+
+.tsw button:hover{
+  background:var(--ac-soft);
+  opacity:1;
+}
+
+.tsw button.on{
+  background:var(--ac);
+  border-color:var(--ac);
+  color:var(--on-ac);
+}
+
+.setrow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
 /* row micro-states */
 .tcard,
 .rrow,

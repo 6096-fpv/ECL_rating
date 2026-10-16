@@ -26,7 +26,9 @@ window.ECL = (function(){
   function esc(s){
     var d = document.createElement("div");
     d.textContent = s == null ? "" : s;
-    return d.innerHTML;
+    return d.innerHTML
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#39;");
   }
 
   function fmtDate(v){

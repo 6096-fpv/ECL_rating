@@ -3,95 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Área de administração da plataforma ECL de avaliação de professores.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F2EE">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0F14">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 
 <title>Menu Admin - Escola Comércio Lisboa</title>
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-:root{
-color-scheme:light;
-    --bg:#f1f1ef;
-    --card:#fff;
-    --tx:#222;
-    --mut:#6b6b6b;
-    --ac:#1f3a68;
-    --ac-soft:#e7ecf5;
-    --bd:#d4d4d0;
-    --track:#e6e6e2;
-}
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-  color-scheme:dark;
-          --bg:#0d0f14;
-          --card:rgba(255,255,255,.06);
-          --tx:#e8ecf4;
-          --mut:#9aa3b2;
-          --ac:#8fb0e8;
-          --ac-soft:rgba(143,176,232,.16);
-          --bd:rgba(255,255,255,.12);
-          --track:rgba(255,255,255,.08);
-  }
-}
-
-:root[data-theme="dark"]{
-color-scheme:dark;
-    --bg:#0d0f14;
-    --card:#1b1e24;
-    --tx:#e8ecf4;
-    --mut:#9aa3b2;
-    --ac:#8fb0e8;
-    --ac-hov:#a4c0f0;
-    --ac-soft:rgba(143,176,232,.16);
-    --bd:rgba(255,255,255,.1);
-    --track:rgba(255,255,255,.08);
-}
-
-.top a{
-color:var(--tx);
-    text-decoration:none;
-    font-weight:600;
-    padding:7px 14px;
-    border-radius:999px;
-    transition:background .15s ease,color .15s ease;
-}
-
-.top a:hover{
-background:var(--ac-soft);
-    color:var(--ac);
-    text-decoration:none;
-}
-
 .wrap{
 max-width:1000px;
     margin:auto;
     padding:20px;
-}
-
-.card{
-background:var(--card);
-    border:1px solid var(--bd);
-    border-radius:12px;
-    box-shadow:0 1px 2px rgba(0,0,0,.04);
-    padding:18px;
-    margin-top:15px;
-}
-
-h1{
-margin:0 0 5px;
-    font-size:26px;
-    font-weight:700;
-    letter-spacing:-.3px;
-}
-
-h2{
-margin-top:0;
-}
-
-.mut{
-color:var(--mut);
-    font-size:14px;
 }
 
 .admwho{
@@ -99,135 +24,9 @@ margin-left:auto;
     font-weight:400;
 }
 
-.badge{
-display:inline-block;
-    padding:1px 7px;
-    border-radius:10px;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:.5px;
-    text-transform:uppercase;
-    vertical-align:middle;
-}
-
-.b-owner{
-background:#f0b429;color:#3d2c00
-}
-
-.b-admin{
-background:#1f3a68;color:#fff
-}
-
-.b-moderator{
-background:#1f7a4d;color:#fff
-}
-
-.b-user{
-background:var(--ac-soft);color:var(--ac)
-}
-
 select{
 width:auto;
     min-width:140px;
-}
-
-input,
-textarea,
-select{
-width:100%;
-    padding:11px 14px;
-    margin:6px 0;
-    border:1px solid var(--bd);
-    border-radius:12px;
-    background:var(--card);
-    color:var(--tx);
-    font:inherit;
-    transition:border-color .15s ease,box-shadow .15s ease;
-}
-
-input:focus,
-textarea:focus,
-select:focus{
-outline:none;
-    border-color:var(--ac);
-    box-shadow:0 0 0 3px var(--ac-soft);
-}
-
-option{
-background:#fff;
-    color:#222;
-}
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) option{
-  background:#14171d;
-          color:#e8ecf4;
-  }
-}
-
-:root[data-theme="dark"] option{
-background:#14171d;
-    color:#e8ecf4;
-}
-
-button:focus-visible,
-.tab:focus-visible{
-outline:2px solid var(--ac);
-    outline-offset:1px;
-}
-
-button{
-border:0;
-    border-radius:999px;
-    padding:10px 20px;
-    cursor:pointer;
-    background:var(--ac);
-    color:#fff;
-    font:inherit;
-    font-weight:600;
-    transition:background .12s ease;
-}
-
-button:hover{
-  background:var(--ac-hov);
-}
-
-button:active{
-  background:var(--ac-hov);
-}
-
-button:disabled{
-  opacity:.55;
-    cursor:not-allowed;
-}
-
-.delete{
-background:#b03232;
-}
-
-.delete:hover{
-  background:#8f2828;
-}
-
-.edit{
-background:var(--ac);
-}
-
-.edit:hover{
-  background:var(--ac-hov);
-}
-
-.logout{
-background:var(--track);
-    color:var(--tx);
-    border:1px solid var(--bd);
-    box-shadow:none;
-}
-
-.logout:hover{
-box-shadow:none;
-    color:var(--ac);
-    border-color:var(--ac);
 }
 
 .login{
@@ -266,6 +65,26 @@ background:var(--ac);
     border-color:transparent;
 }
 
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .tab.active,
+  :root:not([data-theme="light"]) .tab.active:hover{
+    color:var(--on-ac);
+  }
+}
+
+:root[data-theme="dark"] .tab.active,
+:root[data-theme="dark"] .tab.active:hover{
+  color:var(--on-ac);
+}
+
+.tbl tbody tr{
+  transition:background .12s ease;
+}
+
+.tbl tbody tr:hover{
+  background:var(--ac-soft);
+}
+
 .tab.active:hover{
   background:var(--ac-hov);
   color:#fff;
@@ -290,7 +109,7 @@ background:var(--bg);
     border:1px solid var(--bd);
     padding:18px;
     text-align:center;
-    border-radius:12px;
+    border-radius:10px;
 }
 
 .stat-number{
@@ -320,7 +139,7 @@ background:var(--bg);
     border:1px solid var(--bd);
     padding:12px;
     margin-top:10px;
-    border-radius:12px;
+    border-radius:10px;
 }
 
 .hidden{
@@ -330,6 +149,101 @@ display:none;
 .message{
 margin-top:8px;
     color:var(--mut);
+}
+
+/* data tables (P2.4) */
+.twrap{
+overflow:auto;
+    max-height:64vh;
+    margin-top:14px;
+    border-top:1px solid var(--bd);
+}
+
+.tbl{
+width:100%;
+    min-width:560px;
+    border-collapse:collapse;
+    font-size:14px;
+}
+
+.tbl.wide{
+min-width:780px;
+}
+
+.tbl th,
+.tbl td{
+text-align:left;
+    padding:10px;
+    border-top:1px solid var(--bd);
+    vertical-align:top;
+}
+
+.tbl thead th{
+position:sticky;
+    top:0;
+    z-index:1;
+    background:var(--card);
+    color:var(--mut);
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    border-top:0;
+    box-shadow:inset 0 -1px 0 var(--bd);
+}
+
+.tbl td.num{
+font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+}
+
+.tbl .actions{
+margin-top:0;
+}
+
+.tbl textarea{
+width:100%;
+    min-width:200px;
+    margin:0;
+}
+
+.tbl .cellmut{
+font-size:12px;
+    color:var(--mut);
+}
+
+.tbl .body{
+white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    max-width:340px;
+}
+
+.tbl .pin{
+display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+}
+
+.tbl .pin label{
+display:flex;
+    flex-direction:column;
+    gap:3px;
+    font-size:11px;
+    font-weight:700;
+    color:var(--mut);
+}
+
+.tbl .pin input{
+width:56px;
+    padding:6px;
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+}
+
+.tbl input[type="text"],
+.tbl input:not([type]){
+width:100%;
 }
 
 @media(max-width:600px){
@@ -349,6 +263,7 @@ margin-top:8px;
 </head>
 
 <body>
+<a class="skip" href="#main">Saltar para o conteúdo</a>
 
 <div id="loginScreen" class="login">
 
@@ -362,6 +277,7 @@ margin-top:8px;
 
         <input
             id="adminUsername"
+            aria-label="Username"
             placeholder="Username"
             autocomplete="username"
             autocapitalize="none"
@@ -372,6 +288,7 @@ margin-top:8px;
         <input
             id="adminPassword"
             type="password"
+            aria-label="Palavra-passe"
             placeholder="Palavra-passe"
             autocomplete="current-password"
             required
@@ -409,7 +326,7 @@ margin-top:8px;
     </div>
 
 
-    <div class="wrap">
+    <div class="wrap" id="main">
 
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
 
@@ -571,6 +488,7 @@ margin-top:8px;
                 <input
                     id="teacherSearch"
                     placeholder="Pesquisar professor..."
+                    aria-label="Pesquisar professor"
                     oninput="renderTeachers()"
                 >
 
@@ -594,6 +512,7 @@ margin-top:8px;
                 <input
                     id="ratingSearch"
                     placeholder="Pesquisar professor ou comentário..."
+                    aria-label="Pesquisar avaliação por professor ou comentário"
                     oninput="renderRatings()"
                 >
 
@@ -617,12 +536,14 @@ margin-top:8px;
                 <input
                     id="newTeacherName"
                     placeholder="Nome do professor"
+                    aria-label="Nome do professor"
                     maxlength="60"
                 >
 
                 <input
                     id="newTeacherSubject"
                     placeholder="Disciplina / função"
+                    aria-label="Disciplina ou função do professor"
                     maxlength="60"
                 >
 
@@ -653,6 +574,7 @@ margin-top:8px;
                 <input
                     id="forumSearch"
                     placeholder="Pesquisar mensagens..."
+                    aria-label="Pesquisar mensagens do fórum"
                     oninput="renderForum()"
                 >
 
@@ -695,69 +617,29 @@ margin-top:8px;
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 
+<script src="app.js"></script>
+
 <script>
 
-var SUPABASE_URL =
-"https://qsnncbwoybwkhwyepaai.supabase.co";
-
-var SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
-
-
-var sb = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
+var configured = ECL.configured;
+var sb = ECL.sb;
+var esc = ECL.esc;
+var getSession = ECL.getSession;
+var saveSession = ECL.saveSession;
+var endSession = ECL.endSession;
+var badgeHtml = ECL.badgeHtml;
+var ROLE_LABEL = ECL.ROLE_LABEL;
 
 var teachers = [];
 var ratings = [];
 var forumPosts = [];
 var profiles = [];
 var forumSetupNeeded = false;
+var editTid = 0;
 
-
-function esc(text){
-
-    var div = document.createElement("div");
-
-    div.textContent = text == null ? "" : text;
-
-    return div.innerHTML;
-
+function escAttr(s){
+    return esc(s).replace(/"/g,"&quot;");
 }
-
-
-/* SESSÃO */
-
-var SKEY = "ecl-session";
-
-function getSession(){
-
-    try{
-        var s = JSON.parse(localStorage.getItem(SKEY));
-        if(s && s.token && Number(s.exp) * 1000 > Date.now())
-            return s;
-    }catch(e){}
-
-    return null;
-
-}
-
-function saveSession(s){
-    localStorage.setItem(SKEY, JSON.stringify(s));
-}
-
-function endSession(){
-    localStorage.removeItem(SKEY);
-}
-
-var ROLE_LABEL = {
-    user:"USER",
-    moderator:"MODERATOR",
-    admin:"ADMIN",
-    owner:"OWNER"
-};
 
 var ROLE_LEVEL = {
     user:0,
@@ -765,17 +647,6 @@ var ROLE_LEVEL = {
     admin:2,
     owner:3
 };
-
-function badgeHtml(role){
-
-    if(!role)
-        return "";
-
-    return '<span class="badge b-' + esc(role) + '">' +
-        esc(ROLE_LABEL[role] || String(role).toUpperCase()) +
-        '</span>';
-
-}
 
 function isAuthErr(e){
     return !!(e && /sess.o/i.test(e.message || ""));
@@ -817,7 +688,7 @@ function applyRole(role){
 
         });
 
-    var staff = lvl >= 2;
+    var staff = lvl >= 1;
 
     document.querySelector(".tabs").style.display = staff ? "" : "none";
     document.getElementById("noPerms").classList.toggle("hide", staff);
@@ -856,6 +727,11 @@ async function login(){
 
     message.textContent = "";
 
+    if(!configured){
+        message.textContent = "A base de dados ainda não está configurada.";
+        return;
+    }
+
     if(!username || !password){
         message.textContent = "Introduz o username e a palavra-passe.";
         return;
@@ -886,7 +762,7 @@ async function enterAdmin(){
 
     var s = getSession();
 
-    if(!s){
+    if(!configured || !s){
         document.getElementById("loginScreen").classList.remove("hidden");
         document.getElementById("adminScreen").classList.add("hidden");
         return;
@@ -916,7 +792,7 @@ async function logout(){
 
     var s = getSession();
 
-    if(s){
+    if(s && sb){
         try{
             await sb.rpc("logout",{ p_token: s.token });
         }catch(e){}
@@ -1012,7 +888,7 @@ function loadData(){
 
             console.error(result[0].error);
 
-            alert("Erro ao carregar professores.");
+            ECL.toast("Erro ao carregar professores.","err");
 
             return;
 
@@ -1023,7 +899,7 @@ function loadData(){
 
             console.error(result[1].error);
 
-            alert("Erro ao carregar avaliações.");
+            ECL.toast("Erro ao carregar avaliações.","err");
 
             return;
 
@@ -1154,6 +1030,15 @@ function renderTeachers(){
 
 
     list.innerHTML =
+        '<div class="twrap">' +
+        '<table class="tbl">' +
+        '<thead><tr>' +
+        '<th>Professor</th>' +
+        '<th>Disciplina</th>' +
+        '<th class="num">Avaliações</th>' +
+        '<th>Ações</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
         filtered.map(function(t){
 
             var count =
@@ -1164,22 +1049,46 @@ function renderTeachers(){
                 }).length;
 
 
+            if(editTid === t.id){
+
+                return (
+                    '<tr>' +
+                    '<td><input id="tname-' + t.id + '" maxlength="60" ' +
+                        'value="' + escAttr(t.name) + '"></td>' +
+                    '<td><input id="tsub-' + t.id + '" maxlength="60" ' +
+                        'value="' + escAttr(t.subject) + '"></td>' +
+                    '<td class="num">' + count + '</td>' +
+                    '<td><div class="actions">' +
+                    '<button onclick="saveTeacher(' + t.id + ')">' +
+                    'Guardar' +
+                    '</button>' +
+                    '<button class="abtn" onclick="editTeacher(' + t.id + ')">' +
+                    'Cancelar' +
+                    '</button>' +
+                    '</div></td>' +
+                    '</tr>'
+                );
+
+            }
+
+
             return (
 
-                '<div class="item">' +
+                '<tr>' +
 
-                '<strong>' +
+                '<td><strong>' +
                 esc(t.name) +
-                '</strong>' +
+                '</strong></td>' +
 
-                '<div class="mut">' +
+                '<td>' +
                 esc(t.subject) +
-                ' · ' +
-                count +
-                ' avaliação(ões)' +
-                '</div>' +
+                '</td>' +
 
-                '<div class="actions">' +
+                '<td class="num">' +
+                count +
+                '</td>' +
+
+                '<td><div class="actions">' +
 
                 '<button onclick="editTeacher(' +
                 t.id +
@@ -1193,63 +1102,49 @@ function renderTeachers(){
                 'Apagar' +
                 '</button>' +
 
-                '</div>' +
+                '</div></td>' +
 
-                '</div>'
+                '</tr>'
 
             );
 
-        }).join("");
+        }).join("") +
+        '</tbody></table></div>';
+
+}
+
+/* EDIT TEACHER (inline) */
+
+function editTeacher(id){
+
+    editTid = (editTid === id) ? 0 : id;
+
+    renderTeachers();
 
 }
 
 
-/* EDIT TEACHER */
+function saveTeacher(id){
 
-function editTeacher(id){
-
-    var teacher =
-        teachers.find(function(t){
-
-            return t.id === id;
-
-        });
+    var nameEl =
+        document.getElementById("tname-" + id);
 
 
-    if(!teacher)
+    var subEl =
+        document.getElementById("tsub-" + id);
+
+
+    if(!nameEl || !subEl)
         return;
 
 
-    var name =
-        prompt(
-            "Nome do professor:",
-            teacher.name
-        );
-
-
-    if(name === null)
-        return;
-
-
-    var subject =
-        prompt(
-            "Disciplina / função:",
-            teacher.subject
-        );
-
-
-    if(subject === null)
-        return;
-
-
-    name = name.trim();
-
-    subject = subject.trim();
+    var name = nameEl.value.trim();
+    var subject = subEl.value.trim();
 
 
     if(!name || !subject){
 
-        alert("Preenche todos os campos.");
+        ECL.toast("Preenche todos os campos.","err");
 
         return;
 
@@ -1274,11 +1169,16 @@ function editTeacher(id){
                     return;
                 }
 
-                alert(result.error.message || "Erro ao editar professor.");
+                ECL.toast(result.error.message || "Erro ao editar professor.","err");
 
                 return;
+
             }
 
+
+            editTid = 0;
+
+            ECL.toast("Professor atualizado.");
 
             loadData();
 
@@ -1289,7 +1189,7 @@ function editTeacher(id){
 
 /* DELETE TEACHER */
 
-function deleteTeacher(id){
+async function deleteTeacher(id){
 
     var teacher =
         teachers.find(function(t){
@@ -1304,7 +1204,7 @@ function deleteTeacher(id){
 
 
     var ok =
-        confirm(
+        await ECL.askConfirm(
             "Apagar o professor \"" +
             teacher.name +
             "\" e todas as suas avaliações?"
@@ -1331,12 +1231,14 @@ function deleteTeacher(id){
                     return;
                 }
 
-                alert(result.error.message || "Erro ao apagar professor.");
+                ECL.toast(result.error.message || "Erro ao apagar professor.","err");
 
                 return;
 
             }
 
+
+            ECL.toast("Professor apagado.");
 
             loadData();
 
@@ -1416,6 +1318,9 @@ function addTeacher(){
                 "Professor adicionado.";
 
 
+            ECL.toast("Professor adicionado.");
+
+
             loadData();
 
         });
@@ -1479,6 +1384,17 @@ function renderRatings(){
 
 
         list.innerHTML =
+        '<div class="twrap">' +
+        '<table class="tbl wide">' +
+        '<thead><tr>' +
+        '<th class="num">#</th>' +
+        '<th>Professor</th>' +
+        '<th>Autor</th>' +
+        '<th>Notas (1–5)</th>' +
+        '<th>Comentário</th>' +
+        '<th>Ações</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
         filtered.map(function(r){
 
             var teacher =
@@ -1514,46 +1430,50 @@ function renderRatings(){
 
             return (
 
-                '<div class="rating">' +
+                '<tr>' +
 
-                '<strong>' +
-                esc(teacherName) +
-                '</strong>' +
-
-                '<div class="mut">' +
-                'Avaliação #' +
+                '<td class="num">' +
                 r.id +
-                ' · por ' +
+                '</td>' +
+
+                '<td><strong>' +
+                esc(teacherName) +
+                '</strong></td>' +
+
+                '<td class="cellmut">' +
                 authorLabel +
-                '</div>' +
+                '</td>' +
 
-                '<p>' +
-                'Clareza: ' +
-                r.clareza +
-                '/5<br>' +
+                '<td><div class="pin">' +
+                '<label>Clareza' +
+                '<input type="number" min="1" max="5" step="1" ' +
+                'data-rid="' + r.id + '" data-sc="c" ' +
+                'value="' + Number(r.clareza) + '">' +
+                '</label>' +
+                '<label>Apoio' +
+                '<input type="number" min="1" max="5" step="1" ' +
+                'data-rid="' + r.id + '" data-sc="a" ' +
+                'value="' + Number(r.apoio) + '">' +
+                '</label>' +
+                '<label>Justiça' +
+                '<input type="number" min="1" max="5" step="1" ' +
+                'data-rid="' + r.id + '" data-sc="j" ' +
+                'value="' + Number(r.justica) + '">' +
+                '</label>' +
+                '</div></td>' +
 
-                'Apoio: ' +
-                r.apoio +
-                '/5<br>' +
-
-                'Justiça: ' +
-                r.justica +
-                '/5' +
-
-                '</p>' +
-
-                '<textarea id="comment-' +
+                '<td><textarea id="comment-' +
                 r.id +
                 '" rows="3">' +
                 esc(r.comment || "") +
-                '</textarea>' +
+                '</textarea></td>' +
 
-                '<div class="actions">' +
+                '<td><div class="actions">' +
 
                 '<button onclick="saveRating(' +
                 r.id +
                 ')">' +
-                'Guardar edição' +
+                'Guardar' +
                 '</button>' +
 
                 '<button class="delete" onclick="deleteRating(' +
@@ -1562,18 +1482,19 @@ function renderRatings(){
                 'Apagar' +
                 '</button>' +
 
-                '</div>' +
+                '</div></td>' +
 
-                '</div>'
+                '</tr>'
 
             );
 
-        }).join("");
+        }).join("") +
+        '</tbody></table></div>';
 
 }
 
 
-/* EDIT RATING */
+/* EDIT RATING (inline) */
 
 function saveRating(id){
 
@@ -1589,51 +1510,34 @@ function saveRating(id){
         return;
 
 
-    var clareza =
-        prompt(
-            "Clareza (1-5):",
-            rating.clareza
-        );
+    var ci = document.querySelector(
+        '[data-rid="' + id + '"][data-sc="c"]'
+    );
+    var ai = document.querySelector(
+        '[data-rid="' + id + '"][data-sc="a"]'
+    );
+    var ji = document.querySelector(
+        '[data-rid="' + id + '"][data-sc="j"]'
+    );
 
 
-    if(clareza === null)
+    if(!ci || !ai || !ji)
         return;
 
 
-    var apoio =
-        prompt(
-            "Apoio (1-5):",
-            rating.apoio
-        );
+    var clareza = Number(ci.value);
+    var apoio = Number(ai.value);
+    var justica = Number(ji.value);
 
 
-    if(apoio === null)
-        return;
+    function badScore(v){
+        return !Number.isInteger(v) || v < 1 || v > 5;
+    }
 
 
-    var justica =
-        prompt(
-            "Justiça (1-5):",
-            rating.justica
-        );
+    if(badScore(clareza) || badScore(apoio) || badScore(justica)){
 
-
-    if(justica === null)
-        return;
-
-
-    clareza = Number(clareza);
-    apoio = Number(apoio);
-    justica = Number(justica);
-
-
-    if(
-        clareza < 1 || clareza > 5 ||
-        apoio < 1 || apoio > 5 ||
-        justica < 1 || justica > 5
-    ){
-
-        alert("As notas devem estar entre 1 e 5.");
+        ECL.toast("As notas devem estar entre 1 e 5.","err");
 
         return;
 
@@ -1667,12 +1571,14 @@ function saveRating(id){
                     return;
                 }
 
-                alert(result.error.message || "Erro ao editar avaliação.");
+                ECL.toast(result.error.message || "Erro ao editar avaliação.","err");
 
                 return;
 
             }
 
+
+            ECL.toast("Avaliação guardada.");
 
             loadData();
 
@@ -1683,12 +1589,12 @@ function saveRating(id){
 
 /* DELETE RATING */
 
-function deleteRating(id){
+async function deleteRating(id){
 
     if(
-        !confirm(
+        !(await ECL.askConfirm(
             "Tens a certeza que queres apagar esta avaliação?"
-        )
+        ))
     ){
 
         return;
@@ -1712,12 +1618,14 @@ function deleteRating(id){
                     return;
                 }
 
-                alert(result.error.message || "Erro ao apagar avaliação.");
+                ECL.toast(result.error.message || "Erro ao apagar avaliação.","err");
 
                 return;
 
             }
 
+
+            ECL.toast("Avaliação apagada.");
 
             loadData();
 
@@ -1727,26 +1635,7 @@ function deleteRating(id){
 
 /* FORUM */
 
-function fmtDate(v){
-
-    if(!v)
-        return "";
-
-    var d = new Date(v);
-
-    if(isNaN(d))
-        return "";
-
-    return d.toLocaleString("pt-PT",{
-        day:"2-digit",
-        month:"2-digit",
-        year:"numeric",
-        hour:"2-digit",
-        minute:"2-digit"
-    });
-
-}
-
+var fmtDate = ECL.fmtDateTime;
 
 function renderForum(){
 
@@ -1814,6 +1703,14 @@ function renderForum(){
 
 
     list.innerHTML =
+        '<div class="twrap">' +
+        '<table class="tbl">' +
+        '<thead><tr>' +
+        '<th>Mensagem</th>' +
+        '<th>Conteúdo</th>' +
+        '<th>Ações</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
         filtered.map(function(p){
 
             var myLvl = ROLE_LEVEL[(getSession() || {}).role] || 0;
@@ -1848,13 +1745,14 @@ function renderForum(){
 
             return (
 
-                '<div class="rating">' +
+                '<tr>' +
 
+                '<td>' +
                 '<strong>' +
                 esc(p.title || "Resposta") +
                 '</strong>' +
 
-                '<div class="mut">' +
+                '<div class="cellmut">' +
                 (p.parent_id
                     ? 'Resposta ao tópico "' +
                       esc(topic ? topic.title : "#" + p.parent_id) +
@@ -1862,18 +1760,19 @@ function renderForum(){
                     : "Tópico") +
                 '</div>' +
 
-                '<div class="mut">' +
+                '<div class="cellmut">' +
                 esc(p.author_name || "Anónimo") +
                 ' · ' +
                 fmtDate(p.created_at) +
                 (teacher ? ' · ' + esc(teacher.name) : "") +
                 '</div>' +
+                '</td>' +
 
-                '<p>' +
+                '<td><div class="body">' +
                 esc(p.content) +
-                '</p>' +
+                '</div></td>' +
 
-                '<div class="actions">' +
+                '<td><div class="actions">' +
 
                 (
                     p.parent_id
@@ -1891,23 +1790,24 @@ function renderForum(){
                     : ""
                 ) +
 
-                '</div>' +
+                '</div></td>' +
 
-                '</div>'
+                '</tr>'
 
             );
 
-        }).join("");
+        }).join("") +
+        '</tbody></table></div>';
 
 }
 
 
-function deleteForumPost(id){
+async function deleteForumPost(id){
 
     if(
-        !confirm(
+        !(await ECL.askConfirm(
             "Tens a certeza que queres apagar esta mensagem do fórum?"
-        )
+        ))
     ){
         return;
     }
@@ -1929,12 +1829,14 @@ function deleteForumPost(id){
                     return;
                 }
 
-                alert(result.error.message || "Erro ao apagar mensagem.");
+                ECL.toast(result.error.message || "Erro ao apagar mensagem.","err");
 
                 return;
 
             }
 
+
+            ECL.toast("Mensagem apagada.");
 
             loadData();
 
@@ -1975,7 +1877,7 @@ function setUserRole(id, role, sel){
                     return;
                 }
 
-                alert(result.error.message || "Erro ao alterar cargo.");
+                ECL.toast(result.error.message || "Erro ao alterar cargo.","err");
 
                 loadData();
 
@@ -1983,6 +1885,8 @@ function setUserRole(id, role, sel){
 
             }
 
+
+            ECL.toast("Cargo atualizado.");
 
             loadData();
 
@@ -2018,6 +1922,13 @@ function renderUsers(){
 
 
     list.innerHTML =
+        '<div class="twrap">' +
+        '<table class="tbl">' +
+        '<thead><tr>' +
+        '<th>Utilizador</th>' +
+        '<th>Cargo</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
         profiles
         .slice()
         .sort(function(a,b){
@@ -2053,42 +1964,47 @@ function renderUsers(){
 
 
             return (
-                '<div class="rating">' +
 
-                '<strong>' +
+                '<tr>' +
+
+                '<td><strong>' +
                 esc(p.username) +
                 '</strong> ' +
                 badgeHtml(p.role) +
 
-                '<div class="mut">' +
+                '<div class="cellmut">' +
                 (isMe ? "Tu" : "ID " + esc(String(p.id).slice(0,8))) +
                 '</div>' +
+                '</td>' +
 
+                '<td>' +
                 (
                     locked
-                    ? '<div class="mut">' + note + '</div>'
+                    ? '<div class="cellmut">' + note + '</div>'
                     : (
                         '<div class="actions">' +
-                        '<select data-role-sel="' + esc(p.id) + '">' +
+                        '<select data-role-sel="' + escAttr(p.id) + '">' +
                         options +
                         '</select>' +
-                        '<button data-role-save="' + esc(p.id) + '">' +
+                        '<button data-role-save="' + escAttr(p.id) + '">' +
                         'Guardar' +
                         '</button>' +
                         '</div>'
                     )
                 ) +
+                '</td>' +
 
-                '</div>'
+                '</tr>'
 
             );
 
-        }).join("");
+        }).join("") +
+        '</tbody></table></div>';
 
 
     list.querySelectorAll("[data-role-save]").forEach(function(btn){
 
-        btn.onclick = function(){
+        btn.onclick = async function(){
 
             var id = btn.getAttribute("data-role-save");
 
@@ -2109,13 +2025,13 @@ function renderUsers(){
                 return;
 
 
-            if(!confirm(
+            if(!(await ECL.askConfirm(
                 "Alterar o cargo de \"" +
                 (p ? p.username : "?") +
                 "\" para " +
                 (ROLE_LABEL[role] || role) +
                 "?"
-            )){
+            ))){
                 loadData();
                 return;
             }

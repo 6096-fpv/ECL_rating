@@ -3,114 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ranking dos professores da Escola Comércio de Lisboa: mais avaliados e melhores notas.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F2EE">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0F14">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 
 <title>Top Professores – Escola Comércio Lisboa</title>
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-.top nav{
-margin-left:auto;
-  display:flex;
-  gap:4px;
-  align-items:center;
-}
-
-.top a,
-.top .acct a{
-color:var(--tx);
-  text-decoration:none;
-  font-weight:600;
-  padding:7px 14px;
-  border-radius:999px;
-  transition:background .15s ease,color .15s ease;
-}
-
-.top a:hover,
-.top .acct a:hover{
-background:var(--ac-soft);
-  color:var(--ac);
-  text-decoration:none;
-}
-
-.top a.on{
-background:var(--ac);
-  color:#fff;
-}
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .top a.on{
-  color:#111;
-  }
-}
-
-:root[data-theme="dark"] .top a.on{
-color:#111;
-}
-
-.acct{
-font-weight:400;
-}
-
-.badge{
-display:inline-block;
-  padding:1px 7px;
-  border-radius:10px;
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-  vertical-align:middle;
-}
-
-.b-owner{
-background:#f0b429;color:#3d2c00
-}
-
-.b-admin{
-background:#1f3a68;color:#fff
-}
-
-.b-moderator{
-background:#1f7a4d;color:#fff
-}
-
-.b-user{
-background:var(--ac-soft);color:var(--ac)
-}
-
 .wrap{
 max-width:760px;
-  margin:0 auto;
-  padding:16px 16px 40px;
-}
-
-.intro{
-margin:0 0 4px;
-  color:var(--mut);
-}
-
-a{
-color:var(--ac);
-}
-
-.card{
-background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:12px;
-  box-shadow:0 1px 2px rgba(0,0,0,.04);
-  padding:18px;
-  margin-top:14px;
-}
-
-.warn{
-background:#fff3cd;
-  color:#7a5b00;
-  border:1px solid #f0d67a;
-  padding:10px 12px;
-  font-size:13px;
-  border-radius:12px;
-  margin-top:12px;
 }
 
 .sortrow{
@@ -121,121 +25,151 @@ display:flex;
   flex-wrap:wrap;
 }
 
-.sortbtn{
-background:var(--card);
-  color:var(--mut);
-  border:1px solid var(--bd);
-  padding:7px 16px;
+/* secondary criterion tabs (underline, not pills) */
+.ctabs{
+display:flex;
+  gap:16px;
+  margin-top:16px;
+  border-bottom:1px solid var(--bd);
+}
+
+.ctab{
+background:none;
+  border:0;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  padding:7px 2px 8px;
   font-size:13px;
   font-weight:700;
+  color:var(--mut);
+  border-radius:0;
   box-shadow:none;
 }
 
-.sortbtn:hover{
-opacity:1;
+.ctab:hover{
+background:none;
+  color:var(--ac);
+  opacity:1;
   transform:none;
   box-shadow:none;
+}
+
+.ctab.on{
+background:none;
   color:var(--ac);
-  border-color:var(--ac);
+  border-bottom-color:var(--ac);
+  box-shadow:none;
 }
 
-.sortbtn.on{
-background:var(--ac);
-  color:#fff;
-  border-color:transparent;
-}
-
-.sortbtn.on:hover{
-  background:var(--ac-hov);
-  color:#fff;
-}
-
-.trow{
+.frow{
 display:flex;
-  gap:14px;
+  gap:10px;
   align-items:center;
-  background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:12px;
-  box-shadow:0 1px 2px rgba(0,0,0,.04);
-  padding:14px 16px;
-  margin-top:12px;
-  text-decoration:none;
-  color:inherit;
-  transition:box-shadow .15s ease;
+  margin-top:14px;
+  flex-wrap:wrap;
 }
 
-.trow:hover{
-  box-shadow:0 2px 6px rgba(0,0,0,.06);
-  text-decoration:none;
-  color:inherit;
+#list h2{
+margin-top:18px;
 }
 
-.rank{
-flex:0 0 auto;
-  width:40px;
-  text-align:center;
-  font-size:20px;
+.fmlab{
+font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.6px;
   font-weight:700;
   color:var(--mut);
 }
 
-.rank.r1{
-color:#c98a00
+.critlink{
+float:right;
+  font-size:11px;
+  text-transform:none;
+  letter-spacing:0;
+  font-weight:600;
 }
 
-.rank.r2{
-color:#8a8f98
+/* ranking sheet: hairline rows, no cards */
+.sheet{
+background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:var(--r-sheet);
+  margin-top:12px;
+  overflow:hidden;
 }
 
-.rank.r3{
-color:#b06a3b
-}
-
-.avatar{
-flex:0 0 auto;
-  width:46px;
-  height:46px;
-  border-radius:50%;
-  background:var(--ac-soft);
-  color:var(--ac);
-  display:flex;
+.rrow{
+display:grid;
+  grid-template-columns:38px 1fr auto;
+  gap:12px;
   align-items:center;
-  justify-content:center;
+  padding:13px 16px;
+  border-top:1px solid var(--bd);
+  text-decoration:none;
+  color:inherit;
+}
+
+.rrow:first-child{
+border-top:0;
+}
+
+.rrow:hover{
+background:var(--ac-soft);
+  text-decoration:none;
+  color:inherit;
+}
+
+.rrow.norank{
+grid-template-columns:1fr auto;
+}
+
+.rrank{
+font-size:15px;
   font-weight:700;
-  font-size:16px;
-}
-
-.tinfo{
-flex:1;
-  min-width:0;
-}
-
-.tinfo .nm{
-font-weight:700;
-  font-size:15px;
-}
-
-.tstat{
-flex:0 0 auto;
   text-align:right;
+  color:var(--tx);
+  font-variant-numeric:tabular-nums;
 }
 
-.tstat .num{
-font-size:22px;
+.rname{
+font-size:15.5px;
+  font-weight:600;
+  letter-spacing:-.1px;
+}
+
+.rmeta{
+margin-top:4px;
+}
+
+.rscore{
+text-align:right;
+  white-space:nowrap;
+}
+
+.ravg{
+font-size:16px;
   font-weight:700;
-  color:var(--ac);
 }
 
-.stars{
-color:var(--star);
-  letter-spacing:1px;
-  font-size:13px;
+.ravg .stars{
+font-size:12px;
+}
+
+.footnote p{
+margin:0 0 9px;
+  font-size:13.5px;
+  color:var(--mut);
+  line-height:1.55;
+}
+
+.footnote p:last-child{
+margin-bottom:0;
 }
 </style>
 </head>
 
 <body>
+<a class="skip" href="#main">Saltar para o conteúdo</a>
 
 <div class="top">
   <b>Escola Comércio Lisboa</b>
@@ -248,132 +182,92 @@ color:var(--star);
   </nav>
 </div>
 
-<div class="wrap">
+<div class="wrap" id="main">
 
   <div id="cfgWarn" class="warn hide">
     A base de dados ainda não está configurada.
   </div>
 
+  <div id="truncWarn" class="warn hide">
+    A mostrar os dados mais recentes (limite de 1000 por tabela).
+  </div>
+
   <h1>Top Professores</h1>
 
   <p class="intro">
-    Ranking pela média das avaliações dos alunos.
+    Ranking pela avaliação dos alunos.
   </p>
 
   <div class="sortrow">
-    <button id="sortAvg" class="sortbtn on">Melhores</button>
-    <button id="sortCount" class="sortbtn">Mais avaliados</button>
+    <div class="seg" role="group" aria-label="Modo de ordenação">
+      <button id="sortCount" class="sortbtn on" data-mode="count" aria-pressed="true">Mais avaliados</button>
+      <button id="sortAvg" class="sortbtn" data-mode="avg" aria-pressed="false">Melhores média</button>
+    </div>
+  </div>
+
+  <div class="ctabs" id="critTabs" role="group" aria-label="Critério da pontuação">
+    <button class="ctab on" data-crit="m" aria-pressed="true">Média</button>
+    <button class="ctab" data-crit="c" aria-pressed="false">Clareza</button>
+    <button class="ctab" data-crit="a" aria-pressed="false">Apoio</button>
+    <button class="ctab" data-crit="j" aria-pressed="false">Justiça</button>
+  </div>
+
+  <div class="frow">
+    <span class="fmlab">Função</span>
+    <div class="chips" id="roleChips" role="group" aria-label="Filtrar por função"></div>
   </div>
 
   <div id="list">
-    <div class="mut" style="margin-top:14px">A carregar…</div>
+    <div class="state">A carregar…</div>
+  </div>
+
+  <h2 id="nota">Como calculamos</h2>
+
+  <div class="card footnote">
+    <p>
+      A <b>média</b> de um professor é a média simples das três dimensões que os
+      alunos avaliam — Clareza, Apoio e Justiça — sobre todas as avaliações
+      recebidas.
+    </p>
+    <p>
+      O ranking principal inclui apenas professores com <b>3 ou mais avaliações</b>.
+      Com 1 ou 2 aparecem em «Avaliados poucas vezes», sem posição: uma única
+      avaliação não sustenta uma média fiável.
+    </p>
+    <p id="notaStats" class="mut">—</p>
   </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 
+<script src="app.js"></script>
+
 <script>
-
-var SUPABASE_URL =
-"https://qsnncbwoybwkhwyepaai.supabase.co";
-
-var SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
 
 (function(){
 
-var $ = function(i){
-  return document.getElementById(i);
-};
+var $ = ECL.$;
+var esc = ECL.esc;
+var configured = ECL.configured;
+var sb = ECL.sb;
 
 var teachers = [];
 var ratings = [];
 var loaded = false;
-var sortMode = "avg";
 
-var configured =
-  SUPABASE_URL.indexOf("http") === 0 &&
-  SUPABASE_KEY.length > 20;
+var sortMode = "count";
+var crit = "m";
+var roleF = "all";
 
-var sb = configured
-  ? window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    )
-  : null;
+var CRIT_LABEL = {
+  m:"média",
+  c:"clareza",
+  a:"apoio",
+  j:"justiça"
+};
 
-if(!configured){
-  $("cfgWarn").classList.remove("hide");
-}
-
-function esc(s){
-
-  var d = document.createElement("div");
-
-  d.textContent = s == null ? "" : s;
-
-  return d.innerHTML;
-
-}
-
-var SKEY = "ecl-session";
-
-function getSession(){
-
-  try{
-    var s = JSON.parse(localStorage.getItem(SKEY));
-    if(s && s.token && Number(s.exp) * 1000 > Date.now())
-      return s;
-  }catch(e){}
-
-  return null;
-
-}
-
-function endSession(){
-  localStorage.removeItem(SKEY);
-}
-
-function doLogout(){
-
-  var s = getSession();
-
-  if(s && sb){
-    sb.rpc("logout",{ p_token:s.token });
-  }
-
-  endSession();
-
-  paintAcct();
-
-}
-
-function paintAcct(){
-
-  var el = $("acct");
-  var s = getSession();
-
-  if(s){
-
-    el.innerHTML =
-      'Olá, <a href="conta.html"><b>' + esc(s.username) + '</b></a> · ' +
-      '<a href="#" id="acctOut">Sair</a>';
-
-    $("acctOut").onclick = function(e){
-      e.preventDefault();
-      doLogout();
-    };
-
-  }else{
-
-    el.innerHTML = '<a href="auth.html?next=top.html">Entrar</a>';
-
-  }
-
-}
-
-paintAcct();
+ECL.paintAcct("top.html");
 
 function avg(list,k){
 
@@ -386,25 +280,140 @@ function avg(list,k){
 
 }
 
-function initials(name){
+function groupOf(s){
 
-  var parts = String(name).trim().split(/\s+/);
+  s = String(s || "").toLowerCase();
 
-  var out = (parts[0] || "").charAt(0);
+  if(s.indexOf("formador") === 0)
+    return "formador";
 
-  if(parts.length > 1){
-    out += parts[parts.length - 1].charAt(0);
-  }
+  if(s.indexOf("docente") === 0)
+    return "docente";
 
-  return out.toUpperCase();
+  if(s.indexOf("coord") === 0)
+    return "coord";
+
+  return "outros";
 
 }
 
-function starsHtml(t){
+var ROLE_GROUPS = [
+  { k:"formador", label:"Formador(a)" },
+  { k:"docente", label:"Docente" },
+  { k:"coord", label:"Coord." },
+  { k:"outros", label:"Outros" }
+];
 
-  var full = Math.round(t);
+function val(x){
 
-  return "★★★★★".slice(0,full) + "☆☆☆☆☆".slice(0,5-full);
+  if(crit === "c")
+    return x.c;
+
+  if(crit === "a")
+    return x.a;
+
+  if(crit === "j")
+    return x.j;
+
+  return x.m;
+
+}
+
+function sortFn(a,b){
+
+  if(sortMode === "count"){
+    return (b.n - a.n) ||
+      (val(b) - val(a)) ||
+      String(a.t.name).localeCompare(String(b.t.name),"pt");
+  }
+
+  return (val(b) - val(a)) ||
+    (b.n - a.n) ||
+    String(a.t.name).localeCompare(String(b.t.name),"pt");
+
+}
+
+function hdrText(){
+
+  if(sortMode === "count")
+    return "Ordenado por número de avaliações · mínimo de 3 avaliações";
+
+  return "Ordenado por " + CRIT_LABEL[crit] +
+    " · mínimo de 3 avaliações";
+
+}
+
+function stateHtml(txt){
+  return '<div class="state">' + esc(txt) + '</div>';
+}
+
+function rowHtml(x,ranked){
+
+  var v = val(x);
+
+  return '<a class="rrow' + (ranked ? "" : " norank") +
+    '" href="teacher.html?id=' + x.t.id + '">' +
+
+    (ranked
+      ? '<div class="rrank">' + x.pos + '</div>'
+      : "") +
+
+    '<div class="rmain">' +
+      '<div class="rname">' + esc(x.t.name) + '</div>' +
+      '<div class="rmeta">' +
+        '<span class="fchip">' + esc(x.t.subject) + '</span>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="rscore">' +
+      '<div class="ravg">' +
+        '<span class="stars">★</span> ' + v.toFixed(1) +
+      '</div>' +
+      '<div class="mut">' +
+        x.n + ' avaliação' + (x.n === 1 ? "" : "ões") +
+      '</div>' +
+    '</div>' +
+
+  '</a>';
+
+}
+
+function sheetHtml(rows,ranked){
+  return '<div class="sheet">' +
+    rows.map(function(x){
+      return rowHtml(x,ranked);
+    }).join("") +
+    '</div>';
+}
+
+function renderChips(all){
+
+  var present = {};
+
+  all.forEach(function(x){
+    present[groupOf(x.t.subject)] = true;
+  });
+
+  var html =
+    '<button type="button" class="chip' + (roleF === "all" ? " on" : "") +
+    '" data-role="all" aria-pressed="' + (roleF === "all") + '">' +
+    'Todas' +
+    '</button>';
+
+  ROLE_GROUPS.forEach(function(g){
+
+    if(!present[g.k])
+      return;
+
+    html +=
+      '<button type="button" class="chip' + (roleF === g.k ? " on" : "") +
+      '" data-role="' + g.k + '" aria-pressed="' + (roleF === g.k) + '">' +
+      esc(g.label) +
+      '</button>';
+
+  });
+
+  $("roleChips").innerHTML = html;
 
 }
 
@@ -413,22 +422,21 @@ function render(){
   if(!configured){
 
     $("list").innerHTML =
-      '<div class="mut" style="margin-top:14px">' +
-      'Configure a base de dados para ver o ranking.' +
-      '</div>';
+      stateHtml("Configure a base de dados para ver o ranking.");
 
     return;
+
   }
 
   if(!loaded){
 
-    $("list").innerHTML =
-      '<div class="mut" style="margin-top:14px">A carregar…</div>';
+    $("list").innerHTML = stateHtml("A carregar…");
 
     return;
+
   }
 
-  var rows = teachers.map(function(t){
+  var all = teachers.map(function(t){
 
     var r = ratings.filter(function(x){
       return Number(x.teacher_id) === Number(t.id);
@@ -439,59 +447,80 @@ function render(){
     var j = avg(r,"justica");
     var m = r.length ? (c + a + j) / 3 : 0;
 
-    return { t:t, n:r.length, m:m };
+    return { t:t, n:r.length, c:c, a:a, j:j, m:m };
 
   }).filter(function(x){
     return x.n > 0;
   });
 
-  if(sortMode === "count"){
-    rows.sort(function(a,b){
-      return b.n - a.n || b.m - a.m;
-    });
-  }else{
-    rows.sort(function(a,b){
-      return b.m - a.m || b.n - a.n;
-    });
-  }
+  if(!all.length){
 
-  if(!rows.length){
+    renderChips([]);
 
     $("list").innerHTML =
-      '<div class="mut" style="margin-top:14px">' +
-      'Ainda não há avaliações. Seja o primeiro a avaliar!' +
-      '</div>';
+      stateHtml("Ainda não há avaliações. Seja o primeiro a avaliar!");
 
     return;
 
   }
 
-  $("list").innerHTML = rows.map(function(x,i){
+  renderChips(all);
 
-    return '<a class="trow" href="teacher.html?id=' + x.t.id + '">' +
+  var rows = all.filter(function(x){
+    return roleF === "all" || groupOf(x.t.subject) === roleF;
+  });
 
-      '<div class="rank' + (i < 3 ? " r" + (i + 1) : "") + '">' +
-        '#' + (i + 1) +
-      '</div>' +
+  if(!rows.length){
 
-      '<div class="avatar">' +
-        esc(initials(x.t.name)) +
-      '</div>' +
+    $("list").innerHTML =
+      stateHtml("Nenhum professor corresponde a esta função.");
 
-      '<div class="tinfo">' +
-        '<div class="nm">' + esc(x.t.name) + '</div>' +
-        '<div class="mut">' + esc(x.t.subject) + '</div>' +
-      '</div>' +
+    return;
 
-      '<div class="tstat">' +
-        '<div class="num">' + x.m.toFixed(1) + '</div>' +
-        '<div class="stars">' + starsHtml(x.m) + '</div>' +
-        '<div class="mut">' + x.n + ' avaliação' + (x.n === 1 ? "" : "ões") + '</div>' +
-      '</div>' +
+  }
 
-    '</a>';
+  var ranked = rows.filter(function(x){
+    return x.n >= 3;
+  }).sort(sortFn);
 
-  }).join("");
+  var few = rows.filter(function(x){
+    return x.n < 3;
+  }).sort(sortFn);
+
+  ranked.forEach(function(x,i){
+    x.pos = i + 1;
+  });
+
+  $("list").innerHTML =
+
+    '<h2 id="rankHdr">' +
+      esc(hdrText()) +
+      '<a class="critlink" href="#nota">como calculamos?</a>' +
+    '</h2>' +
+
+    (ranked.length
+      ? sheetHtml(ranked,true)
+      : stateHtml("Ainda não há professores com 3 ou mais avaliações.")) +
+
+    (few.length
+      ? '<h2>Avaliados poucas vezes · sem posição</h2>' +
+        sheetHtml(few,false)
+      : "");
+
+}
+
+function noteStats(){
+
+  if(!loaded || !ratings.length)
+    return;
+
+  var latest = ratings.reduce(function(a,x){
+    return String(x.created_at) > String(a) ? x.created_at : a;
+  },"");
+
+  $("notaStats").textContent =
+    ratings.length + ' avaliações no total' +
+    (latest ? " · atualizado a " + ECL.fmtDate(latest) : "");
 
 }
 
@@ -505,11 +534,14 @@ function loadAll(){
     sb
       .from("teachers")
       .select("*")
-      .order("name"),
+      .order("name")
+      .limit(1000),
 
     sb
       .from("ratings")
       .select("*")
+      .order("id",{ascending:false})
+      .limit(1000)
 
   ]).then(function(res){
 
@@ -519,7 +551,7 @@ function loadAll(){
       console.error(res[1].error);
 
       $("list").innerHTML =
-        '<div class="mut" style="margin-top:14px">Erro a carregar dados.</div>';
+        stateHtml("Erro a carregar dados.");
 
       return;
 
@@ -529,25 +561,82 @@ function loadAll(){
     ratings = res[1].data || [];
     loaded = true;
 
+    var tw = $("truncWarn");
+    if(tw){
+      tw.classList.toggle(
+        "hide",
+        teachers.length < 1000 && ratings.length < 1000
+      );
+    }
+
     render();
+    noteStats();
 
   });
 
 }
 
-$("sortAvg").onclick = function(){
-  sortMode = "avg";
-  $("sortAvg").classList.add("on");
-  $("sortCount").classList.remove("on");
+function setPressed(container,attr,value){
+
+  var btns = container.querySelectorAll("[" + attr + "]");
+
+  for(var i = 0; i < btns.length; i++){
+
+    var b = btns[i];
+    var on = b.getAttribute(attr) === value;
+
+    b.classList.toggle("on",on);
+    b.setAttribute("aria-pressed",String(on));
+
+  }
+
+}
+
+function setMode(m){
+
+  sortMode = m;
+
+  setPressed(document.querySelector(".seg"),"data-mode",m);
+
   render();
+
+}
+
+$("sortAvg").onclick = function(){
+  setMode("avg");
 };
 
 $("sortCount").onclick = function(){
-  sortMode = "count";
-  $("sortCount").classList.add("on");
-  $("sortAvg").classList.remove("on");
-  render();
+  setMode("count");
 };
+
+$("critTabs").addEventListener("click",function(e){
+
+  var b = e.target.closest("[data-crit]");
+
+  if(!b)
+    return;
+
+  crit = b.getAttribute("data-crit");
+
+  setPressed($("critTabs"),"data-crit",crit);
+
+  render();
+
+});
+
+$("roleChips").addEventListener("click",function(e){
+
+  var b = e.target.closest("[data-role]");
+
+  if(!b)
+    return;
+
+  roleF = b.getAttribute("data-role");
+
+  render();
+
+});
 
 loadAll();
 

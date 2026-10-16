@@ -3,158 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A minha conta: perfil, avaliações feitas e publicações no fórum da plataforma ECL.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F2EE">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0F14">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 
 <title>A minha conta – Escola Comércio Lisboa</title>
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-.top nav{
-margin-left:auto;
-  display:flex;
-  gap:4px;
-  align-items:center;
-}
-
-.top a,
-.top .acct a{
-color:var(--tx);
-  text-decoration:none;
-  font-weight:600;
-  padding:7px 14px;
-  border-radius:999px;
-  transition:background .15s ease,color .15s ease;
-}
-
-.top a:hover,
-.top .acct a:hover{
-background:var(--ac-soft);
-  color:var(--ac);
-  text-decoration:none;
-}
-
-.acct{
-font-weight:400;
-}
-
-.badge{
-display:inline-block;
-  padding:1px 7px;
-  border-radius:10px;
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-  vertical-align:middle;
-}
-
-.b-owner{
-background:#f0b429;color:#3d2c00
-}
-
-.b-admin{
-background:#1f3a68;color:#fff
-}
-
-.b-moderator{
-background:#1f7a4d;color:#fff
-}
-
-.b-user{
-background:var(--ac-soft);color:var(--ac)
-}
-
 .wrap{
 max-width:760px;
-  margin:0 auto;
-  padding:16px 16px 40px;
-}
-
-.intro{
-margin:0 0 4px;
-  color:var(--mut);
-}
-
-a{
-color:var(--ac);
-}
-
-.card{
-background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:12px;
-  box-shadow:0 1px 2px rgba(0,0,0,.04);
-  padding:18px;
-  margin-top:14px;
-}
-
-input,
-textarea{
-width:100%;
-  padding:11px 14px;
-  border:1px solid var(--bd);
-  border-radius:12px;
-  background:var(--card);
-  color:var(--tx);
-  font:inherit;
-  margin-bottom:10px;
-  transition:border-color .15s ease,box-shadow .15s ease;
-}
-
-input:focus,
-textarea:focus{
-outline:none;
-  border-color:var(--ac);
-  box-shadow:0 0 0 3px var(--ac-soft);
-}
-
-button:disabled{
-opacity:.55;
-  cursor:not-allowed;
-  transform:none;
-  box-shadow:none;
-}
-
-.abtn{
-background:none;
-  color:var(--mut);
-  padding:4px 10px;
-  font-size:13px;
-  font-weight:700;
-  border-radius:999px;
-  box-shadow:none;
-}
-
-.abtn:hover{
-background:var(--ac-soft);
-  color:var(--ac);
-  opacity:1;
-  transform:none;
-  box-shadow:none;
-}
-
-.counter{
-text-align:right;
-  font-size:12px;
-  color:var(--mut);
-  margin:-4px 0 8px;
-}
-
-.msg{
-display:inline-block;
-  margin-left:10px;
-  font-size:13px;
-  color:var(--mut);
-}
-
-.warn{
-background:#fff3cd;
-  color:#7a5b00;
-  border:1px solid #f0d67a;
-  padding:10px 12px;
-  font-size:13px;
-  border-radius:12px;
-  margin-top:12px;
 }
 
 .mrow{
@@ -182,15 +42,33 @@ white-space:pre-wrap;
   margin:6px 0;
 }
 
-.stars{
-color:var(--star);
-  letter-spacing:1px;
+.escores{
+display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin:8px 0 10px;
+}
+
+.escores label{
+display:flex;
+  align-items:center;
+  gap:6px;
   font-size:13px;
+  color:var(--mut);
+  font-weight:700;
+}
+
+.escores input{
+width:56px;
+  padding:7px 8px;
+  text-align:center;
+  font-variant-numeric:tabular-nums;
 }
 </style>
 </head>
 
 <body>
+<a class="skip" href="#main">Saltar para o conteúdo</a>
 
 <div class="top">
   <b>Escola Comércio Lisboa</b>
@@ -203,7 +81,7 @@ color:var(--star);
   </nav>
 </div>
 
-<div class="wrap">
+<div class="wrap" id="main">
 
   <div id="cfgWarn" class="warn hide">
     A base de dados ainda não está configurada.
@@ -241,66 +119,25 @@ color:var(--star);
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 
+<script src="app.js"></script>
+
 <script>
-
-var SUPABASE_URL =
-"https://qsnncbwoybwkhwyepaai.supabase.co";
-
-var SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
 
 (function(){
 
-var $ = function(i){
-  return document.getElementById(i);
-};
+var $ = ECL.$;
+var esc = ECL.esc;
+var fmtDate = ECL.fmtDate;
+var starsHtml = ECL.starsHtml;
+var badgeHtml = ECL.badgeHtml;
+var configured = ECL.configured;
+var sb = ECL.sb;
+var getSession = ECL.getSession;
+var endSession = ECL.endSession;
 
 var mine = [];
 var teachers = [];
 var editing = 0;
-
-var configured =
-  SUPABASE_URL.indexOf("http") === 0 &&
-  SUPABASE_KEY.length > 20;
-
-var sb = configured
-  ? window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    )
-  : null;
-
-if(!configured){
-  $("cfgWarn").classList.remove("hide");
-}
-
-function esc(s){
-
-  var d = document.createElement("div");
-
-  d.textContent = s == null ? "" : s;
-
-  return d.innerHTML;
-
-}
-
-var SKEY = "ecl-session";
-
-function getSession(){
-
-  try{
-    var s = JSON.parse(localStorage.getItem(SKEY));
-    if(s && s.token && Number(s.exp) * 1000 > Date.now())
-      return s;
-  }catch(e){}
-
-  return null;
-
-}
-
-function endSession(){
-  localStorage.removeItem(SKEY);
-}
 
 var sess = getSession();
 
@@ -309,55 +146,13 @@ if(!sess){
   return;
 }
 
-function fmtDate(v){
-
-  if(!v)
-    return "";
-
-  var d = new Date(v);
-
-  if(isNaN(d))
-    return "";
-
-  return d.toLocaleDateString("pt-PT",{
-    day:"2-digit",
-    month:"2-digit",
-    year:"numeric"
-  });
-
-}
-
-function starsHtml(t){
-
-  var full = Math.round(t);
-
-  return "★★★★★".slice(0,full) + "☆☆☆☆☆".slice(0,5-full);
-
-}
+ECL.paintAcct("conta.html");
 
 function teacherById(id){
 
   return teachers.find(function(t){
     return Number(t.id) === Number(id);
   });
-
-}
-
-var ROLE_LABEL = {
-  user:"USER",
-  moderator:"MODERATOR",
-  admin:"ADMIN",
-  owner:"OWNER"
-};
-
-function badgeHtml(role){
-
-  if(!role)
-    return "";
-
-  return '<span class="badge b-' + esc(role) + '">' +
-    esc(ROLE_LABEL[role] || String(role).toUpperCase()) +
-    '</span>';
 
 }
 
@@ -384,10 +179,22 @@ function rowHtml(r){
 
       '<div class="meta">' + name + '</div>' +
 
-      '<div class="mut" style="margin:6px 0">' +
-        'Clareza ' + r.clareza +
-        ' · Apoio ' + r.apoio +
-        ' · Justiça ' + r.justica +
+      '<div class="escores">' +
+        '<label>Clareza ' +
+          '<input type="number" min="1" max="5" step="1" ' +
+            'value="' + Number(r.clareza) + '" ' +
+            'data-rid="' + r.id + '" data-sc="c">' +
+        '</label>' +
+        '<label>Apoio ' +
+          '<input type="number" min="1" max="5" step="1" ' +
+            'value="' + Number(r.apoio) + '" ' +
+            'data-rid="' + r.id + '" data-sc="a">' +
+        '</label>' +
+        '<label>Justiça ' +
+          '<input type="number" min="1" max="5" step="1" ' +
+            'value="' + Number(r.justica) + '" ' +
+            'data-rid="' + r.id + '" data-sc="j">' +
+        '</label>' +
       '</div>' +
 
       '<textarea data-edit="' + r.id + '" rows="3" maxlength="1000">' +
@@ -542,6 +349,26 @@ $("myList").addEventListener("click", function(e){
       return;
     }
 
+    var ci = document.querySelector('[data-rid="' + id + '"][data-sc="c"]');
+    var ai = document.querySelector('[data-rid="' + id + '"][data-sc="a"]');
+    var ji = document.querySelector('[data-rid="' + id + '"][data-sc="j"]');
+
+    if(!ci || !ai || !ji)
+      return;
+
+    var nc = Number(ci.value);
+    var na = Number(ai.value);
+    var nj = Number(ji.value);
+
+    function badScore(v){
+      return !Number.isInteger(v) || v < 1 || v > 5;
+    }
+
+    if(badScore(nc) || badScore(na) || badScore(nj)){
+      me.textContent = "As três notas devem ser valores inteiros entre 1 e 5.";
+      return;
+    }
+
     var r = mine.find(function(x){
       return Number(x.id) === id;
     });
@@ -555,9 +382,9 @@ $("myList").addEventListener("click", function(e){
     sb.rpc("rating_update",{
       p_token:sess.token,
       p_id:id,
-      p_clareza:Number(r.clareza),
-      p_apoio:Number(r.apoio),
-      p_justica:Number(r.justica),
+      p_clareza:nc,
+      p_apoio:na,
+      p_justica:nj,
       p_comment:text
     }).then(function(res){
 
@@ -581,11 +408,16 @@ $("myList").addEventListener("click", function(e){
 
       }
 
+      r.clareza = nc;
+      r.apoio = na;
+      r.justica = nj;
       r.comment = text || null;
 
       editing = 0;
 
       renderList();
+
+      ECL.toast("Avaliação atualizada.");
 
     });
 
@@ -595,7 +427,8 @@ $("myList").addEventListener("click", function(e){
 
 $("cOut").onclick = function(){
 
-  sb.rpc("logout",{ p_token:sess.token });
+  if(sb)
+    sb.rpc("logout",{ p_token:sess.token });
 
   endSession();
 
@@ -611,13 +444,15 @@ if(configured && sb){
     .from("teachers")
     .select("*")
     .order("name")
-    .then(function(res){
+      .then(function(res){
 
       if(!res.error)
         teachers = res.data || [];
 
       loadMine();
 
+    }).catch(function(){
+      loadMine();
     });
 
 }else{

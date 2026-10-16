@@ -3,176 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Entrar ou criar conta para avaliar professores na plataforma da Escola Comércio de Lisboa.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F2EE">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0F14">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 
 <title>Conta – Avaliação de Professores</title>
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-:root{
-color-scheme:light;
-  --bg:#f1f1ef;
-  --card:#fff;
-  --tx:#222;
-  --mut:#6b6b6b;
-  --ac:#1f3a68;
-  --ac-soft:#e7ecf5;
-  --bd:#d4d4d0;
-}
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-  color-scheme:dark;
-      --bg:#0d0f14;
-      --card:rgba(255,255,255,.06);
-      --tx:#e8ecf4;
-      --mut:#9aa3b2;
-      --ac:#8fb0e8;
-      --ac-soft:rgba(143,176,232,.16);
-      --bd:rgba(255,255,255,.12);
-  }
-}
-
-:root[data-theme="dark"]{
-color-scheme:dark;
-    --bg:#0d0f14;
-    --card:#1b1e24;
-    --tx:#e8ecf4;
-    --mut:#9aa3b2;
-    --ac:#8fb0e8;
-    --ac-hov:#a4c0f0;
-    --ac-soft:rgba(143,176,232,.16);
-    --bd:rgba(255,255,255,.1);
-}
-
-.top nav{
-margin-left:auto;
-  display:flex;
-  gap:4px;
-  align-items:center;
-}
-
-.top a{
-color:var(--tx);
-  text-decoration:none;
-  font-weight:600;
-  padding:7px 14px;
-  border-radius:999px;
-  transition:background .15s ease,color .15s ease;
-}
-
-.top a:hover,
-.top a.on{
-background:var(--ac-soft);
-  color:var(--ac);
-  text-decoration:none;
-}
-
-.top a.on{
-background:var(--ac);
-  color:#fff;
-}
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .top a.on{
-  color:#111;
-  }
-}
-
-:root[data-theme="dark"] .top a.on{
-color:#111;
-}
-
 .wrap{
-max-width:440px;
-  margin:0 auto;
-  padding:16px 16px 40px;
-}
-
-.card{
-background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:12px;
-  box-shadow:0 1px 2px rgba(0,0,0,.04);
-  padding:18px;
-  margin-top:14px;
-}
-
-input{
-width:100%;
-  padding:11px 14px;
-  border:1px solid var(--bd);
-  border-radius:12px;
-  background:var(--card);
-  color:var(--tx);
-  font:inherit;
-  margin-bottom:10px;
-  transition:border-color .15s ease,box-shadow .15s ease;
-}
-
-input:focus{
-outline:none;
-  border-color:var(--ac);
-  box-shadow:0 0 0 3px var(--ac-soft);
-}
-
-button:focus-visible,
-a:focus-visible{
-outline:2px solid var(--ac);
-  outline-offset:1px;
-}
-
-button:active{
-transform:translateY(0);
-}
-
-button:disabled{
-opacity:.55;
-  cursor:not-allowed;
-  transform:none;
-  box-shadow:none;
-}
-
-a{
-color:var(--ac);
+max-width:420px;
 }
 
 .modes{
 display:flex;
-  gap:16px;
-  margin-bottom:12px;
+  gap:4px;
+  margin-bottom:16px;
   border-bottom:1px solid var(--bd);
-  padding-bottom:8px;
 }
 
 .modes a{
 text-decoration:none;
   font-weight:700;
+  font-size:14px;
   color:var(--mut);
-  padding:6px 14px;
-  border-radius:999px;
-  transition:background .15s ease,color .15s ease;
+  padding:8px 12px;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  border-radius:0;
+  transition:color .15s ease,border-color .15s ease;
 }
 
 .modes a:hover{
-background:var(--ac-soft);
+background:none;
   color:var(--ac);
   text-decoration:none;
 }
 
 .modes a.on{
-background:var(--ac);
-  color:#fff;
-}
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .modes a.on{
-  color:#111;
-  }
-}
-
-:root[data-theme="dark"] .modes a.on{
-color:#111;
+background:none;
+  color:var(--ac);
+  border-bottom-color:var(--ac);
 }
 
 .message{
@@ -186,51 +59,40 @@ margin-top:8px;
 margin-top:10px;
 }
 
-.badge{
-display:inline-block;
-  padding:1px 7px;
-  border-radius:10px;
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-  vertical-align:middle;
+/* live password checklist */
+.chk{
+list-style:none;
+  margin:0 0 12px;
+  padding:0;
+  font-size:13.5px;
+  color:var(--mut);
 }
 
-.b-owner{
-background:#f0b429;color:#3d2c00
+.chk li{
+padding:2px 0;
 }
 
-.b-admin{
-background:#1f3a68;color:#fff
+.chk li::before{
+content:"○  ";
 }
 
-.b-moderator{
-background:#1f7a4d;color:#fff
+.chk li.ok{
+color:var(--ac);
+  font-weight:600;
 }
 
-.b-user{
-background:var(--ac-soft);color:var(--ac)
-}
-
-.warn{
-background:#fff3cd;
-  color:#7a5b00;
-  border:1px solid #f0d67a;
-  padding:10px 12px;
-  font-size:13px;
-  border-radius:12px;
-  margin-top:12px;
+.chk li.ok::before{
+content:"✓  ";
 }
 
 .continue{
-display:inline-block;
-  margin-right:12px;
+margin-right:12px;
 }
 </style>
 </head>
 
 <body>
+<a class="skip" href="#main">Saltar para o conteúdo</a>
 
 <div class="top">
   <b>Escola Comércio Lisboa</b>
@@ -243,7 +105,7 @@ display:inline-block;
   </nav>
 </div>
 
-<div class="wrap">
+<div class="wrap" id="main">
 
   <h1>A tua conta</h1>
 
@@ -276,6 +138,7 @@ display:inline-block;
 
     <input
       id="auUser"
+      aria-label="Username"
       placeholder="Username"
       autocomplete="username"
       autocapitalize="none"
@@ -286,6 +149,7 @@ display:inline-block;
     <input
       id="auPass"
       type="password"
+      aria-label="Palavra-passe"
       placeholder="Password (mín. 8 caracteres)"
       autocomplete="current-password"
     >
@@ -293,18 +157,28 @@ display:inline-block;
     <input
       id="auPass2"
       type="password"
+      aria-label="Repetir palavra-passe"
       placeholder="Repetir password"
       autocomplete="new-password"
       class="hide"
     >
 
+    <ul id="auRules" class="chk" aria-live="polite">
+      <li data-rule="len">8 a 72 caracteres</li>
+      <li data-rule="match" class="hide">As passwords coincidem</li>
+    </ul>
+
     <button id="auBtn">Entrar</button>
 
-    <div id="auMsg" class="message"></div>
+    <div id="auMsg" class="message" role="alert"></div>
+
+    <div class="warn" style="margin-top:10px">
+      Não há recuperação por email — guarda bem a password.
+    </div>
 
     <div class="mut rules">
       Username: 3 a 20 caracteres (a-z, 0-9, _).
-      Password: 8 a 72 caracteres. Não são usados emails.
+      Não são usados emails.
     </div>
 
   </div>
@@ -313,80 +187,20 @@ display:inline-block;
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 
+<script src="app.js"></script>
+
 <script>
-
-var SUPABASE_URL =
-"https://qsnncbwoybwkhwyepaai.supabase.co";
-
-var SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
 
 (function(){
 
-var $ = function(i){
-  return document.getElementById(i);
-};
-
-var SKEY = "ecl-session";
-
-function getSession(){
-  try{
-    var s = JSON.parse(localStorage.getItem(SKEY));
-    if(s && s.token && Number(s.exp) * 1000 > Date.now())
-      return s;
-  }catch(e){}
-  return null;
-}
-
-function saveSession(s){
-  localStorage.setItem(SKEY, JSON.stringify(s));
-}
-
-function endSession(){
-  localStorage.removeItem(SKEY);
-}
-
-function esc(s){
-
-  var d = document.createElement("div");
-
-  d.textContent = s == null ? "" : s;
-
-  return d.innerHTML;
-}
-
-var ROLE_LABEL = {
-  user:"USER",
-  moderator:"MODERATOR",
-  admin:"ADMIN",
-  owner:"OWNER"
-};
-
-function badgeHtml(role){
-
-  if(!role)
-    return "";
-
-  return '<span class="badge b-' + esc(role) + '">' +
-    esc(ROLE_LABEL[role] || String(role).toUpperCase()) +
-    '</span>';
-
-}
-
-var configured =
-  SUPABASE_URL.indexOf("http") === 0 &&
-  SUPABASE_KEY.length > 20;
-
-var sb = configured
-  ? window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    )
-  : null;
-
-if(!configured){
-  $("cfgWarn").classList.remove("hide");
-}
+var $ = ECL.$;
+var esc = ECL.esc;
+var badgeHtml = ECL.badgeHtml;
+var configured = ECL.configured;
+var sb = ECL.sb;
+var getSession = ECL.getSession;
+var saveSession = ECL.saveSession;
+var endSession = ECL.endSession;
 
 var next = "index.html";
 
@@ -398,6 +212,26 @@ try{
 }catch(e){}
 
 var mode = "login";
+
+function ruleEl(k){
+  return document.querySelector('[data-rule="' + k + '"]');
+}
+
+function setOk(el, ok){
+  if(el)
+    el.classList.toggle("ok", !!ok);
+}
+
+function updRules(){
+
+  var p = $("auPass").value;
+
+  setOk(ruleEl("len"), p.length >= 8 && p.length <= 72);
+
+  if(mode === "reg")
+    setOk(ruleEl("match"), p.length > 0 && p === $("auPass2").value);
+
+}
 
 function setMode(m){
 
@@ -414,6 +248,12 @@ function setMode(m){
   $("modeLogin").classList.toggle("on", m === "login");
   $("modeReg").classList.toggle("on", m === "reg");
 
+  var mt = ruleEl("match");
+  if(mt)
+    mt.classList.toggle("hide", m === "login");
+
+  updRules();
+
 }
 
 $("modeLogin").onclick = function(e){
@@ -429,6 +269,9 @@ $("modeReg").onclick = function(e){
 $("auUser").oninput = function(){
   this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g,"");
 };
+
+$("auPass").oninput = updRules;
+$("auPass2").oninput = updRules;
 
 function showLogged(){
 

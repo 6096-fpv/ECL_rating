@@ -3,124 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Lista de professores da Escola Comércio de Lisboa com notas, comentários e avaliações dos alunos.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F2EE">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0F14">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 
 <title>Avaliação de Professores – Escola Comércio Lisboa</title>
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-.top nav{
-margin-left:auto;
-  display:flex;
-  gap:4px;
-  align-items:center;
-}
-
-.top a,
-.top .acct a{
-color:var(--tx);
-  text-decoration:none;
-  font-weight:600;
-  padding:7px 14px;
-  border-radius:999px;
-  transition:background .15s ease,color .15s ease;
-}
-
-.top a:hover,
-.top .acct a:hover{
-background:var(--ac-soft);
-  color:var(--ac);
-  text-decoration:none;
-}
-
-.top a.on{
-background:var(--ac);
-  color:#fff;
-}
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .top a.on{
-  color:#111;
-  }
-}
-
-:root[data-theme="dark"] .top a.on{
-color:#111;
-}
-
-.acct{
-font-weight:400;
-}
-
-.intro{
-margin:0 0 4px;
-  color:var(--mut);
-}
-
-a{
-color:var(--ac);
-}
-
-input,
-select,
-textarea{
-width:100%;
-  padding:11px 14px;
-  border:1px solid var(--bd);
-  border-radius:12px;
-  background:var(--card);
-  color:var(--tx);
-  font:inherit;
-  margin-bottom:10px;
-  transition:border-color .15s ease,box-shadow .15s ease;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-outline:none;
-  border-color:var(--ac);
-  box-shadow:0 0 0 3px var(--ac-soft);
-}
-
-option{
-background:#fff;
-  color:#222;
-}
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) option{
-  background:#14171d;
-      color:#e8ecf4;
-  }
-}
-
-:root[data-theme="dark"] option{
-background:#14171d;
-  color:#e8ecf4;
-}
-
-button:focus-visible,
-a:focus-visible{
-outline:2px solid var(--ac);
-  outline-offset:1px;
-}
-
-button:active{
-transform:translateY(0);
-}
-
-button:disabled{
-opacity:.55;
-  cursor:not-allowed;
-  transform:none;
-  box-shadow:none;
-}
-
 .toolbar{
 display:flex;
   gap:8px;
   margin-top:16px;
+  flex-wrap:wrap;
 }
 
 .toolbar input{
@@ -132,6 +29,17 @@ margin-bottom:0;
 margin-bottom:0;
   width:auto;
   min-width:150px;
+}
+
+@media (max-width:560px){
+  .toolbar input{
+  flex:1 1 100%;
+  }
+
+  .toolbar select{
+  flex:1 1 auto;
+    min-width:0;
+  }
 }
 
 .grid{
@@ -185,12 +93,6 @@ font-size:17px;
   color:var(--tx);
 }
 
-.stars{
-color:var(--star);
-  letter-spacing:1px;
-  font-size:13px;
-}
-
 .bars{
 margin-top:8px;
   display:grid;
@@ -226,83 +128,86 @@ text-align:right;
   font-weight:600;
 }
 
-#splash{
-position:fixed;
-  inset:0;
-  background:#1f3a68;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  text-align:center;
-  padding:24px;
-  z-index:10;
-}
-
-#splash h1{
-font-size:26px;
-  margin:0 0 6px;
-}
-
-#splash .mut{
-color:#c9d3e6;
-}
-
-#splash .by{
-margin:22px 0 16px;
-  font-size:14px;
-  color:#c9d3e6;
-}
-
-#splash .splash-notice{
-max-width:480px;
-  margin:0 0 24px;
-  padding:12px 16px;
-  border:1px solid rgba(255,255,255,.35);
-  border-radius:12px;
-  color:#fff;
-  font-size:14px;
-  line-height:1.5;
-}
-
-#splash .splash-notice a{
-color:#fff;
-  font-weight:bold;
-  text-decoration:underline;
-  overflow-wrap:anywhere;
-}
-
-#splash button{
-background:#fff;
-  color:#1f3a68;
-  padding:9px 26px;
-}
-
-.warn{
-background:#fff3cd;
-  color:#7a5b00;
-  border:1px solid #f0d67a;
-  padding:10px 12px;
-  font-size:13px;
-  border-radius:12px;
+.notice{
+display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
   margin-top:12px;
+  padding:10px 0;
+  border-top:1px solid var(--bd);
+  border-bottom:1px solid var(--bd);
+  font-size:13px;
+  line-height:1.5;
+  color:var(--mut);
+}
+
+.notice a{
+color:var(--ac);
+  font-weight:600;
+}
+
+.notice-x{
+background:none;
+  border:0;
+  color:var(--mut);
+  padding:0 6px;
+  font-size:16px;
+  line-height:1.4;
+  border-radius:4px;
+}
+
+.notice-x:hover{
+background:var(--ac-soft);
+  color:var(--ac);
+  opacity:1;
+}
+
+.clr{
+background:none;
+  border:0;
+  color:var(--ac);
+  padding:0;
+  margin-left:6px;
+  font-size:13px;
+  font-weight:600;
+  text-decoration:underline;
+  border-radius:0;
+}
+
+.clr:hover{
+background:none;
+  color:var(--ac-hov);
+  opacity:1;
+}
+
+.rcount{
+margin-top:18px;
+  font-size:13px;
+  color:var(--mut);
+}
+
+.foot{
+margin-top:26px;
+  padding-top:12px;
+  border-top:1px solid var(--bd);
+  font-size:12px;
+  color:var(--mut);
+}
+
+.foot a{
+color:var(--mut);
+  text-decoration:underline;
+}
+
+.foot a:hover{
+color:var(--ac);
 }
 </style>
 </head>
 
 <body>
-
-<div id="splash">
-  <h1>Avaliação de Professores</h1>
-  <div class="mut">Escola Comércio Lisboa</div>
-  <div class="by">Feito pelo aluno 6096</div>
-  <div class="splash-notice">
-    Para solicitar a adição de um professor à lista, envie um pedido para
-    <a href="mailto:6096@eclisoba.net">6096@eclisoba.net</a>.
-  </div>
-  <button id="enter">Entrar</button>
-</div>
+<a class="skip" href="#main">Saltar para o conteúdo</a>
 
 <div class="top">
   <b>Escola Comércio Lisboa</b>
@@ -315,157 +220,93 @@ background:#fff3cd;
   </nav>
 </div>
 
-<div class="wrap">
+<div class="wrap" id="main">
 
   <h1>Escolha um professor</h1>
 
-  <p class="intro">
-    Página para os alunos da
-    <a
-      href="https://escolacomerciolisboa.pt/"
-      target="_blank"
-      rel="noopener"
-    >
-      Escola Comércio Lisboa
-    </a>.
-    Seja respeitador. Feito pelo aluno 6096.
-    As avaliações são visíveis para todos.
-    Clique num professor para ver o perfil, avaliar e comentar.
-  </p>
+  <div id="notice" class="notice">
+    <span>
+      Em falta na lista? Pede a adição de um professor por email
+      <a href="mailto:6096@eclisboa.net">6096@eclisboa.net</a>.
+    </span>
+    <button
+      id="noticeOut"
+      class="notice-x"
+      type="button"
+      aria-label="Dispensar aviso"
+    >×</button>
+  </div>
 
   <div id="cfgWarn" class="warn hide">
     A base de dados ainda não está configurada.
+  </div>
+
+  <div id="truncWarn" class="warn hide">
+    A mostrar os dados mais recentes (limite de 1000 por tabela).
   </div>
 
   <div class="toolbar">
     <input
       id="q"
       placeholder="Pesquisar professor ou função"
+      aria-label="Pesquisar professor ou função"
       autocomplete="off"
     >
-    <select id="sort">
+    <select id="fn" aria-label="Filtrar por função">
+      <option value="">Todas as funções</option>
+    </select>
+    <select id="sort" aria-label="Ordenar">
       <option value="name">Nome (A-Z)</option>
       <option value="rating">Melhor média</option>
       <option value="count">Mais avaliações</option>
     </select>
   </div>
 
-  <div id="list" class="grid" style="margin-top:12px">
+  <div id="rcount" class="rcount" aria-live="polite"></div>
+
+  <div id="list" class="grid" style="margin-top:8px">
     <div class="card mut" style="grid-column:1/-1">
       A carregar…
     </div>
+  </div>
+
+  <div class="foot">
+    Feito pelo aluno 6096 para os alunos da
+    <a
+      href="https://escolacomerciolisboa.pt/"
+      target="_blank"
+      rel="noopener"
+    >Escola Comércio Lisboa</a>.
+    As avaliações são visíveis para todos.
   </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 
+<script src="app.js"></script>
+
 <script>
-
-var SUPABASE_URL =
-"https://qsnncbwoybwkhwyepaai.supabase.co";
-
-var SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
 
 (function(){
 
-var $ = function(i){
-  return document.getElementById(i);
-};
+var $ = ECL.$;
+var esc = ECL.esc;
+var configured = ECL.configured;
+var sb = ECL.sb;
 
 var teachers = [];
 var ratings = [];
 
-var configured =
-  SUPABASE_URL.indexOf("http") === 0 &&
-  SUPABASE_KEY.length > 20;
+ECL.paintAcct();
 
-var sb = configured
-  ? window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    )
-  : null;
-
-if(!configured){
-  $("cfgWarn").classList.remove("hide");
+if(sessionStorage.getItem("ecl-notice") === "1"){
+  $("notice").classList.add("hide");
 }
 
-function esc(s){
-
-  var d = document.createElement("div");
-
-  d.textContent = s == null ? "" : s;
-
-  return d.innerHTML;
-}
-
-var SKEY = "ecl-session";
-
-function getSession(){
-
-  try{
-    var s = JSON.parse(localStorage.getItem(SKEY));
-    if(s && s.token && Number(s.exp) * 1000 > Date.now())
-      return s;
-  }catch(e){}
-
-  return null;
-
-}
-
-function endSession(){
-  localStorage.removeItem(SKEY);
-}
-
-function doLogout(){
-
-  var s = getSession();
-
-  if(s && sb){
-    sb.rpc("logout",{ p_token:s.token });
-  }
-
-  endSession();
-
-  paintAcct();
-
-}
-
-function paintAcct(){
-
-  var el = $("acct");
-  var s = getSession();
-
-  if(s){
-
-    el.innerHTML =
-      'Olá, <a href="conta.html"><b>' + esc(s.username) + '</b></a> · ' +
-      '<a href="#" id="acctOut">Sair</a>';
-
-    $("acctOut").onclick = function(e){
-      e.preventDefault();
-      doLogout();
-    };
-
-  }else{
-
-    el.innerHTML = '<a href="auth.html">Entrar</a>';
-
-  }
-
-}
-
-paintAcct();
-
-if(sessionStorage.getItem("ecl-splash") === "1"){
-  $("splash").classList.add("hide");
-}
-
-$("enter").onclick=function(){
-  $("splash").classList.add("hide");
-  sessionStorage.setItem("ecl-splash","1");
+$("noticeOut").onclick = function(){
+  $("notice").classList.add("hide");
+  sessionStorage.setItem("ecl-notice","1");
 };
 
 function avg(list,k){
@@ -525,16 +366,28 @@ function bar(label,v){
 
 }
 
+function norm(s){
+
+  s = String(s).toLowerCase();
+
+  return s.normalize
+    ? s.normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    : s;
+
+}
+
 function render(){
 
-  var q = $("q").value.toLowerCase();
+  var q = norm($("q").value);
+  var fn = $("fn").value;
   var sort = $("sort").value;
 
   var rows = teachers.filter(function(t){
 
-    return (t.name + " " + t.subject)
-      .toLowerCase()
-      .indexOf(q) >= 0;
+    if(fn && t.subject !== fn)
+      return false;
+
+    return norm(t.name + " " + t.subject).indexOf(q) >= 0;
 
   }).map(function(t){
 
@@ -567,14 +420,32 @@ function render(){
 
   });
 
+  var total = teachers.length;
+  var filtered = !!q || !!fn;
+
+  $("rcount").textContent = filtered
+    ? rows.length + " de " + total + " professores"
+    : total + (total === 1 ? " professor" : " professores");
+
   if(!rows.length){
 
     $("list").innerHTML =
       '<div class="card mut" style="grid-column:1/-1">' +
       (teachers.length
-        ? "Nenhum professor corresponde à pesquisa."
+        ? "Nenhum professor corresponde à pesquisa." +
+          '<button id="clr" class="clr" type="button">limpar pesquisa</button>'
         : "Ainda não há professores.") +
       '</div>';
+
+    var clr = $("clr");
+
+    if(clr){
+      clr.onclick = function(){
+        $("q").value = "";
+        $("fn").value = "";
+        render();
+      };
+    }
 
     return;
 
@@ -629,7 +500,42 @@ function render(){
 }
 
 $("q").oninput = render;
+$("fn").onchange = render;
 $("sort").onchange = render;
+
+function fillFn(){
+
+  var prev = $("fn").value;
+  var counts = {};
+
+  teachers.forEach(function(t){
+    counts[t.subject] = (counts[t.subject] || 0) + 1;
+  });
+
+  var keys = Object.keys(counts).sort(function(a,b){
+    return counts[b] - counts[a] ||
+      String(a).localeCompare(String(b),"pt");
+  });
+
+  var sel = $("fn");
+
+  sel.innerHTML = "";
+
+  var all = document.createElement("option");
+  all.value = "";
+  all.textContent = "Todas as funções";
+  sel.appendChild(all);
+
+  keys.forEach(function(k){
+    var o = document.createElement("option");
+    o.value = k;
+    o.textContent = k + " (" + counts[k] + ")";
+    sel.appendChild(o);
+  });
+
+  sel.value = prev;
+
+}
 
 function loadAll(){
 
@@ -648,11 +554,14 @@ function loadAll(){
     sb
       .from("teachers")
       .select("*")
-      .order("name"),
+      .order("name")
+      .limit(1000),
 
     sb
       .from("ratings")
       .select("*")
+      .order("id",{ascending:false})
+      .limit(1000)
 
   ]).then(function(res){
 
@@ -672,6 +581,12 @@ function loadAll(){
     teachers = res[0].data || [];
     ratings = res[1].data || [];
 
+    $("truncWarn").classList.toggle(
+      "hide",
+      teachers.length < 1000 && ratings.length < 1000
+    );
+
+    fillFn();
     render();
 
   });

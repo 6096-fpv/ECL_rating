@@ -3,125 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Perfil de um professor com notas de clareza, apoio e justiça e comentários dos alunos.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F2EE">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0F14">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 
 <title>Perfil do Professor – Escola Comércio Lisboa</title>
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-.top nav{
-margin-left:auto;
-  display:flex;
-  gap:4px;
-  align-items:center;
-}
-
-.top a,
-.top .acct a{
-color:var(--tx);
-  text-decoration:none;
-  font-weight:600;
-  padding:7px 14px;
-  border-radius:999px;
-  transition:background .15s ease,color .15s ease;
-}
-
-.top a:hover,
-.top .acct a:hover{
-background:var(--ac-soft);
-  color:var(--ac);
-  text-decoration:none;
-}
-
-.acct{
-font-weight:400;
-}
-
-.badge{
-display:inline-block;
-  padding:1px 7px;
-  border-radius:10px;
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-  vertical-align:middle;
-}
-
-.b-owner{
-background:#f0b429;color:#3d2c00
-}
-
-.b-admin{
-background:#1f3a68;color:#fff
-}
-
-.b-moderator{
-background:#1f7a4d;color:#fff
-}
-
-.b-user{
-background:var(--ac-soft);color:var(--ac)
-}
-
 .wrap{
 max-width:760px;
-  margin:0 auto;
-  padding:16px 16px 40px;
 }
 
 .back{
 display:inline-block;
   margin-top:14px;
   font-size:13px;
-}
-
-.card{
-background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:12px;
-  box-shadow:0 1px 2px rgba(0,0,0,.04);
-  padding:18px;
-  margin-top:14px;
-}
-
-input,
-select,
-textarea{
-width:100%;
-  padding:11px 14px;
-  border:1px solid var(--bd);
-  border-radius:12px;
-  background:var(--card);
-  color:var(--tx);
-  font:inherit;
-  margin-bottom:10px;
-  transition:border-color .15s ease,box-shadow .15s ease;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-outline:none;
-  border-color:var(--ac);
-  box-shadow:0 0 0 3px var(--ac-soft);
-}
-
-button:focus-visible,
-.stars span:focus-visible{
-outline:2px solid var(--ac);
-  outline-offset:1px;
-}
-
-button:active{
-transform:translateY(0);
-}
-
-button:disabled{
-opacity:.55;
-  cursor:not-allowed;
-  transform:none;
-  box-shadow:none;
 }
 
 .hero{
@@ -221,11 +120,10 @@ font-size:26px;
 color:var(--star);
 }
 
-.counter{
-text-align:right;
-  font-size:12px;
-  color:var(--mut);
-  margin:-4px 0 8px;
+.sval{
+font-weight:700;
+  color:var(--tx);
+  margin-left:6px;
 }
 
 .cm{
@@ -255,42 +153,11 @@ margin-top:4px;
   font-size:12px;
   color:var(--mut);
 }
-
-.msg{
-display:inline-block;
-  margin-left:10px;
-  font-size:13px;
-  color:var(--mut);
-}
-
-.continue{
-display:inline-block;
-  padding:10px 20px;
-  border-radius:999px;
-  background:var(--ac);
-  color:#fff;
-  font-weight:600;
-  text-decoration:none;
-  transition:background .12s ease;
-}
-
-.continue:hover{
-  background:var(--ac-hov);
-}
-
-.warn{
-background:#fff3cd;
-  color:#7a5b00;
-  border:1px solid #f0d67a;
-  padding:10px 12px;
-  font-size:13px;
-  border-radius:12px;
-  margin-top:12px;
-}
 </style>
 </head>
 
 <body>
+<a class="skip" href="#main">Saltar para o conteúdo</a>
 
 <div class="top">
   <b>Escola Comércio Lisboa</b>
@@ -303,7 +170,7 @@ background:#fff3cd;
   </nav>
 </div>
 
-<div class="wrap">
+<div class="wrap" id="main">
 
   <a class="back" href="index.html">← Voltar à lista de professores</a>
 
@@ -336,19 +203,20 @@ background:#fff3cd;
       <h2>Deixar uma avaliação</h2>
 
       <div id="rateForm">
-        <div class="mut">Clareza nas explicações</div>
+        <div class="mut">Clareza nas explicações <span class="sval" data-kv="c">0/5</span></div>
         <div class="stars" data-k="c"></div>
 
-        <div class="mut" style="margin-top:8px">Apoio aos alunos</div>
+        <div class="mut" style="margin-top:8px">Apoio aos alunos <span class="sval" data-kv="a">0/5</span></div>
         <div class="stars" data-k="a"></div>
 
-        <div class="mut" style="margin-top:8px">Justiça na avaliação</div>
+        <div class="mut" style="margin-top:8px">Justiça na avaliação <span class="sval" data-kv="j">0/5</span></div>
         <div class="stars" data-k="j"></div>
 
         <textarea
           id="cm"
           rows="4"
           maxlength="1000"
+          aria-label="Comentário"
           placeholder="Comentário (opcional, até 1000 caracteres)"
           style="margin-top:12px"
         ></textarea>
@@ -392,23 +260,27 @@ background:#fff3cd;
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 
+<script src="app.js"></script>
+
 <script>
-
-var SUPABASE_URL =
-"https://qsnncbwoybwkhwyepaai.supabase.co";
-
-var SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzbm5jYndveWJ3a2h3eWVwYWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjUxMjEsImV4cCI6MjEwNjI0MTEyMX0.RWSTvm_FuJq7FDPiYErHgsTOHPmktgnEG2eKMtNc5TE";
 
 (function(){
 
-var $ = function(i){
-  return document.getElementById(i);
-};
+var $ = ECL.$;
+var esc = ECL.esc;
+var fmtDate = ECL.fmtDate;
+var badgeHtml = ECL.badgeHtml;
+var configured = ECL.configured;
+var sb = ECL.sb;
+var getSession = ECL.getSession;
+var endSession = ECL.endSession;
 
 var TEACHER_ID = Number(
   new URLSearchParams(location.search).get("id")
 );
+
+var TEACHER_NEXT =
+  "teacher.html?id=" + (isFinite(TEACHER_ID) ? TEACHER_ID : "");
 
 var cur = {
   c:0,
@@ -420,62 +292,6 @@ var teacher = null;
 var ratings = [];
 var profiles = [];
 
-var configured =
-  SUPABASE_URL.indexOf("http") === 0 &&
-  SUPABASE_KEY.length > 20;
-
-var sb = configured
-  ? window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    )
-  : null;
-
-if(!configured){
-  $("cfgWarn").classList.remove("hide");
-}
-
-function esc(s){
-
-  var d = document.createElement("div");
-
-  d.textContent = s == null ? "" : s;
-
-  return d.innerHTML;
-}
-
-var SKEY = "ecl-session";
-
-function getSession(){
-
-  try{
-    var s = JSON.parse(localStorage.getItem(SKEY));
-    if(s && s.token && Number(s.exp) * 1000 > Date.now())
-      return s;
-  }catch(e){}
-
-  return null;
-
-}
-
-function endSession(){
-  localStorage.removeItem(SKEY);
-}
-
-function doLogout(){
-
-  var s = getSession();
-
-  if(s && sb){
-    sb.rpc("logout",{ p_token:s.token });
-  }
-
-  endSession();
-
-  paintAcct();
-
-}
-
 function paintRateGate(){
 
   var s = getSession();
@@ -484,63 +300,17 @@ function paintRateGate(){
   $("rateGate").classList.toggle("hide", !!s);
 
   if(!s){
-
     $("rateLogin").setAttribute(
       "href",
-      "auth.html?next=" +
-      encodeURIComponent("teacher.html?id=" + (isFinite(TEACHER_ID) ? TEACHER_ID : ""))
+      "auth.html?next=" + encodeURIComponent(TEACHER_NEXT)
     );
-
   }
 
 }
-
 
 function paintAcct(){
-
-  var el = $("acct");
-  var s = getSession();
-
-  if(s){
-
-    el.innerHTML =
-      'Olá, <a href="conta.html"><b>' + esc(s.username) + '</b></a> · ' +
-      '<a href="#" id="acctOut">Sair</a>';
-
-    $("acctOut").onclick = function(e){
-      e.preventDefault();
-      doLogout();
-    };
-
-  }else{
-
-    el.innerHTML =
-      '<a href="auth.html?next=' +
-      encodeURIComponent("teacher.html?id=" + (isFinite(TEACHER_ID) ? TEACHER_ID : "")) +
-      '">Entrar</a>';
-
-  }
-
+  ECL.paintAcct(TEACHER_NEXT);
   paintRateGate();
-
-}
-
-var ROLE_LABEL = {
-  user:"USER",
-  moderator:"MODERATOR",
-  admin:"ADMIN",
-  owner:"OWNER"
-};
-
-function badgeHtml(role){
-
-  if(!role)
-    return "";
-
-  return '<span class="badge b-' + esc(role) + '">' +
-    esc(ROLE_LABEL[role] || String(role).toUpperCase()) +
-    '</span>';
-
 }
 
 function profById(id){
@@ -598,9 +368,13 @@ function bar(label,v){
 
 }
 
-document.querySelectorAll(".stars").forEach(function(box){
+var CRIT_NAME = { c:"Clareza", a:"Apoio", j:"Justiça" };
+
+document.querySelectorAll("#rateForm .stars").forEach(function(box){
 
   var k = box.dataset.k;
+  box.setAttribute("role","radiogroup");
+  box.setAttribute("aria-label", CRIT_NAME[k] || "Nota");
 
   for(var i=1;i<=5;i++){
 
@@ -609,18 +383,27 @@ document.querySelectorAll(".stars").forEach(function(box){
       var s = document.createElement("span");
 
       s.textContent = "★";
-      s.tabIndex = 0;
+      s.setAttribute("role","radio");
+      s.setAttribute("aria-checked","false");
+      s.setAttribute("aria-label", i + " de 5");
+      s.tabIndex = i === 1 ? 0 : -1;
 
       s.onclick = function(){
-        cur[k] = i;
-        paint(box,i);
+        selectStar(box,i);
       };
 
       s.onkeydown = function(e){
-        if(e.key === "Enter" || e.key === " "){
+        var d = {ArrowRight:1,ArrowUp:1,ArrowLeft:-1,ArrowDown:-1}[e.key];
+        var ni = d
+          ? Math.min(5, Math.max(1, i + d))
+          : (e.key === "Home" ? 1 : (e.key === "End" ? 5 : 0));
+        if(ni){
           e.preventDefault();
-          cur[k] = i;
-          paint(box,i);
+          selectStar(box,ni);
+          box.querySelectorAll("span")[ni-1].focus();
+        }else if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          selectStar(box,i);
         }
       };
 
@@ -632,11 +415,21 @@ document.querySelectorAll(".stars").forEach(function(box){
 
 });
 
+function selectStar(box,i){
+  cur[box.dataset.k] = i;
+  paint(box,i);
+}
+
 function paint(box,n){
 
   box.querySelectorAll("span").forEach(function(s,i){
     s.classList.toggle("on", i<n);
+    s.setAttribute("aria-checked", n > 0 ? String(i === n-1) : "false");
+    s.tabIndex = i === (n > 0 ? n-1 : 0) ? 0 : -1;
   });
+
+  var val = box.parentNode.querySelector('[data-kv="' + box.dataset.k + '"]');
+  if(val) val.textContent = n + "/5";
 
 }
 
@@ -693,7 +486,7 @@ function render(){
   });
 
   $("comments").innerHTML = withCm.length
-    ? withCm.slice().reverse().map(function(x){
+    ? withCm.map(function(x){
 
         var pr = profById(x.user_id);
 
@@ -705,7 +498,8 @@ function render(){
           '<div class="who">' + who + '</div>' +
           '<div class="txt">"' + esc(x.comment) + '"</div>' +
           '<div class="meta">' +
-          'Clareza ' + Number(x.clareza) +
+          fmtDate(x.created_at) +
+          ' · Clareza ' + Number(x.clareza) +
           ' · Apoio ' + Number(x.apoio) +
           ' · Justiça ' + Number(x.justica) +
           '</div>' +
@@ -743,11 +537,13 @@ function loadAll(){
       .from("ratings")
       .select("*")
       .eq("teacher_id",TEACHER_ID)
-      .order("id",{ascending:false}),
+      .order("id",{ascending:false})
+      .limit(1000),
 
     sb
       .from("profiles")
       .select("id,username,role")
+      .limit(1000)
 
   ]).then(function(res){
 
@@ -823,7 +619,11 @@ $("send").onclick=function(){
 
       if(/sess.o/i.test(em)){
         endSession();
-        paintAcct();
+ECL.onAuthChange = function(){
+  paintRateGate();
+};
+
+paintAcct();
         em = "Sessão expirada. Volte a iniciar sessão.";
       }
 

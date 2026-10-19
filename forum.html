@@ -629,7 +629,7 @@ function canCreateBranch(s){
 }
 
 function accessLvl(r){
-  return { user:1, media:2, moderator:3, admin:4, owner:5 }[r] || 0;
+  return { user:1, vip:1, media:2, moderator:3, admin:4, owner:5 }[r] || 0;
 }
 
 function branchWritable(b){

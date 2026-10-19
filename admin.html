@@ -676,6 +676,8 @@ function escAttr(s){
 
 var ROLE_LEVEL = {
     user:0,
+    media:0,
+    vip:0,
     moderator:1,
     admin:2,
     owner:3
@@ -2136,7 +2138,7 @@ function renderUsers(){
     var myLvl = ROLE_LEVEL[me && me.role] || 0;
 
     var roles = myLvl >= 3
-        ? ["user","moderator","admin"]
+        ? ["user","media","moderator","admin"]
         : ["user","moderator"];
 
 
@@ -2159,16 +2161,19 @@ function renderUsers(){
 
             var isOwnerRow = p.role === "owner";
 
+            var advanced =
+                ["admin","media","vip"].indexOf(p.role) >= 0;
+
             var locked =
                 isMe ||
                 isOwnerRow ||
-                (myLvl < 3 && p.role === "admin");
+                (myLvl < 3 && advanced);
 
             var note = isMe
                 ? "Não podes alterar o teu próprio cargo."
                 : (isOwnerRow
                     ? "Ninguém altera o cargo do owner."
-                    : "Só o owner altera admins.");
+                    : "Só o owner altera cargos avançados.");
 
             var options =
                 roles.map(function(r){

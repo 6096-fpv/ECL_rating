@@ -1895,7 +1895,7 @@ var BR_VIEW_OPTS = [
     ["admin","Admin"]
 ];
 
-var BR_WRITE_OPTS = [
+var BR_LEVEL_OPTS = [
     ["user","Utilizadores"],
     ["media","Media"],
     ["moderator","Moderadores"],
@@ -1943,7 +1943,8 @@ function renderBranches(){
         '<thead><tr>' +
         '<th>Nome</th>' +
         '<th>Quem pode ver</th>' +
-        '<th>Quem pode escrever</th>' +
+        '<th>Quem pode publicar</th>' +
+        '<th>Quem pode responder</th>' +
         '<th>Ações</th>' +
         '</tr></thead><tbody>' +
 
@@ -1965,9 +1966,17 @@ function renderBranches(){
 
                 '<td>' +
                 brSelect(
-                    "bw" + b.id,
-                    BR_WRITE_OPTS,
-                    b.access_write || "user"
+                    "bp" + b.id,
+                    BR_LEVEL_OPTS,
+                    b.access_publish || "user"
+                ) +
+                '</td>' +
+
+                '<td>' +
+                brSelect(
+                    "brp" + b.id,
+                    BR_LEVEL_OPTS,
+                    b.access_reply || "user"
                 ) +
                 '</td>' +
 
@@ -1997,8 +2006,11 @@ function saveBranch(id){
     var view =
         document.getElementById("bv" + id).value;
 
-    var write =
-        document.getElementById("bw" + id).value;
+    var publish =
+        document.getElementById("bp" + id).value;
+
+    var reply =
+        document.getElementById("brp" + id).value;
 
 
     var lv = {
@@ -2006,10 +2018,22 @@ function saveBranch(id){
     };
 
 
-    if((lv[write] || 0) < (lv[view] || 0)){
+    if((lv[publish] || 0) < (lv[view] || 0)){
 
         ECL.toast(
-            "Quem escreve tem de conseguir ver.",
+            "Quem publica tem de conseguir ver.",
+            "err"
+        );
+
+        return;
+
+    }
+
+
+    if((lv[reply] || 0) < (lv[view] || 0)){
+
+        ECL.toast(
+            "Quem responde tem de conseguir ver.",
             "err"
         );
 
@@ -2023,7 +2047,8 @@ function saveBranch(id){
             p_token:me.token,
             p_id:id,
             p_view:view,
-            p_write:write
+            p_publish:publish,
+            p_reply:reply
         })
         .then(function(result){
 
@@ -2058,7 +2083,8 @@ function saveBranch(id){
 
             if(b){
                 b.access_view = view;
-                b.access_write = write;
+                b.access_publish = publish;
+                b.access_reply = reply;
             }
 
         });

@@ -632,9 +632,25 @@ function accessLvl(r){
   return { user:1, vip:1, media:2, moderator:3, admin:4, owner:5 }[r] || 0;
 }
 
-function branchWritable(b){
+function branchPublishable(b){
   var s = getSession();
-  return accessLvl(b.access_write || "user") <= accessLvl(s ? s.role : "");
+  return accessLvl(b.access_publish || "user") <= accessLvl(s ? s.role : "");
+}
+
+/* rootId tem de ser o id de um TÓPICO (raiz) — comentários herdam a
+   comunidade da raiz; branch nulo = Geral, sempre aberto */
+function branchReplyable(rootId){
+  var s = getSession();
+  var p = byId(Number(rootId));
+  if(!p) return false;
+  var bid = Number(p.branch_id) || 0;
+  if(!bid) return true;
+  var br = null;
+  branches.forEach(function(x){
+    if(Number(x.id) === bid) br = x;
+  });
+  if(!br) return false;
+  return accessLvl(br.access_reply || "user") <= accessLvl(s ? s.role : "");
 }
 
 function subLvlMax(rootId){
@@ -772,12 +788,18 @@ function wireCreate(){
     }
 
     var view = $("scView").value;
-    var write = $("scWrite").value;
+    var publish = $("scPublish").value;
+    var reply = $("scReply").value;
 
     var lv = { all:0, user:1, media:2, moderator:3, admin:4 };
 
-    if((lv[write] || 0) < (lv[view] || 0)){
-      m.textContent = "Quem escreve tem de conseguir ver.";
+    if((lv[publish] || 0) < (lv[view] || 0)){
+      m.textContent = "Quem publica tem de conseguir ver.";
+      return;
+    }
+
+    if((lv[reply] || 0) < (lv[view] || 0)){
+      m.textContent = "Quem responde tem de conseguir ver.";
       return;
     }
 
@@ -788,7 +810,8 @@ function wireCreate(){
       p_token:s.token,
       p_name:name,
       p_view:view,
-      p_write:write
+      p_publish:publish,
+      p_reply:reply
     }).then(function(r){
 
       if($("scSend"))
@@ -853,8 +876,15 @@ function renderSide(){
         '<option value="moderator">Moderadores</option>' +
         '<option value="admin">Admin</option>' +
       '</select>' +
-      '<label class="mut" for="scWrite">Quem pode escrever</label>' +
-      '<select id="scWrite">' +
+      '<label class="mut" for="scPublish">Quem pode publicar</label>' +
+      '<select id="scPublish">' +
+        '<option value="user">Utilizadores</option>' +
+        '<option value="media">Media</option>' +
+        '<option value="moderator">Moderadores</option>' +
+        '<option value="admin">Admin</option>' +
+      '</select>' +
+      '<label class="mut" for="scReply">Quem pode responder</label>' +
+      '<select id="scReply">' +
         '<option value="user">Utilizadores</option>' +
         '<option value="media">Media</option>' +
         '<option value="moderator">Moderadores</option>' +
@@ -1142,8 +1172,10 @@ function cmtHtml(c, depth, tid){
     '</div>' +
 
     '<div>' +
-      '<button class="abtn mini" data-reply="' + c.id +
-        '" data-topic="' + tid + '">responder</button>' +
+      (branchReplyable(tid)
+        ? '<button class="abtn mini" data-reply="' + c.id +
+            '" data-topic="' + tid + '">responder</button>'
+        : "") +
     '</div>';
 
   if(kids.length){
@@ -1195,7 +1227,14 @@ function threadHtml(t){
 
   var box;
 
-  if(s){
+  if(s && !branchReplyable(t.id)){
+
+    box =
+      '<div class="mut" style="margin-top:10px">' +
+        'Não tens permissões para responder nesta comunidade.' +
+      '</div>';
+
+  }else if(s){
 
     var target = replyTo[t.id] || t.id;
     var tp = byId(target);
@@ -1600,14 +1639,14 @@ function loadAll(){
       if(
         prev2 && Number(prev2) > 0 &&
         branches.some(function(b){
-          return Number(b.id) === Number(prev2) && branchWritable(b);
+          return Number(b.id) === Number(prev2) && branchPublishable(b);
         })
       ){
         nbv = prev2;
       }else if(
         selBranch > 0 &&
         branches.some(function(b){
-          return Number(b.id) === selBranch && branchWritable(b);
+          return Number(b.id) === selBranch && branchPublishable(b);
         })
       ){
         nbv = String(selBranch);
@@ -1615,7 +1654,7 @@ function loadAll(){
 
       sel2.innerHTML =
         '<option value="0">Comunidade: Geral</option>' +
-        branches.filter(branchWritable).map(function(b){
+        branches.filter(branchPublishable).map(function(b){
           return '<option value="' + b.id + '">' +
             esc(b.name) +
             '</option>';

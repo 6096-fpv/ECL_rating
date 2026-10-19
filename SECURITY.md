@@ -28,8 +28,10 @@ Last audit: 2026-10-16 (static client + Supabase backend).
 - All privileged RPCs call `private.require_min_role(token, min)`;
   `owner` is only assignable in SQL, admins can assign only
   `user`/`moderator`.
-- Forum branches carry `access_view` / `access_write` levels enforced in
-  `forum_feed` (read) and `forum_create` / `forum_reply` (write);
+- Forum branches carry `access_view` / `access_publish` / `access_reply`
+  levels: `forum_feed` hides branches below `access_view`,
+  `forum_create` requires `access_publish`, `forum_reply` requires
+  `access_reply` (resolved via the topic's root branch);
   levels are managed by moderators+ via `branch_access_update`.
 - Forum deletion follows a role hierarchy (mod: users only; admin: all
   except owner; owner: all).

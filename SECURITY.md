@@ -36,6 +36,10 @@ Last audit: 2026-10-16 (static client + Supabase backend).
 - Forum deletion follows a role hierarchy (mod: users only; admin: all
   except owner; owner: all). Pinned topics (`pinned`) are toggled only
   by `owner` via `post_pin`.
+- Moderation: admins+ can mute (`user_mute`/`user_unmute`, timed or
+  permanent) and ban (`user_ban`) only users ranked strictly below them.
+  Bans revoke all sessions and block login; muted users cannot post,
+  reply or rate.
 - Tables `forum_posts`, `forum_branches`, `forum_votes`, `teachers`,
   `ratings`: RLS on; REST writes revoked; forum reads only via
   `forum_feed` (no public-read policy).

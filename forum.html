@@ -1557,6 +1557,12 @@ function loadAll(){
 
     var feedOk = !fr.error && fr.data;
 
+    if(!feedOk && fr.error &&
+       /banida|sess.o/i.test(fr.error.message || "")){
+      ECL.toast(authFail(),"err");
+      return;
+    }
+
     if(!feedOk && fr.error && fr.error.code === "42P01"){
       showSetup();
       return;

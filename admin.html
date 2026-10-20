@@ -916,7 +916,7 @@ function loadData(){
 
         sb
             .from("profiles")
-            .select("id,username,role")
+            .select("*")
 
     ]).then(function(result){
 
@@ -2174,6 +2174,7 @@ function renderUsers(){
         '<thead><tr>' +
         '<th>Utilizador</th>' +
         '<th>Cargo</th>' +
+        '<th>Moderação</th>' +
         '</tr></thead>' +
         '<tbody>' +
         profiles
@@ -2213,6 +2214,78 @@ function renderUsers(){
                 }).join("");
 
 
+            var canMod =
+                !isMe &&
+                myLvl > (ROLE_LEVEL[p.role] || 0);
+
+            var isMuted = !!p.muted_until &&
+                (p.muted_until === "infinity" ||
+                 new Date(p.muted_until).getTime() > Date.now());
+
+            var modStatus = "";
+
+            if(p.banned){
+
+                modStatus =
+                    '<span class="badge b-admin">Banido</span> ';
+
+            }else if(isMuted){
+
+                var until =
+                    p.muted_until === "infinity"
+                    ? "(sempre)"
+                    : "até " +
+                      new Date(p.muted_until).toLocaleString("pt-PT",{
+                        day:"2-digit", month:"2-digit",
+                        hour:"2-digit", minute:"2-digit"
+                      });
+
+                modStatus =
+                    '<span class="badge b-owner">Silenciado ' +
+                    esc(until) +
+                    '</span> ';
+
+            }
+
+            var modActions = "";
+
+            if(canMod){
+
+                modActions =
+                    '<div class="actions">' +
+
+                    (p.banned
+                        ? '<button data-unban="' + escAttr(p.id) + '">' +
+                              'Desbanir' +
+                          '</button>'
+                        : '<button data-ban="' + escAttr(p.id) + '">' +
+                              'Banir' +
+                          '</button>') +
+
+                    (!p.banned && !isMuted
+                        ? '<select data-mute-min="' + escAttr(p.id) + '">' +
+                              '<option value="60">1 hora</option>' +
+                              '<option value="1440">1 dia</option>' +
+                              '<option value="10080" selected>7 dias</option>' +
+                              '<option value="43200">30 dias</option>' +
+                              '<option value="">sempre</option>' +
+                          '</select>' +
+                          '<button data-mute="' + escAttr(p.id) + '">' +
+                              'Silenciar' +
+                          '</button>'
+                        : "") +
+
+                    (!p.banned && isMuted
+                        ? '<button data-unmute="' + escAttr(p.id) + '">' +
+                              'Remover silêncio' +
+                          '</button>'
+                        : "") +
+
+                    '</div>';
+
+            }
+
+
             return (
 
                 '<tr>' +
@@ -2242,6 +2315,11 @@ function renderUsers(){
                         '</div>'
                     )
                 ) +
+                '</td>' +
+
+                '<td>' +
+                modStatus +
+                modActions +
                 '</td>' +
 
                 '</tr>'
@@ -2288,6 +2366,145 @@ function renderUsers(){
 
 
             setUserRole(id, role, sel);
+
+        };
+
+    });
+
+
+    list.querySelectorAll("[data-mute]").forEach(function(btn){
+
+        btn.onclick = async function(){
+
+            var id = btn.getAttribute("data-mute");
+
+            var p = profiles.find(function(x){
+                return String(x.id) === String(id);
+            });
+
+            var minsSel = list.querySelector(
+                '[data-mute-min="' + id + '"]'
+            );
+
+            var mins = minsSel && minsSel.value !== ""
+                ? Number(minsSel.value)
+                : null;
+
+            if(!(await ECL.askConfirm(
+                "Silenciar \"" +
+                (p ? p.username : "?") +
+                "\"" +
+                (mins === null
+                    ? " para sempre?"
+                    : " durante " + minsSel.options[minsSel.selectedIndex].text + "?")
+            ))){
+                return;
+            }
+
+            sb.rpc("user_mute",{
+                p_token:me.token,
+                p_id:id,
+                p_minutes:mins
+            }).then(function(result){
+
+                if(result.error){
+                    console.error(result.error);
+                    if(isAuthErr(result.error)){ authFail(); return; }
+                    ECL.toast(result.error.message || "Erro ao silenciar.","err");
+                    return;
+                }
+
+                ECL.toast("Utilizador silenciado.");
+                loadData();
+
+            });
+
+        };
+
+    });
+
+
+    list.querySelectorAll("[data-unmute]").forEach(function(btn){
+
+        btn.onclick = async function(){
+
+            var id = btn.getAttribute("data-unmute");
+
+            var p = profiles.find(function(x){
+                return String(x.id) === String(id);
+            });
+
+            if(!(await ECL.askConfirm(
+                "Remover o silêncio de \"" +
+                (p ? p.username : "?") +
+                "\"?"
+            ))){
+                return;
+            }
+
+            sb.rpc("user_unmute",{
+                p_token:me.token,
+                p_id:id
+            }).then(function(result){
+
+                if(result.error){
+                    console.error(result.error);
+                    if(isAuthErr(result.error)){ authFail(); return; }
+                    ECL.toast(result.error.message || "Erro ao remover silêncio.","err");
+                    return;
+                }
+
+                ECL.toast("Silêncio removido.");
+                loadData();
+
+            });
+
+        };
+
+    });
+
+
+    list.querySelectorAll("[data-ban],[data-unban]").forEach(function(btn){
+
+        btn.onclick = async function(){
+
+            var id = btn.getAttribute("data-ban") ||
+                btn.getAttribute("data-unban");
+
+            var isBan = btn.hasAttribute("data-ban");
+
+            var p = profiles.find(function(x){
+                return String(x.id) === String(id);
+            });
+
+            if(!(await ECL.askConfirm(
+                isBan
+                    ? "Banir \"" + (p ? p.username : "?") +
+                      "\"? As sessões dele são terminadas."
+                    : "Desbanir \"" + (p ? p.username : "?") + "\"?"
+            ))){
+                return;
+            }
+
+            sb.rpc("user_ban",{
+                p_token:me.token,
+                p_id:id,
+                p_ban:isBan
+            }).then(function(result){
+
+                if(result.error){
+                    console.error(result.error);
+                    if(isAuthErr(result.error)){ authFail(); return; }
+                    ECL.toast(result.error.message || "Erro.","err");
+                    return;
+                }
+
+                ECL.toast(isBan
+                    ? "Utilizador banido."
+                    : "Utilizador desbanido.");
+                loadData();
+
+            });
 
         };
 

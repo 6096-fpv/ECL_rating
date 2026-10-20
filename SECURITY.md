@@ -34,7 +34,8 @@ Last audit: 2026-10-16 (static client + Supabase backend).
   `access_reply` (resolved via the topic's root branch);
   levels are managed by moderators+ via `branch_access_update`.
 - Forum deletion follows a role hierarchy (mod: users only; admin: all
-  except owner; owner: all).
+  except owner; owner: all). Pinned topics (`pinned`) are toggled only
+  by `owner` via `post_pin`.
 - Tables `forum_posts`, `forum_branches`, `forum_votes`, `teachers`,
   `ratings`: RLS on; REST writes revoked; forum reads only via
   `forum_feed` (no public-read policy).

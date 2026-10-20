@@ -398,9 +398,13 @@ position:sticky;
   bottom:0;
   background:var(--card);
   border-top:1px solid var(--bd);
-  margin-top:10px;
-  padding:10px 0 12px;
+  margin-top:8px;
+  padding:8px 0 10px;
   z-index:5;
+}
+
+.rbox.nosticky{
+  position:static;
 }
 
 /* composer entry points */
@@ -619,7 +623,7 @@ function authorHtml(p){
 }
 
 function roleLvl(r){
-  return { user:0, moderator:1, admin:2, owner:3 }[r] || 0;
+  return { user:0, vip:0, media:0, moderator:1, admin:2, owner:3 }[r] || 0;
 }
 
 function canCreateBranch(s){
@@ -1288,6 +1292,14 @@ function cardHtml(t){
     ? ' · <button class="delete mini" data-del="' + t.id + '">apagar</button>'
     : "";
 
+  var sMe = getSession();
+
+  var pin = (sMe && sMe.role === "owner")
+    ? ' · <button class="abtn mini" data-pin="' + t.id + '">' +
+        (t.pinned ? "desafixar" : "fixar") +
+      '</button>'
+    : "";
+
   return '<div class="post-card' + (open ? " open" : "") +
       '" data-post="' + t.id + '">' +
 
@@ -1308,6 +1320,7 @@ function cardHtml(t){
     '<div class="pcontent">' +
 
       '<div class="ptitle">' +
+        (t.pinned ? '<span class="pinchip">fixado</span>' : "") +
         esc(t.title) +
       '</div>' +
 
@@ -1337,6 +1350,7 @@ function cardHtml(t){
         '</span>' +
 
         del +
+        pin +
       '</div>' +
 
       '<div class="pbody">' +
@@ -1408,6 +1422,12 @@ function renderFeed(){
 
   }).sort(function(a,b){
 
+    var pa = a.pinned ? 1 : 0;
+    var pb = b.pinned ? 1 : 0;
+
+    if(pa !== pb)
+      return pb - pa;
+
     if(sortMode === "top"){
 
       var d = (Number(b.score) || 0) - (Number(a.score) || 0);
@@ -1430,6 +1450,26 @@ function renderFeed(){
             : "Ainda não há publicações nesta comunidade.")
         : "Ainda não há publicações. Cria a primeira!") +
       '</div>';
+
+  fitReplyBoxes();
+
+}
+
+/* sticky só quando a conversa é alta; em conversas curtas fica em fluxo
+   normal (senão há um vazio flutuante acima da caixa de resposta) */
+function fitReplyBoxes(){
+
+  document.querySelectorAll(".thread").forEach(function(th){
+
+    var box = th.querySelector(".rbox");
+
+    if(box)
+      box.classList.toggle(
+        "nosticky",
+        th.scrollHeight <= window.innerHeight - 100
+      );
+
+  });
 
 }
 
@@ -2019,6 +2059,58 @@ $("feed").addEventListener("click", function(e){
         loadAll();
 
       });
+
+    });
+
+    return;
+
+  }
+
+  var pin = e.target.closest("[data-pin]");
+
+  if(pin){
+
+    var pinId = Number(pin.getAttribute("data-pin"));
+
+    if(!pinId)
+      return;
+
+    var sPin = getSession();
+
+    if(!sPin || sPin.role !== "owner")
+      return;
+
+    var pp = byId(pinId);
+
+    pin.disabled = true;
+
+    sb.rpc("post_pin",{
+      p_token:sPin.token,
+      p_id:pinId,
+      p_pin: !(pp && pp.pinned)
+    }).then(function(r){
+
+      if(r.error){
+
+        console.error(r.error);
+
+        var em = r.error.message || "Erro ao fixar.";
+
+        if(/sess.o/i.test(em)){
+          ECL.toast(authFail(),"err");
+          return;
+        }
+
+        ECL.toast(em,"err");
+        return;
+
+      }
+
+      ECL.toast(pp && pp.pinned
+        ? "Publicação desafixada."
+        : "Publicação fixada.");
+
+      loadAll();
 
     });
 

@@ -395,6 +395,21 @@ option{
   vertical-align:middle;
 }
 
+/* ── país (bandeira ao lado do nome) ──────── */
+
+.flag{
+  width:20px;
+  height:15px;
+  object-fit:cover;
+  border-radius:2px;
+  border:1px solid var(--bd);
+  vertical-align:middle;
+  margin-right:5px;
+  display:inline-block;
+  position:relative;
+  top:-1px;
+}
+
 /* ── stars (display) ─────────────────────── */
 
 .stars{

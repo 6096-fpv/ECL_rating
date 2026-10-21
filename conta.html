@@ -64,6 +64,22 @@ width:56px;
   text-align:center;
   font-variant-numeric:tabular-nums;
 }
+
+.prow{
+display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.prow select{
+margin-bottom:0;
+  max-width:220px;
+}
+
+.prow .flag{
+margin-right:0;
+}
 </style>
 </head>
 
@@ -101,6 +117,27 @@ width:56px;
 
     <div style="margin-top:12px">
       <button id="cOut">Terminar sessão</button>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>País</h2>
+
+    <div class="setrow">
+      <div>
+        <b>Bandeira</b>
+        <div class="mut">Aparece ao teu nome nas publicações do fórum.</div>
+      </div>
+      <div class="prow">
+        <span id="cFlagPrev"></span>
+        <select id="cCountry" aria-label="País">
+          <option value="">Sem bandeira</option>
+        </select>
+        <button id="cCountrySave">Guardar</button>
+        <span id="cCountryMsg" class="msg"></span>
+      </div>
     </div>
 
   </div>
@@ -156,6 +193,79 @@ var mine = [];
 var teachers = [];
 var editing = 0;
 
+var COUNTRIES = [
+["AD","Andorra"],["AE","Emirados Árabes Unidos"],["AF","Afeganistão"],
+["AG","Antígua e Barbuda"],["AI","Anguila"],["AL","Albânia"],
+["AM","Arménia"],["AO","Angola"],["AQ","Antártida"],["AR","Argentina"],
+["AS","Samoa Americana"],["AT","Áustria"],["AU","Austrália"],["AW","Aruba"],
+["AX","Ilhas Aland"],["AZ","Azerbaijão"],["BA","Bósnia e Herzegovina"],
+["BB","Barbados"],["BD","Bangladesh"],["BE","Bélgica"],["BF","Burkina Faso"],
+["BG","Bulgária"],["BH","Barém"],["BI","Burundi"],["BJ","Benim"],
+["BL","São Bartolomeu"],["BM","Bermudas"],["BN","Brunei"],["BO","Bolívia"],
+["BQ","Caraíbas Neerlandesas"],["BR","Brasil"],["BS","Bahamas"],["BT","Butão"],
+["BW","Botswana"],["BV","Ilha Bouvet"],["BY","Bielorrússia"],["BZ","Belize"],
+["CA","Canadá"],["CC","Ilhas Cocos"],["CD","República Democrática do Congo"],
+["CF","República Centro-Africana"],["CG","Congo"],["CH","Suíça"],
+["CI","Costa do Marfim"],["CK","Ilhas Cook"],["CL","Chile"],["CM","Camarões"],
+["CN","China"],["CO","Colômbia"],["CR","Costa Rica"],["CU","Cuba"],
+["CV","Cabo Verde"],["CW","Curaçao"],["CX","Ilha do Natal"],["CY","Chipre"],
+["CZ","Chéquia"],["DE","Alemanha"],["DJ","Djibuti"],["DK","Dinamarca"],
+["DM","Dominica"],["DO","República Dominicana"],["DZ","Argélia"],
+["EC","Equador"],["EE","Estónia"],["EG","Egito"],["EH","Saara Ocidental"],
+["ER","Eritreia"],["ES","Espanha"],["ET","Etiópia"],["FI","Finlândia"],
+["FJ","Fiji"],["FK","Ilhas Malvinas"],["FM","Micronésia"],["FO","Ilhas Faroé"],
+["FR","França"],["GA","Gabão"],["GB","Reino Unido"],["GD","Granada"],
+["GE","Geórgia"],["GF","Guiana Francesa"],["GG","Guernsey"],["GH","Gana"],
+["GI","Gibraltar"],["GL","Groenlândia"],["GM","Gâmbia"],["GN","Guiné"],
+["GP","Guadalupe"],["GQ","Guiné Equatorial"],["GR","Grécia"],
+["GS","Geórgia do Sul e Sandwich do Sul"],["GT","Guatemala"],["GU","Guam"],
+["GW","Guiné-Bissau"],["GY","Guiana"],["HK","Hong Kong"],
+["HM","Ilhas Heard e McDonald"],["HN","Honduras"],["HR","Croácia"],
+["HT","Haiti"],["HU","Hungria"],["ID","Indonésia"],["IE","Irlanda"],
+["IL","Israel"],["IN","Índia"],
+["IO","Território Britânico do Oceano Índico"],["IQ","Iraque"],["IR","Irão"],
+["IS","Islândia"],["IT","Itália"],["JE","Jersey"],["JM","Jamaica"],
+["JO","Jordânia"],["JP","Japão"],["KE","Quénia"],["KG","Quirguistão"],
+["KH","Camboja"],["KI","Kiribati"],["KM","Comores"],
+["KN","São Cristóvão e Neves"],["KP","Coreia do Norte"],["KR","Coreia do Sul"],
+["KW","Kuwait"],["KY","Ilhas Caimão"],["KZ","Cazaquistão"],["LA","Laos"],
+["LB","Líbano"],["LC","Santa Lúcia"],["LI","Liechtenstein"],["LK","Sri Lanka"],
+["LR","Libéria"],["LS","Lesoto"],["LT","Lituânia"],["LU","Luxemburgo"],
+["LV","Letónia"],["LY","Líbia"],["MA","Marrocos"],["MC","Mónaco"],
+["MD","Moldávia"],["ME","Montenegro"],["MF","São Martinho"],
+["MG","Madagáscar"],["MH","Ilhas Marshall"],["MK","Macedónia do Norte"],
+["ML","Mali"],["MM","Mianmar"],["MN","Mongólia"],["MO","Macau"],
+["MP","Ilhas Marianas do Norte"],["MQ","Martinica"],["MR","Mauritânia"],
+["MS","Montserrat"],["MT","Malta"],["MU","Maurícias"],["MV","Maldivas"],
+["MW","Malawi"],["MX","México"],["MZ","Moçambique"],["NA","Namíbia"],
+["NC","Nova Caledónia"],["NE","Níger"],["NF","Ilha Norfolk"],["NG","Nigéria"],
+["NI","Nicarágua"],["NL","Países Baixos"],["NO","Noruega"],["NP","Nepal"],
+["NR","Nauru"],["NU","Niue"],["NZ","Nova Zelândia"],["OM","Omã"],
+["PA","Panamá"],["PE","Peru"],["PF","Polinésia Francesa"],
+["PG","Papua Nova Guiné"],["PH","Filipinas"],["PK","Paquistão"],["PL","Polónia"],
+["PM","São Pedro e Miquelão"],["PN","Pitcairn"],["PR","Porto Rico"],
+["PS","Territórios Palestinianos"],["PT","Portugal"],["PW","Palau"],
+["PY","Paraguai"],["QA","Catar"],["RE","Reunião"],["RO","Roménia"],
+["RU","Rússia"],["RW","Ruanda"],["SA","Arábia Saudita"],["SB","Ilhas Salomão"],
+["SC","Seicheles"],["SD","Sudão"],["SE","Suécia"],["SG","Singapura"],
+["SH","Santa Helena"],["SI","Eslovénia"],["SJ","Svalbard e Jan Mayen"],
+["SK","Eslováquia"],["SL","Serra Leoa"],["SM","San Marino"],["SN","Senegal"],
+["SO","Somália"],["SR","Suriname"],["SS","Sudão do Sul"],
+["ST","São Tomé e Príncipe"],["SV","El Salvador"],["SX","São Martinho"],
+["SY","Síria"],["SZ","Essuatíni"],["TC","Ilhas Turks e Caicos"],["TD","Chade"],
+["TG","Togo"],["TH","Tailândia"],["TJ","Tajiquistão"],["TK","Tokelau"],
+["TL","Timor-Leste"],["TM","Turquemenistão"],["TN","Tunísia"],["TO","Tonga"],
+["TR","Turquia"],["TT","Trindade e Tobago"],["TV","Tuvalu"],["TW","Taiwan"],
+["TZ","Tanzânia"],["UA","Ucrânia"],["UG","Uganda"],
+["UM","Ilhas Menores Distantes dos EUA"],["US","Estados Unidos"],
+["UY","Uruguai"],["UZ","Usbequistão"],["VA","Vaticano"],
+["VC","São Vicente e Granadinas"],["VE","Venezuela"],
+["VG","Ilhas Virgens Britânicas"],["VI","Ilhas Virgens dos EUA"],
+["VN","Vietname"],["VU","Vanuatu"],["WF","Wallis e Futuna"],["WS","Samoa"],
+["YE","Iêmen"],["YT","Maiote"],["ZA","África do Sul"],["ZM","Zâmbia"],
+["ZW","Zimbábue"]
+];
+
 var sess = getSession();
 
 if(!sess){
@@ -179,6 +289,69 @@ function paintHead(){
   $("cBadge").innerHTML = badgeHtml(sess.role);
   $("cSince").textContent =
     "Membro desde " + fmtDate(sess.created_at);
+
+}
+
+function countryName(code){
+
+  var hit = COUNTRIES.find(function(c){
+    return c[0] === code;
+  });
+
+  return hit ? hit[1] : "";
+
+}
+
+function fillCountries(){
+
+  var sel = $("cCountry");
+  var prev = sel.value;
+
+  var sorted = COUNTRIES.slice().sort(function(a,b){
+    return a[1].localeCompare(b[1], "pt");
+  });
+
+  sel.innerHTML = '<option value="">Sem bandeira</option>' +
+    sorted.map(function(c){
+      return '<option value="' + c[0] + '">' + esc(c[1]) + '</option>';
+    }).join("");
+
+  sel.value = prev;
+
+}
+
+function paintFlagPrev(){
+
+  var code = $("cCountry").value;
+
+  $("cFlagPrev").innerHTML = code
+    ? ECL.flagHtml(code) +
+      '<span class="mut">' + esc(countryName(code)) + '</span>'
+    : '<span class="mut">—</span>';
+
+}
+
+function loadCountry(){
+
+  if(!configured || !sb || !sess.id)
+    return;
+
+  sb
+    .from("profiles")
+    .select("*")
+    .eq("id", sess.id)
+    .maybeSingle()
+    .then(function(res){
+
+      if(res.error || !res.data)
+        return;
+
+      if(res.data.country)
+        $("cCountry").value = res.data.country;
+
+      paintFlagPrev();
+
+    }).catch(function(){});
 
 }
 
@@ -454,6 +627,57 @@ $("cOut").onclick = function(){
 };
 
 paintHead();
+
+fillCountries();
+paintFlagPrev();
+loadCountry();
+
+$("cCountry").onchange = paintFlagPrev;
+
+$("cCountrySave").onclick = function(){
+
+  var m = $("cCountryMsg");
+  var code = $("cCountry").value || null;
+
+  if(!configured || !sb){
+    m.textContent = "Base de dados por configurar.";
+    return;
+  }
+
+  m.textContent = "";
+  $("cCountrySave").disabled = true;
+
+  sb.rpc("user_set_country",{
+    p_token: sess.token,
+    p_country: code
+  }).then(function(res){
+
+    $("cCountrySave").disabled = false;
+
+    if(res.error){
+
+      console.error(res.error);
+
+      var em = res.error.message || "Erro ao guardar.";
+
+      if(/sess.o/i.test(em)){
+        endSession();
+        location.replace("auth.html?next=conta.html");
+        return;
+      }
+
+      m.textContent = em;
+      return;
+
+    }
+
+    m.textContent = "";
+    paintFlagPrev();
+    ECL.toast("País atualizado.");
+
+  });
+
+};
 
 if(configured && sb){
 

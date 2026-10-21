@@ -1,6 +1,6 @@
 # Security — ECL Rating
 
-Last audit: 2026-10-16 (static client + Supabase backend).
+Last audit: 2026-10-21 (static client + Supabase backend).
 
 ## Model
 
@@ -40,6 +40,10 @@ Last audit: 2026-10-16 (static client + Supabase backend).
   permanent) and ban (`user_ban`) only users ranked strictly below them.
   Bans revoke all sessions and block login; muted users cannot post,
   reply or rate.
+- Profile flags: users set their own `country` (ISO 3166-1 alpha-2)
+  via `user_set_country` (own profile only, token-authenticated,
+  `^[A-Z]{2}$` enforced in SQL + check constraint); the value is
+  exposed through the `profiles` view and rendered from flagcdn.com.
 - Tables `forum_posts`, `forum_branches`, `forum_votes`, `teachers`,
   `ratings`: RLS on; REST writes revoked; forum reads only via
   `forum_feed` (no public-read policy).

@@ -94,6 +94,18 @@ window.ECL = (function(){
       '</span>';
   }
 
+  function flagHtml(country){
+    if(!country || typeof country !== "string")
+      return "";
+    var c = country.toUpperCase();
+    if(!/^[A-Z]{2}$/.test(c))
+      return "";
+    return '<img class="flag" src="https://flagcdn.com/20x15/' +
+      c.toLowerCase() +
+      '.png" width="20" height="15" alt="' + c +
+      '" title="' + c + '" loading="lazy" onerror="this.remove()">';
+  }
+
   /* Page may assign: ECL.onAuthChange = function(){ ... } */
   var onAuthChange = null;
   var lastNext = null;
@@ -220,6 +232,7 @@ window.ECL = (function(){
     endSession: endSession,
     ROLE_LABEL: ROLE_LABEL,
     badgeHtml: badgeHtml,
+    flagHtml: flagHtml,
     paintAcct: paintAcct,
     doLogout: doLogout,
     fireAuthChange: fireAuthChange,

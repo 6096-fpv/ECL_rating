@@ -17,18 +17,6 @@
 max-width:1080px;
 }
 
-.row{
-display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
-.row input,
-.row select{
-margin-bottom:0;
-}
-
 .tag{
 display:inline-block;
   background:var(--ac-soft);
@@ -58,355 +46,6 @@ margin-bottom:0;
   max-width:260px;
 }
 
-.fgrid{
-display:flex;
-  gap:18px;
-  align-items:flex-start;
-}
-
-.fmain{
-flex:1;
-  min-width:0;
-}
-
-/* persistent community rail (desktop) */
-.side{
-flex:0 0 220px;
-  width:220px;
-  position:sticky;
-  top:60px;
-  background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:var(--r-sheet);
-  padding:10px;
-}
-
-.sideCard{
-position:static;
-  top:auto;
-  left:auto;
-  margin:0;
-  width:auto;
-  max-height:none;
-  overflow:visible;
-  opacity:1;
-  visibility:visible;
-  transform:none;
-  transition:none;
-  background:none;
-  border:0;
-  padding:0;
-  box-shadow:none;
-}
-
-#sideTg{
-display:none;
-}
-
-#sideBtn{
-display:none;
-}
-
-.sideTitle{
-font-size:12px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.6px;
-  color:var(--mut);
-  padding:4px 8px 8px;
-}
-
-.sideItem{
-display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  width:100%;
-  text-align:left;
-  background:none;
-  border:0;
-  border-radius:var(--r-ctl);
-  padding:8px 10px;
-  font-size:13px;
-  font-weight:700;
-  color:var(--mut);
-  cursor:pointer;
-  box-shadow:none;
-}
-
-.sideItem:hover{
-opacity:1;
-  transform:none;
-  box-shadow:none;
-  background:var(--ac-soft);
-  color:var(--ac);
-}
-
-.sideItem.on{
-background:var(--ac);
-  color:#fff;
-}
-
-.sideItem.on:hover{
-background:var(--ac-hov);
-  color:#fff;
-}
-
-.sideItem .cnt{
-font-size:11px;
-  font-weight:700;
-  opacity:.7;
-}
-
-.sideCreate{
-border-top:1px solid var(--bd);
-  margin-top:8px;
-  padding-top:10px;
-}
-
-.sideCreate input{
-margin-bottom:6px;
-}
-
-.sideCreate .msg{
-font-size:12px;
-  margin-top:6px;
-}
-
-/* mobile: chip strip in flow (no popover/hamburger) */
-@media (max-width:960px){
-  .fgrid{
-  display:block;
-  }
-
-  .side{
-  position:static;
-      width:auto;
-      max-height:none;
-      overflow:visible;
-      margin:14px 0 0;
-  }
-
-  #sideList{
-  display:flex;
-      gap:6px;
-      overflow-x:auto;
-      padding-bottom:2px;
-  }
-
-  .sideItem{
-  width:auto;
-      flex:0 0 auto;
-      white-space:nowrap;
-      border:1px solid var(--bd);
-      border-radius:var(--r-chip);
-      padding:5px 12px;
-      background:var(--card);
-  }
-
-  .sideItem.on{
-  border-color:transparent;
-  }
-}
-
-/* feed as a hairline sheet of rows */
-#feed{
-background:var(--card);
-  border:1px solid var(--bd);
-  border-radius:var(--r-sheet);
-  margin-top:14px;
-}
-
-#feed > .state{
-padding:30px 8px;
-}
-
-.post-card{
-display:flex;
-  gap:12px;
-  background:none;
-  border:0;
-  border-top:1px solid var(--bd);
-  border-radius:0;
-  box-shadow:none;
-  padding:14px 16px;
-  margin-top:0;
-  transition:background .15s ease;
-}
-
-.post-card:first-child{
-border-top:0;
-  border-top-left-radius:var(--r-sheet);
-  border-top-right-radius:var(--r-sheet);
-}
-
-.post-card:last-child{
-border-bottom-left-radius:var(--r-sheet);
-  border-bottom-right-radius:var(--r-sheet);
-}
-
-.post-card:hover{
-box-shadow:none;
-  background:var(--ac-soft);
-}
-
-.post-card.hl{
-animation:eclPostHl 1.7s ease;
-}
-
-@keyframes eclPostHl{
-  0%,35%{background:var(--ac-soft)}
-  100%{background:transparent}
-}
-
-@media (prefers-reduced-motion:reduce){
-  .post-card.hl{
-  animation:none;
-    background:var(--ac-soft);
-  }
-}
-
-.votes{
-display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:2px;
-  min-width:34px;
-}
-
-.vbtn{
-background:none;
-  color:var(--mut);
-  padding:2px 6px;
-  font-size:14px;
-  border-radius:4px;
-  line-height:1;
-}
-
-.vbtn:hover{
-background:var(--ac-soft);
-  color:var(--ac);
-  opacity:1;
-}
-
-.vbtn.on{
-color:var(--ac);
-  font-weight:700;
-}
-
-.score{
-font-weight:700;
-  font-size:13px;
-}
-
-.score.neg{
-color:#a83232;
-}
-
-.pcontent{
-flex:1;
-  min-width:0;
-}
-
-.pmeta{
-font-size:12px;
-  color:var(--mut);
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-.ptitle{
-font-size:17px;
-  font-weight:600;
-  margin:6px 0 4px;
-  line-height:1.35;
-  letter-spacing:-.1px;
-}
-
-.pbody{
-white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-
-.post-card:not(.open) .pbody{
-max-height:130px;
-  overflow:hidden;
-}
-
-.pact{
-margin-top:8px;
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.abtn{
-background:none;
-  color:var(--mut);
-  padding:4px 8px;
-  font-size:13px;
-  font-weight:700;
-  border-radius:4px;
-}
-
-.abtn:hover{
-background:var(--ac-soft);
-  color:var(--ac);
-  opacity:1;
-}
-
-.mini{
-font-size:12px;
-  padding:2px 6px;
-}
-
-.thread{
-margin-top:10px;
-  border-top:1px solid var(--bd);
-  padding-top:10px;
-}
-
-.cmt{
-margin-top:10px;
-  font-size:14px;
-}
-
-.cmt .cbody{
-white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  margin:3px 0;
-}
-
-.cmt-kids{
-border-left:2px solid var(--bd);
-  padding-left:6px;
-}
-
-.minivotes{
-display:inline-flex;
-  align-items:center;
-  gap:2px;
-  margin-right:6px;
-  vertical-align:middle;
-}
-
-/* sticky reply box inside open threads */
-.rbox{
-position:sticky;
-  bottom:0;
-  background:var(--card);
-  border-top:1px solid var(--bd);
-  margin-top:8px;
-  padding:8px 0 10px;
-  z-index:5;
-}
-
-.rbox.nosticky{
-  position:static;
-}
-
 /* composer entry points */
 .ntbar{
 margin-top:14px;
@@ -430,6 +69,194 @@ display:flex;
 
 .ntanon .mut{
 font-size:14px;
+}
+
+/* classic forum tables (HLTV-style) */
+.sheet{
+background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:var(--r-sheet);
+  overflow:hidden;
+  margin-top:10px;
+}
+
+.ftbl{
+width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+.ftbl th{
+font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:var(--mut);
+  font-weight:700;
+  text-align:left;
+  padding:9px 14px;
+  border-bottom:1px solid var(--bd);
+  white-space:nowrap;
+}
+
+.ftbl td{
+padding:11px 14px;
+  border-top:1px solid var(--bd);
+  vertical-align:middle;
+  overflow-wrap:anywhere;
+}
+
+.ftbl tbody tr:first-child td{
+border-top:0;
+}
+
+.ftbl tbody tr:hover{
+background:var(--ac-soft);
+}
+
+.ftbl tr[data-open]{
+cursor:pointer;
+}
+
+.num{
+text-align:right;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+
+.tlink{
+color:inherit;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.tlink:hover{
+color:var(--ac);
+  text-decoration:underline;
+  opacity:1;
+}
+
+.fsub{
+font-size:12px;
+  color:var(--mut);
+}
+
+.fhead{
+margin-top:2px;
+}
+
+.backlink{
+display:inline-block;
+  font-size:13px;
+  font-weight:700;
+  color:var(--mut);
+  margin:0 0 6px;
+  text-decoration:none;
+}
+
+.backlink:hover{
+color:var(--ac);
+  opacity:1;
+  text-decoration:none;
+}
+
+.ptitle{
+font-size:17px;
+  font-weight:600;
+  margin:4px 0 6px;
+  line-height:1.35;
+  letter-spacing:-.1px;
+  color:inherit;
+  text-transform:none;
+}
+
+.pmeta{
+font-size:12px;
+  color:var(--mut);
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.pbody{
+white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font-size:15px;
+  line-height:1.55;
+}
+
+.op{
+padding:14px 16px;
+}
+
+.op.hl{
+animation:eclPostHl 1.7s ease;
+}
+
+@keyframes eclPostHl{
+  0%,35%{background:var(--ac-soft)}
+  100%{background:var(--card)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .op.hl{
+  animation:none;
+    background:var(--ac-soft);
+  }
+}
+
+.cmtcount{
+margin:18px 0 0;
+  font-size:13px;
+  font-weight:700;
+  color:var(--mut);
+}
+
+.cmtlist .cmt{
+padding:12px 14px;
+  border-top:1px solid var(--bd);
+  font-size:14px;
+}
+
+.cmtlist .cmt:first-child{
+border-top:0;
+}
+
+.cmt .cbody{
+white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  margin:3px 0;
+}
+
+.ref{
+display:block;
+  font-size:12px;
+  color:var(--mut);
+  margin-bottom:3px;
+}
+
+/* reply box (static, end of thread) */
+.rbox{
+position:static;
+  background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:var(--r-sheet);
+  margin-top:12px;
+  padding:10px 14px 12px;
+}
+
+.rbox textarea{
+margin-bottom:6px;
+}
+
+@media (max-width:640px){
+  .hide-xs{
+  display:none!important;
+  }
+
+  .col-msgs{
+  display:none!important;
+  }
 }
 </style>
 </head>
@@ -465,46 +292,14 @@ font-size:14px;
 
   <h1>Fórum de Professores</h1>
 
-<div class="fgrid">
-
-  <aside id="side" class="side" aria-label="Comunidades">
-    <button id="sideTg" title="Comunidades" aria-label="Comunidades">☰</button>
-    <div class="sideCard">
-      <div class="sideTitle">Comunidades</div>
-      <div id="sideList"></div>
-      <div id="sideCreate" class="sideCreate"></div>
-    </div>
-  </aside>
-
-  <div class="fmain">
-
-  <div class="sortrow">
-
-    <div class="seg" role="group" aria-label="Ordenar publicações">
-      <button id="sortNew" class="sortbtn on" data-sort="new" aria-pressed="true">Novos</button>
-      <button id="sortTop" class="sortbtn" data-sort="top" aria-pressed="false">Melhores</button>
-    </div>
-
-    <input
-      id="q"
-      placeholder="Pesquisar"
-      aria-label="Pesquisar publicações"
-      autocomplete="off"
-      style="max-width:220px"
-    >
-
-    <button id="sideBtn" class="sortbtn" aria-label="Comunidades">☰ Comunidades</button>
-
-  </div>
-
-  <div class="ntbar">
+  <div class="ntbar" id="ntbar">
 
     <button id="ntOpen" class="hide">
       Nova publicação
     </button>
 
     <div id="ntAnon" class="ntanon hide">
-      <span class="mut">Inicia sessão para publicar e votar.</span>
+      <span class="mut">Inicia sessão para publicar e comentar.</span>
       <a class="continue" href="auth.html?next=forum.html">Entrar ou criar conta</a>
     </div>
 
@@ -516,10 +311,6 @@ font-size:14px;
 
     <select id="ntTeacher">
       <option value="">— Sem professor associado —</option>
-    </select>
-
-    <select id="ntBranch">
-      <option value="0">Comunidade: Geral</option>
     </select>
 
     <input
@@ -545,13 +336,127 @@ font-size:14px;
 
   </div>
 
-  <div id="feed">
-    <div class="state">A carregar…</div>
-  </div>
+  <div id="vstate"></div>
 
-  </div>
+  <section id="vHome" aria-label="Comunidades">
 
-</div>
+    <h2>Comunidades</h2>
+
+    <div class="sheet">
+      <table class="ftbl">
+        <thead>
+          <tr>
+            <th>Comunidade</th>
+            <th class="num">Tópicos</th>
+            <th class="num col-msgs">Mensagens</th>
+            <th>Última atividade</th>
+          </tr>
+        </thead>
+        <tbody id="homeRows">
+        </tbody>
+      </table>
+    </div>
+
+    <div id="createWrap" class="card">
+
+      <div id="scForm" class="hide">
+
+        <div class="mut" style="margin-bottom:6px">
+          Cria a tua comunidade
+        </div>
+
+        <input id="scName" maxlength="40"
+          placeholder="Nome (2 a 40 caracteres)">
+
+        <label class="mut" for="scView">Quem pode ver</label>
+        <select id="scView">
+          <option value="all">Todos</option>
+          <option value="user">Utilizadores</option>
+          <option value="media">Media</option>
+          <option value="moderator">Moderadores</option>
+          <option value="admin">Admin</option>
+        </select>
+
+        <label class="mut" for="scPublish">Quem pode publicar</label>
+        <select id="scPublish">
+          <option value="user">Utilizadores</option>
+          <option value="media">Media</option>
+          <option value="moderator">Moderadores</option>
+          <option value="admin">Admin</option>
+        </select>
+
+        <label class="mut" for="scReply">Quem pode responder</label>
+        <select id="scReply">
+          <option value="user">Utilizadores</option>
+          <option value="media">Media</option>
+          <option value="moderator">Moderadores</option>
+          <option value="admin">Admin</option>
+        </select>
+
+        <button id="scSend" class="sortbtn">+ Nova comunidade</button>
+
+        <div id="scMsg" class="msg"></div>
+
+      </div>
+
+      <div id="scRestrict" class="mut hide">
+        Apenas moderadores criam comunidades.
+      </div>
+
+    </div>
+
+    <h2 style="margin-top:22px">Atividade recente</h2>
+
+    <div id="recentState"></div>
+
+    <div class="sheet" id="recentSheet">
+      <table class="ftbl">
+        <tbody id="recentRows">
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <section id="vList" class="hide">
+
+    <div class="fhead">
+      <a id="lBack" class="backlink" href="#">← Fórum</a>
+      <h2 class="ptitle" id="lTitle">…</h2>
+      <div class="mut" id="lCounts"></div>
+    </div>
+
+    <div class="sortrow">
+      <input
+        id="q"
+        placeholder="Pesquisar neste fórum"
+        aria-label="Pesquisar publicações"
+        autocomplete="off"
+      >
+    </div>
+
+    <div id="listState"></div>
+
+    <div class="sheet" id="listSheet">
+      <table class="ftbl">
+        <thead>
+          <tr>
+            <th>Tópico</th>
+            <th class="hide-xs">Autor</th>
+            <th class="num">Respostas</th>
+            <th>Última atividade</th>
+          </tr>
+        </thead>
+        <tbody id="listRows">
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <section id="vThread" class="hide">
+    <div id="threadMount"></div>
+  </section>
 
 </div>
 
@@ -571,27 +476,20 @@ var configured = ECL.configured;
 var sb = ECL.sb;
 var getSession = ECL.getSession;
 var endSession = ECL.endSession;
+var flagHtml = ECL.flagHtml || function(){ return ""; };
 
 var posts = [];
 var teachers = [];
 var profiles = [];
-var myVotes = {};
-var expanded = {};
 var replyTo = {};
 var setupNeeded = false;
 var loaded = false;
-var sortMode = "new";
 var branches = [];
-var selBranch = -1;
 var composerOpen = false;
-var cont = {};
+var cur = { v:"home", id:0 };
 
 function paintAcct(){
   ECL.paintAcct("forum.html");
-}
-
-function doLogout(){
-  ECL.doLogout();
 }
 
 function profById(id){
@@ -610,7 +508,27 @@ function authorHtml(p){
   var pr = profById(p.user_id);
 
   if(pr)
-    return esc(pr.username) + ' ' + badgeHtml(pr.role);
+    return flagHtml(pr.country) + esc(pr.username) + ' ' + badgeHtml(pr.role);
+
+  if(p.author_name && p.author_name !== "Anónimo")
+    return esc(p.author_name);
+
+  if(p.user_id)
+    return "utilizador removido";
+
+  return "Anónimo";
+
+}
+
+function shortAuthor(p){
+
+  if(!p)
+    return "";
+
+  var pr = profById(p.user_id);
+
+  if(pr)
+    return flagHtml(pr.country) + esc(pr.username);
 
   if(p.author_name && p.author_name !== "Anónimo")
     return esc(p.author_name);
@@ -649,10 +567,7 @@ function branchReplyable(rootId){
   if(!p) return false;
   var bid = Number(p.branch_id) || 0;
   if(!bid) return true;
-  var br = null;
-  branches.forEach(function(x){
-    if(Number(x.id) === bid) br = x;
-  });
+  var br = branchById(bid);
   if(!br) return false;
   return accessLvl(br.access_reply || "user") <= accessLvl(s ? s.role : "");
 }
@@ -665,14 +580,14 @@ function subLvlMax(rootId){
 
   while(stack.length){
 
-    var cur = stack.pop();
+    var curId = stack.pop();
 
-    if(seen[cur])
+    if(seen[curId])
       continue;
 
-    seen[cur] = 1;
+    seen[curId] = 1;
 
-    var p = byId(cur);
+    var p = byId(curId);
 
     if(p){
 
@@ -684,7 +599,7 @@ function subLvlMax(rootId){
 
     }
 
-    kidsOf(cur).forEach(function(k){
+    kidsOf(curId).forEach(function(k){
       stack.push(Number(k.id));
     });
 
@@ -718,14 +633,21 @@ function canDel(p){
 
 }
 
-function renderForms(){
+function branchById(id){
 
-  var s = !!getSession();
+  if(!id)
+    return null;
 
-  $("ntOpen").classList.toggle("hide", !s || composerOpen);
-  $("ntCard").classList.toggle("hide", !s || !composerOpen);
-  $("ntAnon").classList.toggle("hide", s);
+  return branches.find(function(x){
+    return Number(x.id) === Number(id);
+  }) || null;
 
+}
+
+function branchExists(id){
+  if(!id)
+    return true;
+  return !!branchById(id);
 }
 
 function branchName(id){
@@ -733,11 +655,427 @@ function branchName(id){
   if(!id)
     return "Geral";
 
-  var b = branches.find(function(x){
-    return Number(x.id) === Number(id);
-  });
+  var b = branchById(id);
 
   return b ? b.name : "Geral";
+
+}
+
+function teacherById(id){
+
+  return teachers.find(function(t){
+    return Number(t.id) === Number(id);
+  });
+
+}
+
+function byId(id){
+
+  return posts.find(function(p){
+    return Number(p.id) === Number(id);
+  }) || null;
+
+}
+
+function kidsOf(id){
+
+  return posts.filter(function(p){
+    return Number(p.parent_id) === Number(id);
+  });
+
+}
+
+function descendants(id){
+
+  var k = kidsOf(id);
+
+  return k.reduce(function(n,c){
+    return n + 1 + descendants(c.id);
+  }, 0);
+
+}
+
+function descList(id){
+
+  var out = [];
+
+  kidsOf(id).forEach(function(k){
+    out.push(k);
+    out = out.concat(descList(k.id));
+  });
+
+  return out;
+
+}
+
+function rootOf(p){
+
+  var curP = p;
+  var guard = 0;
+
+  while(curP && curP.parent_id && guard < 80){
+    var nx = byId(curP.parent_id);
+    if(!nx)
+      break;
+    curP = nx;
+    guard++;
+  }
+
+  return curP || p;
+
+}
+
+/* estatísticas por tópico e por comunidade numa única passagem */
+function buildStats(){
+
+  var byRoot = {};
+  var byBranch = {};
+
+  function slot(map, key){
+    if(!map[key])
+      map[key] = { topics:0, msgs:0, last:null, lastPost:null };
+    return map[key];
+  }
+
+  posts.forEach(function(p){
+
+    var r = rootOf(p);
+    var rid = Number(r.id);
+    var bid = Number(r.branch_id) || 0;
+
+    var rs = slot(byRoot, rid);
+    rs.msgs++;
+    if(!r.parent_id)
+      rs.topics++;
+    if(!rs.last || String(p.created_at) >= String(rs.last)){
+      rs.last = p.created_at;
+      rs.lastPost = p;
+    }
+
+    var bs = slot(byBranch, bid);
+    bs.msgs++;
+    if(!r.parent_id)
+      bs.topics++;
+    if(!bs.last || String(p.created_at) >= String(bs.last)){
+      bs.last = p.created_at;
+      bs.lastPost = p;
+    }
+
+  });
+
+  return { roots:byRoot, branches:byBranch };
+
+}
+
+function parseHash(){
+
+  var h = location.hash.replace(/^#/,"");
+  var m;
+
+  if((m = h.match(/^topico-(\d+)$/)))
+    return { v:"thread", id:Number(m[1]) };
+
+  if((m = h.match(/^comunidade-(\d+)$/)))
+    return { v:"list", id:Number(m[1]) };
+
+  return { v:"home", id:0 };
+
+}
+
+function scrollToPost(id){
+
+  var el = document.querySelector('[data-post="' + id + '"]');
+
+  if(!el)
+    return;
+
+  el.scrollIntoView({ block:"start" });
+
+  el.classList.remove("hl");
+  void el.offsetWidth;
+  el.classList.add("hl");
+
+  setTimeout(function(){
+    el.classList.remove("hl");
+  }, 1800);
+
+}
+
+function fmtWhen(v){
+
+  if(!v)
+    return "";
+
+  var d = new Date(v);
+
+  if(isNaN(d))
+    return "";
+
+  var s = (Date.now() - d.getTime()) / 1000;
+
+  if(s < 60)
+    return "agora";
+
+  if(s < 3600)
+    return "há " + Math.floor(s / 60) + " min";
+
+  if(s < 86400)
+    return "há " + Math.floor(s / 3600) + " h";
+
+  if(s < 86400 * 30)
+    return "há " + Math.floor(s / 86400) + " d";
+
+  return fmtDate(d);
+
+}
+
+function authFail(msg){
+
+  endSession();
+  paintAcct();
+  ECL.fireAuthChange();
+
+  return msg || "Sessão expirada. Volte a iniciar sessão.";
+
+}
+
+function globalState(){
+
+  if(!configured)
+    return "Configure a base de dados para usar o fórum.";
+
+  if(setupNeeded)
+    return "Fórum por configurar.";
+
+  if(!loaded)
+    return "A carregar…";
+
+  return "";
+
+}
+
+function canPublishHere(){
+
+  if(cur.v !== "list")
+    return true;
+
+  if(!cur.id)
+    return true;
+
+  var b = branchById(cur.id);
+
+  return b ? branchPublishable(b) : false;
+
+}
+
+function renderForms(){
+
+  var s = !!getSession();
+  var g = !!globalState();
+  var onThread = cur.v === "thread";
+  var pub = canPublishHere();
+
+  if(composerOpen && (g || onThread || !s || !pub))
+    composerOpen = false;
+
+  var hideBar = g || onThread;
+
+  $("ntbar").classList.toggle("hide", hideBar);
+  $("ntAnon").classList.toggle("hide", hideBar || s);
+  $("ntOpen").classList.toggle("hide", hideBar || !s || !pub || composerOpen);
+  $("ntCard").classList.toggle("hide", hideBar || !s || !composerOpen);
+
+}
+
+function renderCreate(){
+
+  var showForm = canCreateBranch(getSession());
+
+  $("scForm").classList.toggle("hide", !showForm);
+  $("scRestrict").classList.toggle("hide", showForm);
+
+}
+
+function renderHome(){
+
+  var stat = buildStats();
+
+  var items = [{ id:0, name:"Geral" }].concat(branches.map(function(b){
+    return { id:Number(b.id), name:b.name };
+  }));
+
+  $("homeRows").innerHTML = items.map(function(it){
+
+    var st = stat.branches[it.id] ||
+      { topics:0, msgs:0, last:null, lastPost:null };
+
+    var last = st.last
+      ? '<span class="hide-xs">' + shortAuthor(st.lastPost) + ' · </span>' +
+        esc(fmtWhen(st.last))
+      : "—";
+
+    return '<tr data-open="#comunidade-' + it.id + '">' +
+      '<td><a class="tlink" href="#comunidade-' + it.id + '">' +
+        esc(it.name) +
+      '</a></td>' +
+      '<td class="num">' + st.topics + '</td>' +
+      '<td class="num col-msgs">' + st.msgs + '</td>' +
+      '<td class="fsub nowrap">' + last + '</td>' +
+    '</tr>';
+
+  }).join("");
+
+  var rec = Object.keys(stat.roots).map(function(rid){
+    var rs = stat.roots[rid];
+    return { p:byId(Number(rid)), last:rs.last, lastPost:rs.lastPost };
+  }).filter(function(x){
+    return x.p && !x.p.parent_id;
+  }).sort(function(a,b){
+    return String(b.last).localeCompare(String(a.last));
+  }).slice(0, 10);
+
+  var recEmpty = rec.length
+    ? ""
+    : '<div class="state">Ainda não há atividade recente.</div>';
+
+  $("recentState").innerHTML = recEmpty;
+  $("recentSheet").classList.toggle("hide", !rec.length);
+
+  $("recentRows").innerHTML = rec.map(function(x){
+
+    var t = x.p;
+    var n = descendants(t.id);
+    var tid = Number(t.branch_id) || 0;
+
+    return '<tr data-open="#topico-' + t.id + '">' +
+      '<td>' +
+        (t.pinned ? '<span class="pinchip">fixado</span> ' : "") +
+        '<a class="tlink" href="#topico-' + t.id + '">' +
+          esc(t.title) +
+        '</a> ' +
+        '<span class="tag">' + esc(branchName(tid)) + '</span> ' +
+        '<span class="fsub">· ' + n + ' resposta' +
+          (n === 1 ? "" : "s") + '</span>' +
+      '</td>' +
+      '<td class="fsub nowrap" style="text-align:right">' +
+        '<span class="hide-xs">' + shortAuthor(t) + ' · </span>' +
+        esc(fmtWhen(x.last)) +
+      '</td>' +
+    '</tr>';
+
+  }).join("");
+
+}
+
+function renderList(){
+
+  var bid = Number(cur.id) || 0;
+
+  $("lBack").setAttribute("href", "#");
+  $("lBack").textContent = "← Fórum";
+
+  if(!branchExists(bid)){
+
+    $("lTitle").textContent = "Comunidade";
+    $("lCounts").textContent = "";
+    $("listState").innerHTML =
+      '<div class="state">Comunidade não encontrada.</div>';
+    $("listSheet").classList.add("hide");
+    return;
+
+  }
+
+  var s = getSession();
+  var pub = canPublishHere();
+  var q = ($("q").value || "").toLowerCase();
+  var stat = buildStats();
+
+  $("lBack").setAttribute("href", "#");
+  $("lTitle").textContent = branchName(bid);
+  $("lCounts").textContent =
+    topicCount(bid) + " tópico" + (topicCount(bid) === 1 ? "" : "s") +
+    " · " +
+    ((stat.branches[bid] ? stat.branches[bid].msgs : 0)) + " mensagem" +
+    (((stat.branches[bid] ? stat.branches[bid].msgs : 0)) === 1 ? "" : "s") +
+    (s && !pub ? " · Somente leitura" : "");
+
+  var rows = posts.filter(function(p){
+    return !p.parent_id &&
+      (Number(p.branch_id) || 0) === bid;
+  }).filter(function(t){
+
+    var name = teacherById(t.teacher_id);
+
+    var hay =
+      t.title + " " +
+      (t.content || "") + " " +
+      (name ? name.name + " " + name.subject : "");
+
+    return hay.toLowerCase().indexOf(q) >= 0;
+
+  }).sort(function(a,b){
+
+    var pa = a.pinned ? 1 : 0;
+    var pb = b.pinned ? 1 : 0;
+
+    if(pa !== pb)
+      return pb - pa;
+
+    var la = stat.roots[Number(a.id)] ? stat.roots[Number(a.id)].last : a.created_at;
+    var lb = stat.roots[Number(b.id)] ? stat.roots[Number(b.id)].last : b.created_at;
+
+    return String(lb).localeCompare(String(la));
+
+  });
+
+  if(!rows.length){
+
+    $("listState").innerHTML =
+      '<div class="state">' +
+      (posts.length
+        ? (q
+            ? "Nada corresponde à pesquisa."
+            : "Ainda não há publicações nesta comunidade.")
+        : "Ainda não há publicações. Cria a primeira!") +
+      '</div>';
+
+    $("listSheet").classList.add("hide");
+    return;
+
+  }
+
+  $("listState").innerHTML = "";
+  $("listSheet").classList.remove("hide");
+
+  $("listRows").innerHTML = rows.map(function(t){
+
+    var n = descendants(t.id);
+    var name = teacherById(t.teacher_id);
+    var rs = stat.roots[Number(t.id)] || { last:t.created_at, lastPost:t };
+
+    return '<tr data-open="#topico-' + t.id + '">' +
+      '<td>' +
+        (t.pinned ? '<span class="pinchip">fixado</span> ' : "") +
+        '<a class="tlink" href="#topico-' + t.id + '">' +
+          esc(t.title) +
+        '</a> ' +
+        (
+          name
+          ? '<a class="tag" href="teacher.html?id=' + name.id + '">' +
+            esc(name.name) +
+            '</a>'
+          : ""
+        ) +
+      '</td>' +
+      '<td class="hide-xs">' + authorHtml(t) + '</td>' +
+      '<td class="num">' + n + '</td>' +
+      '<td class="fsub nowrap">' +
+        '<span class="hide-xs">' + shortAuthor(rs.lastPost) + ' · </span>' +
+        esc(fmtWhen(rs.last)) +
+      '</td>' +
+    '</tr>';
+
+  }).join("");
 
 }
 
@@ -751,14 +1089,215 @@ function topicCount(bid){
 
 }
 
-function sideItem(id, name, n){
+function cmtRow(c, tid){
 
-  return '<button class="sideItem' +
-      (selBranch === id ? " on" : "") +
-      '" data-branch="' + id + '">' +
-      '<span>' + esc(name) + '</span>' +
-      '<span class="cnt">' + n + '</span>' +
-    '</button>';
+  var parent = c.parent_id ? byId(c.parent_id) : null;
+
+  var ref = parent && Number(c.parent_id) !== Number(tid)
+    ? '<span class="ref">→ responder a <b>' +
+        shortAuthor(parent) +
+      '</b></span>'
+    : "";
+
+  var del = canDel(c)
+    ? ' · <button class="delete mini" data-del="' + c.id + '">apagar</button>'
+    : "";
+
+  return '<div class="cmt">' +
+    ref +
+    '<div class="pmeta">' +
+      authorHtml(c) +
+      ' · ' +
+      fmtWhen(c.created_at) +
+      (branchReplyable(tid)
+        ? ' · <button class="abtn mini" data-reply="' + c.id +
+            '" data-topic="' + tid + '">responder</button>'
+        : "") +
+      del +
+    '</div>' +
+    '<div class="cbody">' +
+      esc(c.content) +
+    '</div>' +
+  '</div>';
+
+}
+
+function threadBoxHtml(t){
+
+  var s = getSession();
+
+  if(s && !branchReplyable(t.id)){
+
+    return '<div class="mut" style="margin-top:12px">' +
+        'Não tens permissões para responder nesta comunidade.' +
+      '</div>';
+
+  }
+
+  if(s){
+
+    var target = replyTo[t.id] || t.id;
+    var tp = byId(target);
+
+    var ctx = replyTo[t.id] && tp
+      ? '<div class="mut" style="margin-bottom:4px">' +
+          'A responder a <b>' +
+          (profById(tp.user_id)
+            ? esc(profById(tp.user_id).username)
+            : esc(tp.author_name || "Anónimo")) +
+          '</b> · ' +
+          '<button class="abtn mini" data-cancelreply="' + t.id +
+            '">cancelar</button>' +
+        '</div>'
+      : "";
+
+    return '<div class="rbox">' +
+        ctx +
+        '<textarea data-rpbody="' + t.id + '" rows="2" maxlength="2000" ' +
+          'placeholder="Comentar…"></textarea>' +
+        '<div>' +
+          '<button class="mini" data-rpsend="' + t.id + '">Enviar</button>' +
+          '<span class="msg" data-rpmsg="' + t.id + '"></span>' +
+        '</div>' +
+      '</div>';
+
+  }
+
+  return '<div class="mut" style="margin-top:12px">' +
+      'Inicia sessão para comentar. ' +
+      '<a href="auth.html?next=' +
+        encodeURIComponent("forum.html#topico-" + t.id) +
+      '">Entrar ou criar conta</a>.' +
+    '</div>';
+
+}
+
+function renderThread(){
+
+  var mount = $("threadMount");
+  var t = byId(cur.id);
+
+  if(!t){
+    mount.innerHTML = '<div class="state">Tópico não encontrado.</div>';
+    return;
+  }
+
+  if(t.parent_id)
+    t = rootOf(t);
+
+  var bid = Number(t.branch_id) || 0;
+  var s = getSession();
+  var n = descendants(t.id);
+  var name = teacherById(t.teacher_id);
+
+  var del = canDel(t)
+    ? ' · <button class="delete mini" data-del="' + t.id + '">apagar</button>'
+    : "";
+
+  var pin = (s && s.role === "owner")
+    ? ' · <button class="abtn mini" data-pin="' + t.id + '">' +
+        (t.pinned ? "desafixar" : "fixar") +
+      '</button>'
+    : "";
+
+  var kids = descList(t.id).sort(function(a,b){
+    return String(b.created_at).localeCompare(String(a.created_at));
+  });
+
+  var list = kids.length
+    ? kids.map(function(c){
+        return cmtRow(c, t.id);
+      }).join("")
+    : '<div class="cmt mut">Ainda não há comentários.</div>';
+
+  mount.innerHTML =
+
+    '<a class="backlink" href="#comunidade-' + bid + '">' +
+      '← ' + esc(branchName(bid)) +
+    '</a>' +
+
+    '<div class="op sheet" data-post="' + t.id + '">' +
+
+      '<div class="ptitle">' +
+        (t.pinned ? '<span class="pinchip">fixado</span> ' : "") +
+        esc(t.title) +
+      '</div>' +
+
+      '<div class="pmeta">' +
+
+        (
+          bid
+          ? '<a class="tag" href="#comunidade-' + bid + '">' +
+              esc(branchName(bid)) +
+            '</a>'
+          : ""
+        ) +
+
+        (
+          name
+          ? '<a class="tag" href="teacher.html?id=' + name.id + '">' +
+            esc(name.name) +
+            '</a>'
+          : ""
+        ) +
+
+        '<span>' +
+          authorHtml(t) +
+          ' · ' +
+          fmtWhen(t.created_at) +
+        '</span>' +
+
+        del +
+        pin +
+      '</div>' +
+
+      '<div class="pbody" style="margin-top:8px">' +
+        esc(t.content) +
+      '</div>' +
+
+    '</div>' +
+
+    '<div class="cmtcount">' +
+      n + ' comentário' + (n === 1 ? "" : "s") +
+    '</div>' +
+
+    '<div class="sheet cmtlist">' +
+      list +
+    '</div>' +
+
+    threadBoxHtml(t);
+
+}
+
+function renderRoute(){
+
+  var prev = cur;
+  cur = parseHash();
+
+  var g = globalState();
+
+  $("vstate").innerHTML = g
+    ? '<div class="state">' + esc(g) + '</div>'
+    : "";
+
+  $("vHome").classList.toggle("hide", !!g || cur.v !== "home");
+  $("vList").classList.toggle("hide", !!g || cur.v !== "list");
+  $("vThread").classList.toggle("hide", !!g || cur.v !== "thread");
+
+  if(!g){
+
+    if(cur.v === "home")
+      renderHome();
+    else if(cur.v === "list")
+      renderList();
+    else
+      renderThread();
+
+  }
+
+  renderForms();
+
+  return prev;
 
 }
 
@@ -829,7 +1368,7 @@ function wireCreate(){
 
         if(/sess.o/i.test(em)){
           m.textContent = authFail();
-          renderSide();
+          renderCreate();
           return;
         }
 
@@ -838,886 +1377,12 @@ function wireCreate(){
 
       }
 
-      selBranch = Number(r.data.id);
+      location.hash = "#comunidade-" + Number(r.data.id);
       loadAll();
 
     });
 
   };
-
-}
-
-function renderSide(){
-
-  var h = "";
-
-  h += sideItem(
-    -1,
-    "Todas",
-    posts.filter(function(t){ return !t.parent_id; }).length
-  );
-
-  h += sideItem(0, "Geral", topicCount(0));
-
-  branches.forEach(function(b){
-    h += sideItem(Number(b.id), b.name, topicCount(b.id));
-  });
-
-  $("sideList").innerHTML = h;
-
-  var s = getSession();
-
-  $("sideCreate").innerHTML = canCreateBranch(s)
-    ? '<div class="mut" style="margin-bottom:6px">' +
-        'Cria a tua comunidade</div>' +
-      '<input id="scName" maxlength="40" ' +
-        'placeholder="Nome (2 a 40 caracteres)">' +
-      '<label class="mut" for="scView">Quem pode ver</label>' +
-      '<select id="scView">' +
-        '<option value="all">Todos</option>' +
-        '<option value="user">Utilizadores</option>' +
-        '<option value="media">Media</option>' +
-        '<option value="moderator">Moderadores</option>' +
-        '<option value="admin">Admin</option>' +
-      '</select>' +
-      '<label class="mut" for="scPublish">Quem pode publicar</label>' +
-      '<select id="scPublish">' +
-        '<option value="user">Utilizadores</option>' +
-        '<option value="media">Media</option>' +
-        '<option value="moderator">Moderadores</option>' +
-        '<option value="admin">Admin</option>' +
-      '</select>' +
-      '<label class="mut" for="scReply">Quem pode responder</label>' +
-      '<select id="scReply">' +
-        '<option value="user">Utilizadores</option>' +
-        '<option value="media">Media</option>' +
-        '<option value="moderator">Moderadores</option>' +
-        '<option value="admin">Admin</option>' +
-      '</select>' +
-      '<button id="scSend" class="sortbtn">+ Nova comunidade</button>' +
-      '<div id="scMsg" class="msg"></div>'
-    : '<div class="mut">Apenas moderadores criam comunidades.</div>';
-
-  if(canCreateBranch(s))
-    wireCreate();
-
-}
-
-function openSide(){
-
-  var el = $("side");
-
-  if(
-    window.matchMedia &&
-    window.matchMedia("(max-width:960px)").matches
-  ){
-
-    var r = $("sideBtn").getBoundingClientRect();
-    var g = el.parentElement.getBoundingClientRect();
-
-    el.style.top = (r.bottom - g.top + 8) + "px";
-    el.style.left = Math.max(0, r.left - g.left) + "px";
-
-  }else{
-    el.style.top = "";
-    el.style.left = "";
-  }
-
-  el.classList.add("open");
-
-}
-
-function closeSide(){
-
-  var el = $("side");
-
-  el.classList.remove("open");
-  el.style.top = "";
-  el.style.left = "";
-
-}
-
-function authFail(msg){
-
-  endSession();
-  paintAcct();
-  myVotes = {};
-  ECL.fireAuthChange();
-
-  return msg || "Sessão expirada. Volte a iniciar sessão.";
-
-}
-
-paintAcct();
-renderForms();
-renderSide();
-
-$("ntOpen").onclick = function(){
-  composerOpen = true;
-  renderForms();
-  var f = $("ntTitle");
-  if(f)
-    f.focus();
-};
-
-$("ntCancel").onclick = function(){
-  composerOpen = false;
-  renderForms();
-};
-
-$("sideList").addEventListener("click", function(e){
-
-  var b = e.target.closest("[data-branch]");
-
-  if(!b)
-    return;
-
-  selBranch = Number(b.getAttribute("data-branch"));
-
-  renderSide();
-  renderFeed();
-  closeSide();
-
-});
-
-function toggleSide(){
-  if($("side").classList.contains("open"))
-    closeSide();
-  else
-    openSide();
-}
-
-$("sideBtn").onclick = toggleSide;
-$("sideTg").onclick = toggleSide;
-
-document.addEventListener("click", function(e){
-
-  if(!$("side").classList.contains("open"))
-    return;
-
-  if(
-    e.target.closest("#side") ||
-    e.target.closest("#sideBtn")
-  )
-    return;
-
-  closeSide();
-
-});
-
-document.addEventListener("keydown", function(e){
-  if(e.key === "Escape")
-    closeSide();
-});
-
-ECL.onAuthChange = function(){
-  renderForms();
-  renderSide();
-  loadMyVotes();
-  renderFeed();
-};
-
-function fmtWhen(v){
-
-  if(!v)
-    return "";
-
-  var d = new Date(v);
-
-  if(isNaN(d))
-    return "";
-
-  var s = (Date.now() - d.getTime()) / 1000;
-
-  if(s < 60)
-    return "agora";
-
-  if(s < 3600)
-    return "há " + Math.floor(s / 60) + " min";
-
-  if(s < 86400)
-    return "há " + Math.floor(s / 3600) + " h";
-
-  if(s < 86400 * 30)
-    return "há " + Math.floor(s / 86400) + " d";
-
-  return fmtDate(d);
-
-}
-
-function teacherById(id){
-
-  return teachers.find(function(t){
-    return Number(t.id) === Number(id);
-  });
-
-}
-
-function byId(id){
-
-  return posts.find(function(p){
-    return Number(p.id) === Number(id);
-  }) || null;
-
-}
-
-function kidsOf(id){
-
-  return posts.filter(function(p){
-    return Number(p.parent_id) === Number(id);
-  });
-
-}
-
-function descendants(id){
-
-  var k = kidsOf(id);
-
-  return k.reduce(function(n,c){
-    return n + 1 + descendants(c.id);
-  }, 0);
-
-}
-
-function topicId(){
-
-  var h = location.hash.replace("#","");
-  var m = h.match(/^topico-(\d+)$/);
-
-  return m ? Number(m[1]) : 0;
-
-}
-
-function scrollToPost(id){
-
-  var el = document.querySelector('[data-post="' + id + '"]');
-
-  if(!el)
-    return;
-
-  el.scrollIntoView({ block:"start" });
-
-  el.classList.remove("hl");
-  void el.offsetWidth;
-  el.classList.add("hl");
-
-  setTimeout(function(){
-    el.classList.remove("hl");
-  }, 1800);
-
-}
-
-function updateVoteUi(id){
-
-  var mine = myVotes[Number(id)] || 0;
-
-  var p = byId(id);
-  var sc = p ? Number(p.score) || 0 : 0;
-
-  document
-    .querySelectorAll('[data-score="' + id + '"]')
-    .forEach(function(el){
-      el.textContent = sc;
-      el.classList.toggle("neg", sc < 0);
-    });
-
-  document
-    .querySelectorAll('[data-vote="' + id + '"]')
-    .forEach(function(el){
-      el.classList.toggle(
-        "on",
-        Number(el.getAttribute("data-dir")) === mine
-      );
-    });
-
-}
-
-function votesHtml(id, mini){
-
-  var mine = myVotes[Number(id)] || 0;
-  var p = byId(id);
-  var sc = p ? Number(p.score) || 0 : 0;
-
-  return '<span class="minivotes">' +
-    '<button class="vbtn' + (mini ? " mini" : "") +
-      (mine === 1 ? " on" : "") +
-      '" data-vote="' + id + '" data-dir="1">▲</button>' +
-    '<span class="score' + (sc < 0 ? " neg" : "") +
-      '" data-score="' + id + '">' + sc + '</span>' +
-    '<button class="vbtn' + (mini ? " mini" : "") +
-      (mine === -1 ? " on" : "") +
-      '" data-vote="' + id + '" data-dir="-1">▼</button>' +
-  '</span>';
-
-}
-
-function cmtHtml(c, depth, tid){
-
-  var kids = kidsOf(c.id);
-
-  var del = canDel(c)
-    ? ' · <button class="delete mini" data-del="' + c.id + '">apagar</button>'
-    : "";
-
-  var html =
-    '<div class="cmt" style="padding-left:' +
-      (Math.min(depth, 4) * 14) + 'px">' +
-
-    '<div class="pmeta">' +
-      votesHtml(c.id, true) +
-      authorHtml(c) +
-      ' · ' +
-      fmtWhen(c.created_at) +
-      del +
-    '</div>' +
-
-    '<div class="cbody">' +
-      esc(c.content) +
-    '</div>' +
-
-    '<div>' +
-      (branchReplyable(tid)
-        ? '<button class="abtn mini" data-reply="' + c.id +
-            '" data-topic="' + tid + '">responder</button>'
-        : "") +
-    '</div>';
-
-  if(kids.length){
-
-    if(depth < 4){
-
-      html += '<div class="cmt-kids">' +
-          kids.map(function(k){
-            return cmtHtml(k, depth + 1, tid);
-          }).join("") +
-        '</div>';
-
-    }else if(cont[c.id]){
-
-      html += kids.map(function(k){
-        return cmtHtml(k, depth + 1, tid);
-      }).join("");
-
-    }else{
-
-      html += '<div style="margin-top:6px">' +
-        '<button class="abtn mini" data-cont="' + c.id + '">' +
-          kids.length + ' resposta' + (kids.length === 1 ? "" : "s") +
-          ' adicional' + (kids.length === 1 ? "" : "is") +
-          ' — continuar conversa →' +
-        '</button>' +
-      '</div>';
-
-    }
-
-  }
-
-  html += '</div>';
-
-  return html;
-
-}
-
-function threadHtml(t){
-
-  var kids = kidsOf(t.id);
-  var s = getSession();
-
-  var list = kids.length
-    ? kids.map(function(k){
-        return cmtHtml(k, 1, t.id);
-      }).join("")
-    : '<div class="mut">Ainda não há comentários.</div>';
-
-  var box;
-
-  if(s && !branchReplyable(t.id)){
-
-    box =
-      '<div class="mut" style="margin-top:10px">' +
-        'Não tens permissões para responder nesta comunidade.' +
-      '</div>';
-
-  }else if(s){
-
-    var target = replyTo[t.id] || t.id;
-    var tp = byId(target);
-
-    var ctx = replyTo[t.id] && tp
-      ? '<div class="mut" style="margin-bottom:4px">' +
-          'A responder a <b>' +
-          (profById(tp.user_id)
-            ? esc(profById(tp.user_id).username)
-            : esc(tp.author_name || "Anónimo")) +
-          '</b> · ' +
-          '<button class="abtn mini" data-cancelreply="' + t.id +
-            '">cancelar</button>' +
-        '</div>'
-      : "";
-
-    box =
-      '<div class="rbox">' +
-        ctx +
-        '<textarea data-rpbody="' + t.id + '" rows="2" maxlength="2000" ' +
-          'placeholder="Comentar…"></textarea>' +
-        '<div>' +
-          '<button class="mini" data-rpsend="' + t.id + '">Enviar</button>' +
-          '<span class="msg" data-rpmsg="' + t.id + '"></span>' +
-        '</div>' +
-      '</div>';
-
-  }else{
-
-    box =
-      '<div class="mut" style="margin-top:10px">' +
-        'Inicia sessão para comentar. ' +
-        '<a href="auth.html?next=' +
-          encodeURIComponent("forum.html#topico-" + t.id) +
-        '">Entrar ou criar conta</a>.' +
-      '</div>';
-
-  }
-
-  return '<div class="thread">' + list + box + '</div>';
-
-}
-
-function cardHtml(t){
-
-  var open = !!expanded[t.id];
-  var n = descendants(t.id);
-  var name = teacherById(t.teacher_id);
-
-  var del = canDel(t)
-    ? ' · <button class="delete mini" data-del="' + t.id + '">apagar</button>'
-    : "";
-
-  var sMe = getSession();
-
-  var pin = (sMe && sMe.role === "owner")
-    ? ' · <button class="abtn mini" data-pin="' + t.id + '">' +
-        (t.pinned ? "desafixar" : "fixar") +
-      '</button>'
-    : "";
-
-  return '<div class="post-card' + (open ? " open" : "") +
-      '" data-post="' + t.id + '">' +
-
-    '<div class="votes">' +
-      '<button class="vbtn' +
-        (myVotes[t.id] === 1 ? " on" : "") +
-        '" data-vote="' + t.id + '" data-dir="1">▲</button>' +
-      '<span class="score' +
-        ((Number(t.score) || 0) < 0 ? " neg" : "") +
-        '" data-score="' + t.id + '">' +
-        (Number(t.score) || 0) +
-      '</span>' +
-      '<button class="vbtn' +
-        (myVotes[t.id] === -1 ? " on" : "") +
-        '" data-vote="' + t.id + '" data-dir="-1">▼</button>' +
-    '</div>' +
-
-    '<div class="pcontent">' +
-
-      '<div class="ptitle">' +
-        (t.pinned ? '<span class="pinchip">fixado</span>' : "") +
-        esc(t.title) +
-      '</div>' +
-
-      '<div class="pmeta">' +
-
-        (
-          Number(t.branch_id)
-          ? '<a class="tag" href="#" data-gobranch="' +
-              Number(t.branch_id) + '">' +
-              esc(branchName(t.branch_id)) +
-            '</a>'
-          : ""
-        ) +
-
-        (
-          name
-          ? '<a class="tag" href="teacher.html?id=' + name.id + '">' +
-            esc(name.name) +
-            '</a>'
-          : ""
-        ) +
-
-        '<span>' +
-          authorHtml(t) +
-          ' · ' +
-          fmtWhen(t.created_at) +
-        '</span>' +
-
-        del +
-        pin +
-      '</div>' +
-
-      '<div class="pbody">' +
-        esc(t.content) +
-      '</div>' +
-
-      '<div class="pact">' +
-        '<button class="abtn" data-expand="' + t.id + '">' +
-          (open
-            ? "fechar comentários"
-            : (n
-                ? n + " comentário" + (n === 1 ? "" : "s")
-                : "comentar")) +
-        '</button>' +
-      '</div>' +
-
-      (open ? threadHtml(t) : "") +
-
-    '</div>' +
-
-  '</div>';
-
-}
-
-function renderFeed(){
-
-  if(!configured){
-
-    $("feed").innerHTML =
-      '<div class="state">' +
-      'Configure a base de dados para usar o fórum.' +
-      '</div>';
-
-    return;
-  }
-
-  if(setupNeeded)
-    return;
-
-  if(!loaded){
-
-    $("feed").innerHTML =
-      '<div class="state">A carregar…</div>';
-
-    return;
-  }
-
-  var q = $("q").value.toLowerCase();
-
-  var rows = posts.filter(function(p){
-    return !p.parent_id;
-  }).filter(function(t){
-
-    if(selBranch === -1)
-      return true;
-
-    return (Number(t.branch_id) || 0) === selBranch;
-
-  }).filter(function(t){
-
-    var name = teacherById(t.teacher_id);
-
-    var hay =
-      t.title + " " +
-      (t.content || "") + " " +
-      (name ? name.name + " " + name.subject : "");
-
-    return hay.toLowerCase().indexOf(q) >= 0;
-
-  }).sort(function(a,b){
-
-    var pa = a.pinned ? 1 : 0;
-    var pb = b.pinned ? 1 : 0;
-
-    if(pa !== pb)
-      return pb - pa;
-
-    if(sortMode === "top"){
-
-      var d = (Number(b.score) || 0) - (Number(a.score) || 0);
-
-      if(d)
-        return d;
-
-    }
-
-    return String(b.created_at).localeCompare(String(a.created_at));
-
-  });
-
-  $("feed").innerHTML = rows.length
-    ? rows.map(cardHtml).join("")
-    : '<div class="state">' +
-      (posts.length
-        ? (selBranch === -1
-            ? "Nada corresponde à pesquisa."
-            : "Ainda não há publicações nesta comunidade.")
-        : "Ainda não há publicações. Cria a primeira!") +
-      '</div>';
-
-  fitReplyBoxes();
-
-}
-
-/* sticky só quando a conversa é alta; em conversas curtas fica em fluxo
-   normal (senão há um vazio flutuante acima da caixa de resposta) */
-function fitReplyBoxes(){
-
-  document.querySelectorAll(".thread").forEach(function(th){
-
-    var box = th.querySelector(".rbox");
-
-    if(box)
-      box.classList.toggle(
-        "nosticky",
-        th.scrollHeight <= window.innerHeight - 100
-      );
-
-  });
-
-}
-
-function showSetup(){
-
-  setupNeeded = true;
-  $("setupWarn").classList.remove("hide");
-  $("feed").innerHTML =
-    '<div class="state">Fórum por configurar.</div>';
-
-}
-
-function loadMyVotes(){
-
-  myVotes = {};
-
-  if(!configured || !sb)
-    return;
-
-  var s = getSession();
-
-  if(!s)
-    return;
-
-  sb.rpc("my_votes",{ p_token:s.token }).then(function(r){
-
-    if(r.error || !r.data)
-      return;
-
-    Object.keys(r.data).forEach(function(k){
-      myVotes[Number(k)] = Number(r.data[k]) || 0;
-    });
-
-    renderFeed();
-
-  });
-
-}
-
-function loadAll(){
-
-  if(!configured)
-    return;
-
-  var s = getSession();
-  var token = s ? s.token : null;
-
-  Promise.all([
-
-    sb.rpc("forum_feed",{p_token:token}),
-
-    sb
-      .from("teachers")
-      .select("*")
-      .order("name")
-      .limit(1000),
-
-    sb
-      .from("profiles")
-      .select("id,username,role")
-      .limit(1000)
-
-  ]).then(function(res){
-
-    var fr = res[0];
-    var tr = res[1];
-    var pr = res[2];
-
-    if(tr.error){
-
-      console.error(tr.error);
-
-      if(tr.error.code === "42P01"){
-        showSetup();
-      }else{
-        $("feed").innerHTML =
-          '<div class="state">' +
-          'Erro a carregar dados.' +
-          '</div>';
-      }
-
-      return;
-
-    }
-
-    var feedOk = !fr.error && fr.data;
-
-    if(!feedOk && fr.error &&
-       /banida|sess.o/i.test(fr.error.message || "")){
-      ECL.toast(authFail(),"err");
-      return;
-    }
-
-    if(!feedOk && fr.error && fr.error.code === "42P01"){
-      showSetup();
-      return;
-    }
-
-    function restFeed(){
-
-      return Promise.all([
-
-        sb
-          .from("forum_posts")
-          .select("*")
-          .order("id",{ascending:false})
-          .limit(1000),
-
-        sb
-          .from("forum_branches")
-          .select("*")
-          .order("name")
-          .limit(1000)
-
-      ]).then(function(f){
-
-        if(f[0].error || f[1].error){
-
-          var e = f[0].error || f[1].error;
-
-          console.error(e);
-
-          if(e.code === "42P01"){
-            showSetup();
-          }else{
-            $("feed").innerHTML =
-              '<div class="state">' +
-              'Erro a carregar dados.' +
-              '</div>';
-          }
-
-          return null;
-        }
-
-        return {
-          posts:(f[0].data || []).slice().reverse(),
-          branches:f[1].data || []
-        };
-
-      });
-
-    }
-
-    var fp = feedOk
-      ? Promise.resolve({
-          posts:(fr.data.posts || []).slice().reverse(),
-          branches:fr.data.branches || []
-        })
-      : restFeed();
-
-    return fp.then(function(feed){
-
-      if(!feed)
-        return;
-
-      posts = feed.posts;
-      teachers = tr.data || [];
-      profiles = pr.data || [];
-      branches = feed.branches;
-      loaded = true;
-
-      var tw = $("truncWarn");
-      if(tw){
-        tw.classList.toggle(
-          "hide",
-          posts.length < 1000 && teachers.length < 1000
-        );
-      }
-
-      if(
-        selBranch > 0 &&
-        !branches.some(function(b){
-          return Number(b.id) === selBranch;
-        })
-      ){
-        selBranch = -1;
-      }
-
-      Object.keys(expanded).forEach(function(k){
-        if(!byId(k))
-          delete expanded[k];
-      });
-
-      Object.keys(cont).forEach(function(k){
-        if(!byId(k))
-          delete cont[k];
-      });
-
-      var hid = topicId();
-
-      if(hid && byId(hid))
-        expanded[hid] = true;
-
-      var sel = $("ntTeacher");
-      var prev = sel.value;
-
-      sel.innerHTML =
-        '<option value="">— Sem professor associado —</option>' +
-        teachers.map(function(t){
-          return '<option value="' + t.id + '">' +
-            esc(t.name) +
-            ' (' +
-            esc(t.subject) +
-            ')</option>';
-        }).join("");
-
-      sel.value = prev;
-
-      var sel2 = $("ntBranch");
-      var prev2 = sel2.value;
-      var nbv = "0";
-
-      if(
-        prev2 && Number(prev2) > 0 &&
-        branches.some(function(b){
-          return Number(b.id) === Number(prev2) && branchPublishable(b);
-        })
-      ){
-        nbv = prev2;
-      }else if(
-        selBranch > 0 &&
-        branches.some(function(b){
-          return Number(b.id) === selBranch && branchPublishable(b);
-        })
-      ){
-        nbv = String(selBranch);
-      }
-
-      sel2.innerHTML =
-        '<option value="0">Comunidade: Geral</option>' +
-        branches.filter(branchPublishable).map(function(b){
-          return '<option value="' + b.id + '">' +
-            esc(b.name) +
-            '</option>';
-        }).join("");
-
-      sel2.value = nbv;
-
-      renderSide();
-      renderFeed();
-      loadMyVotes();
-
-      if(hid && byId(hid))
-        scrollToPost(hid);
-
-    });
-
-  });
 
 }
 
@@ -1773,17 +1438,194 @@ function sendPost(rpcName, params, msgEl, clearFn, btn){
 
 }
 
+function showSetup(){
+
+  setupNeeded = true;
+  $("setupWarn").classList.remove("hide");
+  renderRoute();
+
+}
+
+function loadAll(){
+
+  if(!configured)
+    return;
+
+  var s = getSession();
+  var token = s ? s.token : null;
+
+  Promise.all([
+
+    sb.rpc("forum_feed",{p_token:token}),
+
+    sb
+      .from("teachers")
+      .select("*")
+      .order("name")
+      .limit(1000),
+
+    sb
+      .from("profiles")
+      .select("*")
+      .limit(1000)
+
+  ]).then(function(res){
+
+    var fr = res[0];
+    var tr = res[1];
+    var pr = res[2];
+
+    if(tr.error){
+
+      console.error(tr.error);
+
+      if(tr.error.code === "42P01"){
+        showSetup();
+      }else{
+        renderRoute();
+      }
+
+      return;
+
+    }
+
+    var feedOk = !fr.error && fr.data;
+
+    if(!feedOk && fr.error &&
+       /banida|sess.o/i.test(fr.error.message || "")){
+      ECL.toast(authFail(),"err");
+      return;
+    }
+
+    if(!feedOk && fr.error && fr.error.code === "42P01"){
+      showSetup();
+      return;
+    }
+
+    function restFeed(){
+
+      return Promise.all([
+
+        sb
+          .from("forum_posts")
+          .select("*")
+          .order("id",{ascending:false})
+          .limit(1000),
+
+        sb
+          .from("forum_branches")
+          .select("*")
+          .order("name")
+          .limit(1000)
+
+      ]).then(function(f){
+
+        if(f[0].error || f[1].error){
+
+          var e = f[0].error || f[1].error;
+
+          console.error(e);
+
+          if(e.code === "42P01"){
+            showSetup();
+          }else{
+            renderRoute();
+          }
+
+          return null;
+        }
+
+        return {
+          posts:(f[0].data || []).slice().reverse(),
+          branches:f[1].data || []
+        };
+
+      });
+
+    }
+
+    var fp = feedOk
+      ? Promise.resolve({
+          posts:(fr.data.posts || []).slice().reverse(),
+          branches:fr.data.branches || []
+        })
+      : restFeed();
+
+    return fp.then(function(feed){
+
+      if(!feed)
+        return;
+
+      posts = feed.posts;
+      teachers = tr.data || [];
+      profiles = pr.data || [];
+      branches = feed.branches;
+      loaded = true;
+
+      var tw = $("truncWarn");
+      if(tw){
+        tw.classList.toggle(
+          "hide",
+          posts.length < 1000 && teachers.length < 1000
+        );
+      }
+
+      var sel = $("ntTeacher");
+      var prev = sel.value;
+
+      sel.innerHTML =
+        '<option value="">— Sem professor associado —</option>' +
+        teachers.map(function(t){
+          return '<option value="' + t.id + '">' +
+            esc(t.name) +
+            ' (' +
+            esc(t.subject) +
+            ')</option>';
+        }).join("");
+
+      sel.value = prev;
+
+      renderRoute();
+
+      if(cur.v === "thread" && byId(cur.id))
+        scrollToPost(cur.id);
+
+    });
+
+  });
+
+}
+
+paintAcct();
+renderCreate();
+renderRoute();
+wireCreate();
+
+$("ntOpen").onclick = function(){
+  composerOpen = true;
+  renderForms();
+  var f = $("ntTitle");
+  if(f)
+    f.focus();
+};
+
+$("ntCancel").onclick = function(){
+  composerOpen = false;
+  renderForms();
+};
+
 $("ntBody").oninput = function(){
   $("ntLen").textContent = $("ntBody").value.length;
 };
 
-$("ntSend").onclick=function(){
+$("ntSend").onclick = function(){
 
   var m = $("ntMsg");
 
   var title = $("ntTitle").value.trim();
   var body = $("ntBody").value.trim();
   var tid = $("ntTeacher").value;
+  var bid = (cur.v === "list" && cur.id) ? cur.id : 0;
 
   if(title.length < 3){
 
@@ -1814,7 +1656,7 @@ $("ntSend").onclick=function(){
       p_title:title,
       p_content:body,
       p_teacher_id: tid ? Number(tid) : null,
-      p_branch_id: Number($("ntBranch").value) || null
+      p_branch_id: bid || null
     },
     m,
     function(){
@@ -1822,6 +1664,7 @@ $("ntSend").onclick=function(){
       $("ntBody").value = "";
       $("ntLen").textContent = "0";
       composerOpen = false;
+      location.hash = "#comunidade-" + bid;
       renderForms();
     },
     $("ntSend")
@@ -1829,138 +1672,43 @@ $("ntSend").onclick=function(){
 
 };
 
-$("sortNew").onclick = function(){
-  sortMode = "new";
-  $("sortNew").classList.add("on");
-  $("sortTop").classList.remove("on");
-  $("sortNew").setAttribute("aria-pressed","true");
-  $("sortTop").setAttribute("aria-pressed","false");
-  renderFeed();
+$("q").oninput = function(){
+  if(cur.v === "list")
+    renderList();
 };
 
-$("sortTop").onclick = function(){
-  sortMode = "top";
-  $("sortTop").classList.add("on");
-  $("sortNew").classList.remove("on");
-  $("sortTop").setAttribute("aria-pressed","true");
-  $("sortNew").setAttribute("aria-pressed","false");
-  renderFeed();
+ECL.onAuthChange = function(){
+  renderCreate();
+  renderForms();
+  renderRoute();
 };
 
-$("q").oninput = renderFeed;
+$("main").addEventListener("click", function(e){
 
-function doVote(id, dir){
+  var op = e.target.closest("[data-open]");
 
-  var s = getSession();
+  if(op){
 
-  if(!s){
-    location.href =
-      "auth.html?next=" + encodeURIComponent("forum.html" + location.hash);
-    return;
-  }
-
-  if(!configured)
-    return;
-
-  sb.rpc("forum_vote",{
-    p_token:s.token,
-    p_id:Number(id),
-    p_value:Number(dir)
-  }).then(function(r){
-
-    if(r.error){
-
-      console.error(r.error);
-
-      var em = r.error.message || "Erro ao votar.";
-
-      if(/sess.o/i.test(em)){
-        ECL.toast(authFail(),"err");
-        return;
-      }
-
-      ECL.toast(em,"err");
+    if(e.target.closest("a"))
       return;
 
-    }
-
-    myVotes[Number(id)] = Number(r.data.mine) || 0;
-
-    if(!myVotes[Number(id)])
-      delete myVotes[Number(id)];
-
-    var p = byId(id);
-
-    if(p)
-      p.score = r.data.score;
-
-    updateVoteUi(id);
-
-  });
-
-}
-
-$("feed").addEventListener("click", function(e){
-
-  var gb = e.target.closest("[data-gobranch]");
-
-  if(gb){
-
-    e.preventDefault();
-
-    selBranch = Number(gb.getAttribute("data-gobranch"));
-
-    renderSide();
-    renderFeed();
-
-    window.scrollTo({ top:0 });
-
+    location.hash = op.getAttribute("data-open");
     return;
-  }
 
-  var v = e.target.closest("[data-vote]");
-
-  if(v){
-    doVote(
-      v.getAttribute("data-vote"),
-      v.getAttribute("data-dir")
-    );
-    return;
-  }
-
-  var x = e.target.closest("[data-expand]");
-
-  if(x){
-
-    var id = x.getAttribute("data-expand");
-
-    expanded[id] = !expanded[id];
-
-    renderFeed();
-
-    if(expanded[id]){
-
-      var el = document.querySelector('[data-post="' + id + '"]');
-
-      if(el)
-        el.scrollIntoView({ block:"nearest" });
-
-    }
-
-    return;
   }
 
   var rp = e.target.closest("[data-reply]");
 
   if(rp){
 
-    replyTo[rp.getAttribute("data-topic")] =
-      Number(rp.getAttribute("data-reply"));
+    var topicId = Number(rp.getAttribute("data-topic"));
 
-    renderFeed();
+    replyTo[topicId] = Number(rp.getAttribute("data-reply"));
+
+    renderThread();
 
     var box = document.querySelector(
-      '[data-rpbody="' + rp.getAttribute("data-topic") + '"]'
+      '[data-rpbody="' + topicId + '"]'
     );
 
     if(box)
@@ -1973,7 +1721,7 @@ $("feed").addEventListener("click", function(e){
 
   if(cr){
     delete replyTo[cr.getAttribute("data-cancelreply")];
-    renderFeed();
+    renderThread();
     return;
   }
 
@@ -2124,33 +1872,18 @@ $("feed").addEventListener("click", function(e){
 
   }
 
-  var ct = e.target.closest("[data-cont]");
-
-  if(ct){
-
-    cont[ct.getAttribute("data-cont")] = true;
-
-    renderFeed();
-
-    return;
-
-  }
-
 });
 
 window.addEventListener("hashchange", function(){
 
-  var id = topicId();
+  $("q").value = "";
 
-  if(id && byId(id)){
+  renderRoute();
 
-    expanded[id] = true;
-
-    renderFeed();
-
-    scrollToPost(id);
-
-  }
+  if(cur.v === "thread" && byId(cur.id))
+    scrollToPost(cur.id);
+  else
+    window.scrollTo({ top:0 });
 
 });
 
@@ -2174,8 +1907,6 @@ if(configured){
     .subscribe();
 
 }
-
-renderFeed();
 
 })();
 

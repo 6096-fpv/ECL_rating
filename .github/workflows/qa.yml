@@ -1,0 +1,40 @@
+name: qa
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: qa
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - run: node make-fixtures.mjs
+
+      - name: gate dark
+        run: node gate.mjs || node gate.mjs
+        env:
+          ECL_THEME: dark
+
+      - name: gate light
+        run: node gate.mjs || node gate.mjs
+        env:
+          ECL_THEME: light
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: qa-shots
+          path: qa/shots
+          if-no-files-found: ignore

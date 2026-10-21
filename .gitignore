@@ -1,1 +1,4 @@
 setup.sql
+qa/node_modules
+qa/fixtures
+qa/shots

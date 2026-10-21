@@ -32,7 +32,8 @@ Last audit: 2026-10-21 (static client + Supabase backend).
   levels: `forum_feed` hides branches below `access_view`,
   `forum_create` requires `access_publish`, `forum_reply` requires
   `access_reply` (resolved via the topic's root branch);
-  levels are managed by moderators+ via `branch_access_update`.
+  levels are managed by moderators+ via `branch_access_update`, and
+  creation (`branch_create`, moderator+) happens in the admin panel.
 - Forum deletion follows a role hierarchy (mod: users only; admin: all
   except owner; owner: all). Pinned topics (`pinned`) are toggled only
   by `owner` via `post_pin`.

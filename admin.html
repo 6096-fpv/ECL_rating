@@ -603,15 +603,51 @@ width:100%;
 
                 <h2>Comunidades</h2>
 
-                <div id="branchesList">
+                <div class="mut" style="margin-bottom:6px">
+                    Cria a tua comunidade
+                </div>
+
+                <input id="scName" maxlength="40"
+                    placeholder="Nome (2 a 40 caracteres)">
+
+                <label class="mut" for="scView">Quem pode ver</label>
+                <select id="scView">
+                    <option value="all">Todos</option>
+                    <option value="user">Utilizadores</option>
+                    <option value="media">Media</option>
+                    <option value="moderator">Moderadores</option>
+                    <option value="admin">Admin</option>
+                </select>
+
+                <label class="mut" for="scPublish">Quem pode publicar</label>
+                <select id="scPublish">
+                    <option value="user">Utilizadores</option>
+                    <option value="media">Media</option>
+                    <option value="moderator">Moderadores</option>
+                    <option value="admin">Admin</option>
+                </select>
+
+                <label class="mut" for="scReply">Quem pode responder</label>
+                <select id="scReply">
+                    <option value="user">Utilizadores</option>
+                    <option value="media">Media</option>
+                    <option value="moderator">Moderadores</option>
+                    <option value="admin">Admin</option>
+                </select>
+
+                <button id="scSend" onclick="createBranch()">
+                    + Nova comunidade
+                </button>
+
+                <div id="scMsg" class="msg"></div>
+
+                <div id="branchesList" style="margin-top:14px">
                     A carregar...
                 </div>
 
                 <div class="message">
                     O nível de escrita tem de ser igual ou mais
                     restrito que o de visualização.
-                    Comunidades novas são criadas no fórum por
-                    moderadores.
                 </div>
 
             </div>
@@ -2086,6 +2122,80 @@ function saveBranch(id){
                 b.access_publish = publish;
                 b.access_reply = reply;
             }
+
+        });
+
+}
+
+
+function createBranch(){
+
+    var m = document.getElementById("scMsg");
+    var name = document.getElementById("scName").value.trim();
+    var me = getSession();
+
+    if(!me){
+        authFail();
+        return;
+    }
+
+    if(name.length < 2 || name.length > 40){
+        m.textContent = "O nome deve ter de 2 a 40 caracteres.";
+        return;
+    }
+
+    var view = document.getElementById("scView").value;
+    var publish = document.getElementById("scPublish").value;
+    var reply = document.getElementById("scReply").value;
+
+    var lv = { all:0, user:1, media:2, moderator:3, admin:4 };
+
+    if((lv[publish] || 0) < (lv[view] || 0)){
+        m.textContent = "Quem publica tem de conseguir ver.";
+        return;
+    }
+
+    if((lv[reply] || 0) < (lv[view] || 0)){
+        m.textContent = "Quem responde tem de conseguir ver.";
+        return;
+    }
+
+    m.textContent = "";
+
+    var btn = document.getElementById("scSend");
+    btn.disabled = true;
+
+
+    sb
+        .rpc("branch_create",{
+            p_token:me.token,
+            p_name:name,
+            p_view:view,
+            p_publish:publish,
+            p_reply:reply
+        })
+        .then(function(result){
+
+            btn.disabled = false;
+
+            if(result.error){
+
+                console.error(result.error);
+
+                if(isAuthErr(result.error)){
+                    authFail();
+                    return;
+                }
+
+                m.textContent = result.error.message || "Erro ao criar.";
+                return;
+
+            }
+
+            m.textContent = "";
+            document.getElementById("scName").value = "";
+            ECL.toast("Comunidade criada.");
+            loadData();
 
         });
 

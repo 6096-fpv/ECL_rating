@@ -140,6 +140,16 @@ font-size:12px;
   color:var(--mut);
 }
 
+.texsum{
+margin-top:3px;
+  font-size:12px;
+  line-height:1.35;
+  color:var(--mut);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
 .fhead{
 margin-top:2px;
 }
@@ -990,6 +1000,11 @@ function renderList(){
     var name = teacherById(t.teacher_id);
     var rs = stat.roots[Number(t.id)] || { last:t.created_at, lastPost:t };
 
+    var ex = String(t.content || "").replace(/\s+/g, " ").trim();
+
+    if(ex.length > 160)
+      ex = ex.slice(0, 160).replace(/\s+\S*$/, "").trim() + "…";
+
     return '<tr data-open="#topico-' + t.id + '">' +
       '<td>' +
         (t.pinned ? '<span class="pinchip">fixado</span> ' : "") +
@@ -1003,6 +1018,7 @@ function renderList(){
             '</a>'
           : ""
         ) +
+        (ex ? '<div class="texsum">' + esc(ex) + '</div>' : "") +
       '</td>' +
       '<td class="hide-xs">' + authorHtml(t) + '</td>' +
       '<td class="num">' + n + '</td>' +

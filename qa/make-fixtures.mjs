@@ -7,7 +7,7 @@ const out = path.join(root, "qa", "fixtures");
 
 const pages = [
   "index.html", "top.html", "forum.html", "teacher.html",
-  "conta.html", "auth.html", "admin.html"
+  "conta.html", "auth.html", "admin.html", "perfil.html"
 ];
 const assets = ["app.js", "style.css", "favicon.svg"];
 

@@ -663,7 +663,9 @@ function render(){
         var pr = profById(x.user_id);
 
         var who = pr
-          ? esc(pr.username) + ' ' + badgeHtml(pr.role)
+          ? '<a class="who-link" href="perfil.html?id=' +
+            encodeURIComponent(pr.id) + '">' + esc(pr.username) +
+            '</a> ' + badgeHtml(pr.role)
           : "Anónimo";
 
         return '<div class="cm">' +

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Perfil público de um utilizador com as suas avaliações de professores.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F2EE">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0D0F14">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+<title>Perfil – Escola Comércio Lisboa</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.wrap{
+max-width:760px;
+}
+
+.back{
+display:inline-block;
+  margin-top:14px;
+  font-size:13px;
+}
+
+.hero{
+display:flex;
+  gap:14px;
+  align-items:flex-start;
+}
+
+.avatar{
+flex:0 0 auto;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  background:var(--ac-soft);
+  color:var(--ac);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:20px;
+}
+
+.hero-main{
+flex:1;
+  min-width:0;
+}
+
+.hero-main h1{
+margin:0;
+}
+
+.stats{
+display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-top:12px;
+  font-size:13px;
+  color:var(--mut);
+}
+
+.stats b{
+color:var(--tx);
+}
+
+.chiprow{
+display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.pchip{
+font-size:12px;
+  font-weight:700;
+  padding:3px 10px;
+  border-radius:6px;
+  background:var(--ac-soft);
+  color:var(--ac);
+}
+
+.pchip.warn{
+background:#8a4b0012;
+  color:#a45a00;
+}
+
+.pchip.bad{
+background:#8a1f1f12;
+  color:#c0392b;
+}
+
+.cm{
+padding:10px 0;
+  border-top:1px solid var(--bd);
+  margin-top:10px;
+  font-size:14px;
+}
+
+.cm:first-of-type{
+border-top:0;
+  padding-top:0;
+  margin-top:0;
+}
+
+.cm .txt{
+overflow-wrap:anywhere;
+}
+
+.cm .who{
+font-weight:700;
+  margin-bottom:2px;
+}
+
+.cm .meta{
+margin-top:4px;
+  font-size:12px;
+  color:var(--mut);
+}
+</style>
+</head>
+
+<body>
+<a class="skip" href="#main">Saltar para o conteúdo</a>
+
+<div class="top">
+  <b>Escola Comércio Lisboa</b>
+  <span class="sub">· Avaliação de professores</span>
+  <nav>
+    <a href="index.html">Professores</a>
+    <a href="top.html">Top</a>
+    <a href="forum.html">Fórum</a>
+    <span id="acct" class="acct"></span>
+  </nav>
+</div>
+
+<div class="wrap" id="main">
+
+  <a class="back" href="index.html">← Voltar</a>
+
+  <div id="cfgWarn" class="warn hide">
+    A base de dados ainda não está configurada.
+  </div>
+
+  <div id="content" class="hide">
+
+    <div class="card hero">
+
+      <div class="avatar" id="pfAvatar">?</div>
+
+      <div class="hero-main">
+        <h1>
+          <span id="pfName">…</span>
+          <span id="pfBadge"></span>
+        </h1>
+        <div class="mut" id="pfSince"></div>
+        <div class="chiprow hide" id="pfChips"></div>
+        <div class="stats" id="pfStats"></div>
+      </div>
+
+    </div>
+
+    <div class="card hide" id="pfOwn">
+
+      <div class="mut" style="margin:0">
+        Este é o teu perfil público.
+        <a href="conta.html">Gerir conta</a>
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <h2>Avaliações</h2>
+
+      <div id="pfList"></div>
+
+    </div>
+
+  </div>
+
+  <div id="missing" class="card mut hide">
+    Utilizador não encontrado.
+    <a href="index.html">Ver todos os professores</a>.
+  </div>
+
+  <div id="loading" class="card mut">
+    A carregar…
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
+
+<script src="app.js"></script>
+<script>
+(function(){
+
+  var $ = ECL.$;
+  var esc = ECL.esc;
+  var fmtDate = ECL.fmtDate;
+  var fmtDateTime = ECL.fmtDateTime;
+  var badgeHtml = ECL.badgeHtml;
+  var flagHtml = ECL.flagHtml;
+  var sb = ECL.sb;
+  var configured = ECL.configured;
+
+  ECL.paintAcct();
+  ECL.paintNews();
+
+  var qs = new URLSearchParams(location.search);
+  var uid = qs.get("id") || "";
+
+  var profile = null;
+  var ratings = [];
+  var teachers = {};
+  var isOwn = false;
+
+  function initials(name){
+
+    var parts = String(name).trim().split(/\s+/);
+
+    var out = (parts[0] || "").charAt(0);
+
+    if(parts.length > 1){
+      out += parts[parts.length - 1].charAt(0);
+    }
+
+    return out.toUpperCase();
+  }
+
+  function showMissing(){
+    $("loading").classList.add("hide");
+    $("missing").classList.remove("hide");
+  }
+
+  function render(){
+
+    if(!profile){
+      showMissing();
+      return;
+    }
+
+    document.title = profile.username + " – Avaliação de Professores";
+
+    $("pfAvatar").textContent = initials(profile.username);
+    $("pfName").textContent = profile.username;
+    $("pfBadge").innerHTML = flagHtml(profile.country) + " " + badgeHtml(profile.role);
+
+    $("pfSince").textContent = profile.created_at
+      ? "Membro desde " + fmtDate(profile.created_at)
+      : "";
+
+    if(isOwn)
+      $("pfOwn").classList.remove("hide");
+
+    var chips = "";
+
+    if(profile.muted_until && new Date(profile.muted_until) > new Date())
+      chips += '<span class="pchip warn">Silenciado até ' +
+        fmtDateTime(profile.muted_until) + "</span>";
+
+    if(profile.banned)
+      chips += '<span class="pchip bad">Conta banida</span>';
+
+    if(chips)
+      $("pfChips").innerHTML = chips, $("pfChips").classList.remove("hide");
+
+    var nCm = ratings.filter(function(x){
+      return x.comment && x.comment.trim();
+    }).length;
+
+    var mean = ratings.length
+      ? ratings.reduce(function(a,x){
+          return a + Number(x.clareza) + Number(x.apoio) + Number(x.justica);
+        }, 0) / (ratings.length * 3)
+      : 0;
+
+    $("pfStats").innerHTML =
+      "<span><b>" + ratings.length + "</b> avaliações</span>" +
+      "<span><b>" + nCm + "</b> com comentário</span>" +
+      (ratings.length
+        ? '<span>Média <b>' + mean.toFixed(1) + "</b></span>"
+        : "");
+
+    $("pfList").innerHTML = ratings.length
+      ? ratings.map(function(x){
+
+          var t = teachers[x.teacher_id];
+
+          var tHtml = t
+            ? '<a href="teacher.html?id=' + x.teacher_id + '">' +
+                esc(t.name) + "</a>"
+            : "Professor";
+
+          return '<div class="cm">' +
+            '<div class="who">' + tHtml +
+            (t && t.subject
+              ? ' <span class="mut" style="font-weight:400">' +
+                  esc(t.subject) + "</span>"
+              : "") +
+            "</div>" +
+            (x.comment
+              ? '<div class="txt">"' + esc(x.comment) + '"</div>'
+              : "") +
+            '<div class="meta">' +
+            fmtDate(x.created_at) +
+            " · Clareza " + Number(x.clareza) +
+            " · Apoio " + Number(x.apoio) +
+            " · Justiça " + Number(x.justica) +
+            "</div>" +
+            "</div>";
+
+        }).join("")
+      : '<div class="mut">Ainda não há avaliações públicas.</div>';
+
+    $("loading").classList.add("hide");
+    $("content").classList.remove("hide");
+  }
+
+  function loadAll(){
+
+    if(!configured || !uid){
+      showMissing();
+      return;
+    }
+
+    var me = ECL.getSession();
+    isOwn = !!(me && String(me.id) === String(uid));
+
+    sb.from("profiles")
+      .select("id,username,role,country,muted_until,banned,created_at")
+      .eq("id", uid)
+      .limit(1)
+      .then(function(prRes){
+
+        var rows = (prRes && prRes.data) || [];
+
+        profile = rows.find(function(x){
+          return String(x.id) === String(uid);
+        }) || null;
+
+        if(!profile){
+          showMissing();
+          return null;
+        }
+
+        return sb.from("ratings")
+          .select("id,teacher_id,clareza,apoio,justica,comment,created_at")
+          .eq("user_id", uid)
+          .order("created_at",{ ascending:false })
+          .limit(50);
+
+      })
+      .then(function(rtRes){
+
+        if(!profile)
+          return null;
+
+        ratings = (rtRes && rtRes.data) || [];
+
+        var ids = [];
+        ratings.forEach(function(x){
+          if(x.teacher_id != null && ids.indexOf(x.teacher_id) < 0)
+            ids.push(x.teacher_id);
+        });
+
+        if(!ids.length){
+          render();
+          return null;
+        }
+
+        return sb.from("teachers")
+          .select("id,name,subject")
+          .in("id", ids)
+          .then(function(thRes){
+            (thRes.data || []).forEach(function(t){
+              teachers[t.id] = t;
+            });
+            render();
+          });
+
+      })
+      .catch(function(){
+        showMissing();
+      });
+  }
+
+  loadAll();
+
+})();
+</script>
+
+</body>
+</html>

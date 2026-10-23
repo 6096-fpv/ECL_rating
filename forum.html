@@ -554,7 +554,10 @@ function authorHtml(p){
   var pr = profById(p.user_id);
 
   if(pr)
-    return flagHtml(pr.country) + esc(pr.username) + ' ' + badgeHtml(pr.role);
+    return flagHtml(pr.country) +
+      '<a class="who-link" href="perfil.html?id=' +
+      encodeURIComponent(pr.id) + '">' + esc(pr.username) +
+      '</a> ' + badgeHtml(pr.role);
 
   if(p.author_name && p.author_name !== "Anónimo")
     return esc(p.author_name);
@@ -574,7 +577,9 @@ function shortAuthor(p){
   var pr = profById(p.user_id);
 
   if(pr)
-    return flagHtml(pr.country) + esc(pr.username);
+    return flagHtml(pr.country) +
+      '<a class="who-link" href="perfil.html?id=' +
+      encodeURIComponent(pr.id) + '">' + esc(pr.username) + '</a>';
 
   if(p.author_name && p.author_name !== "Anónimo")
     return esc(p.author_name);

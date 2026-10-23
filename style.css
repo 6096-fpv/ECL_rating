@@ -184,6 +184,15 @@ a{
   color:var(--ac);
 }
 
+a.who-link{
+  font-weight:700;
+  text-decoration:none;
+}
+
+a.who-link:hover{
+  text-decoration:underline;
+}
+
 .hide{
   display:none!important;
 }

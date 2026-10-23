@@ -21,7 +21,7 @@ function fileUrl(p){
 
 fs.mkdirSync(OUT, { recursive: true });
 
-const pages = ["index.html","top.html","forum.html","teacher.html","conta.html","auth.html","admin.html"];
+const pages = ["index.html","top.html","forum.html","teacher.html","conta.html","auth.html","admin.html","perfil.html"];
 const widths = [[1440,900],[834,1112],[390,844]];
 
 const browser = await puppeteer.launch({
@@ -679,6 +679,127 @@ for(const [w,h] of widths){
     JSON.stringify(csBest));
 
   log("teacher no page errors", errs.length === 0, errs.join("; "));
+}
+
+// 4b. perfil: public profile page (stubbed)
+{
+  const CORS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Methods": "*",
+    "Access-Control-Expose-Headers": "*"
+  };
+  const pProfiles = [
+    { id: "u1", username: "gate", role: "owner", country: null,
+      muted_until: null, banned: false, created_at: "2026-01-01T00:00:00Z" },
+    { id: "u2", username: "ana", role: "user", country: "PT",
+      muted_until: "2099-01-01T00:00:00Z", banned: false,
+      created_at: "2026-02-02T00:00:00Z" }
+  ];
+  const pRatings = [
+    { id: 21, teacher_id: 1, user_id: "u1", clareza: 5, apoio: 4, justica: 3,
+      comment: "Boa explicação", created_at: "2026-10-09T09:00:00Z" },
+    { id: 22, teacher_id: 2, user_id: "u1", clareza: 2, apoio: 2, justica: 5,
+      comment: "", created_at: "2026-10-08T09:00:00Z" }
+  ];
+  const pTeachers = [
+    { id: 1, name: "Helga Duarte", subject: "Matemática" },
+    { id: 2, name: "Professor 2", subject: "Disciplina 2" }
+  ];
+  const onReq = req => {
+    const u = req.url();
+    const json = body => req.respond({ status: 200, headers: CORS, contentType: "application/json", body });
+    if(u.includes("/rest/v1/profiles")) return json(JSON.stringify(pProfiles));
+    if(u.includes("/rest/v1/ratings"))
+      return json(JSON.stringify(u.includes("user_id=eq.u2") ? [] : pRatings));
+    if(u.includes("/rest/v1/teachers")) return json(JSON.stringify(pTeachers));
+    if(u.includes("/rest/v1/rpc/")) return json(JSON.stringify({ count: 0 }));
+    return req.continue();
+  };
+  await browserPage.evaluate(() => localStorage.removeItem("ecl-session"));
+  await browserPage.setRequestInterception(true);
+  browserPage.on("request", onReq);
+  try {
+    // public view (anon): u1 owner with 2 ratings
+    const errs = await open(browserPage, "perfil.html?id=u1", 1440, 900);
+    const pf = await browserPage.evaluate(() => ({
+      content: !document.getElementById("content").classList.contains("hide"),
+      name: (document.getElementById("pfName")||{}).textContent || "",
+      badge: /OWNER/.test((document.getElementById("pfBadge")||{}).textContent || ""),
+      since: /Membro desde/.test((document.getElementById("pfSince")||{}).textContent || ""),
+      stats: (document.getElementById("pfStats")||{}).textContent || "",
+      rows: document.querySelectorAll("#pfList .cm").length,
+      teacherLinks: document.querySelectorAll('#pfList a[href^="teacher.html"]').length,
+      ownHidden: document.getElementById("pfOwn").classList.contains("hide"),
+      chipsHidden: document.getElementById("pfChips").classList.contains("hide")
+    }));
+    log("perfil public view",
+      pf.content && pf.name === "gate" && pf.badge && pf.since &&
+        pf.rows === 2 && pf.teacherLinks === 2 && pf.ownHidden && pf.chipsHidden &&
+        /2 avaliações/.test(pf.stats) && /1 com comentário/.test(pf.stats),
+      JSON.stringify(pf));
+    log("perfil no page errors", errs.length === 0, errs.join("; "));
+
+    // own view (session u2): "Gerir conta" shown + mute chip
+    await browserPage.evaluate(() => localStorage.setItem("ecl-session", JSON.stringify({
+      token: "gate-fake",
+      exp: Math.floor(Date.now() / 1000) + 3600,
+      username: "ana",
+      role: "user",
+      id: "u2"
+    })));
+    const errs2 = await open(browserPage, "perfil.html?id=u2", 1440, 900);
+    const own = await browserPage.evaluate(() => ({
+      name: (document.getElementById("pfName")||{}).textContent || "",
+      ownShown: !document.getElementById("pfOwn").classList.contains("hide"),
+      manage: !!document.querySelector('#pfOwn a[href="conta.html"]'),
+      chipsShown: !document.getElementById("pfChips").classList.contains("hide"),
+      muted: /Silenciado até/.test((document.getElementById("pfChips")||{}).textContent || ""),
+      empty: /Ainda não há avaliações/.test((document.getElementById("pfList")||{}).textContent || "")
+    }));
+    log("perfil own view + mute chip",
+      own.name === "ana" && own.ownShown && own.manage &&
+        own.chipsShown && own.muted && own.empty,
+      JSON.stringify(own));
+    log("perfil own no page errors", errs2.length === 0, errs2.join("; "));
+
+    // missing profile
+    await browserPage.evaluate(() => localStorage.removeItem("ecl-session"));
+    const errs3 = await open(browserPage, "perfil.html?id=zzz", 1440, 900);
+    const miss = await browserPage.evaluate(() => ({
+      missing: !document.getElementById("missing").classList.contains("hide"),
+      contentHidden: document.getElementById("content").classList.contains("hide")
+    }));
+    log("perfil missing profile", miss.missing && miss.contentHidden, JSON.stringify(miss));
+    log("perfil missing no page errors", errs3.length === 0, errs3.join("; "));
+
+    // entry links from teacher comments (errors covered by section 4 live run)
+    await browserPage.setViewport({ width: 1440, height: 900 });
+    await browserPage.goto(
+      "file:///" + path.join(BASE, "teacher.html").replace(/\\/g, "/") + "?id=1",
+      { waitUntil: "networkidle2", timeout: 60000 });
+    await new Promise(r2 => setTimeout(r2, 3500));
+    const elinks = await browserPage.evaluate(() => ({
+      cms: document.querySelectorAll("#comments .cm").length,
+      links: document.querySelectorAll('#comments .who a[href^="perfil.html"]').length
+    }));
+    log("teacher comments link to perfil",
+      elinks.cms === 0 || elinks.links >= 1, JSON.stringify(elinks));
+
+    // mobile overflow (current page: teacher entry)
+    await browserPage.setViewport({ width: 390, height: 844 });
+    await new Promise(r2 => setTimeout(r2, 250));
+    const mov = await browserPage.evaluate(() => ({
+      sw: document.documentElement.scrollWidth,
+      iw: window.innerWidth
+    }));
+    log("teacher entry mobile no overflow", mov.sw <= mov.iw, JSON.stringify(mov));
+    await browserPage.setViewport({ width: 1440, height: 900 });
+  } finally {
+    browserPage.off("request", onReq);
+    await browserPage.setRequestInterception(false);
+    await browserPage.evaluate(() => localStorage.removeItem("ecl-session"));
+  }
 }
 
 // 5. auth: modes + underline tabs + live checklist + no-reset + inline errors

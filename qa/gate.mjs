@@ -1606,6 +1606,19 @@ for(const [w,h] of widths){
     /\.sk\{/.test(cssSrc) && /sk-pulse/.test(cssSrc) &&
       /prefers-reduced-motion:reduce\)\{\s*\.sk\{/.test(cssSrc), "");
 
+  // M7: CSP meta on every page + 404 page
+  for(const f of pages){
+    const s = fs.readFileSync(path.join(BASE, f), "utf8");
+    log("m7 csp meta " + f, /<meta http-equiv="Content-Security-Policy" content="[^"]*script-src[^"]*"/.test(s), "");
+  }
+  const nf = path.join(here, "..", "404.html");
+  const nfSrc = fs.existsSync(nf) ? fs.readFileSync(nf, "utf8") : "";
+  log("m7 csp meta 404.html",
+    /<meta http-equiv="Content-Security-Policy" content="[^"]*script-src[^"]*"/.test(nfSrc), "");
+  log("m7 404 page",
+    /404/.test(nfSrc) && /Página não encontrada/.test(nfSrc) &&
+      /index\.html/.test(nfSrc), "");
+
   const admSrc = fs.readFileSync(path.join(BASE, "admin.html"), "utf8");
   log("p3 admin tab active dark fix",
     /\[data-theme="dark"\]\s*\.tab\.active/.test(admSrc) &&

@@ -153,6 +153,88 @@ margin-top:4px;
   font-size:12px;
   color:var(--mut);
 }
+
+#histCard.hide{
+display:none;
+}
+
+.hrow{
+display:flex;
+  align-items:center;
+  gap:10px;
+  margin:8px 0;
+}
+
+.hlabel{
+width:56px;
+  font-size:12px;
+  font-weight:700;
+  color:var(--mut);
+  flex:none;
+}
+
+.hbars{
+flex:1;
+  display:flex;
+  gap:6px;
+  align-items:flex-end;
+  height:64px;
+}
+
+.hcol{
+flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  height:100%;
+  min-width:0;
+}
+
+.hcount{
+font-size:11px;
+  color:var(--mut);
+  line-height:1.2;
+}
+
+.hbar{
+width:100%;
+  max-width:34px;
+  background:var(--ac);
+  border-radius:3px 3px 0 0;
+}
+
+.hnum{
+font-size:11px;
+  color:var(--mut);
+  line-height:1.2;
+  margin-top:2px;
+}
+
+.sortrow{
+display:flex;
+  gap:8px;
+  margin:0 0 12px;
+  flex-wrap:wrap;
+}
+
+.sortbtn{
+font:inherit;
+  font-size:13px;
+  font-weight:600;
+  padding:4px 12px;
+  border-radius:6px;
+  border:1px solid var(--bd);
+  background:transparent;
+  color:var(--fg);
+  cursor:pointer;
+}
+
+.sortbtn.on{
+background:var(--ac);
+  border-color:var(--ac);
+  color:#fff;
+}
 </style>
 </head>
 
@@ -198,6 +280,14 @@ margin-top:4px;
 
     </div>
 
+    <div class="card hide" id="histCard">
+
+      <h2>Distribuição</h2>
+
+      <div id="tHist"></div>
+
+    </div>
+
     <div class="card">
 
       <h2>Deixar uma avaliação</h2>
@@ -240,6 +330,12 @@ margin-top:4px;
     <div class="card">
 
       <h2>Comentários</h2>
+
+      <div class="sortrow" id="cmSort">
+        <button type="button" class="sortbtn on" data-csort="new" aria-pressed="true">Recentes</button>
+        <button type="button" class="sortbtn" data-csort="old" aria-pressed="false">Antigos</button>
+        <button type="button" class="sortbtn" data-csort="best" aria-pressed="false">Melhores</button>
+      </div>
 
       <div id="comments"></div>
 
@@ -370,6 +466,60 @@ function bar(label,v){
 
 var CRIT_NAME = { c:"Clareza", a:"Apoio", j:"Justiça" };
 
+var cmtSort = "new";
+
+function dist(list,k){
+
+  var d = [0,0,0,0,0];
+
+  list.forEach(function(x){
+    var v = Math.round(Number(x[k]));
+    if(v >= 1 && v <= 5) d[v-1]++;
+  });
+
+  return d;
+}
+
+function histRow(label,counts){
+
+  var max = Math.max.apply(null,counts) || 1;
+
+  return '<div class="hrow">' +
+    '<span class="hlabel">' + label + '</span>' +
+    '<span class="hbars">' +
+    counts.map(function(n,i){
+      return '<span class="hcol">' +
+        '<span class="hcount">' + n + '</span>' +
+        '<span class="hbar" style="height:' +
+        (n ? Math.round((n / max) * 44) + 3 : 0) +
+        'px"></span>' +
+        '<span class="hnum">' + (i + 1) + '</span>' +
+        '</span>';
+    }).join("") +
+    '</span>' +
+    '</div>';
+}
+
+function renderHist(r){
+
+  if(!r.length){
+    $("histCard").classList.add("hide");
+    return;
+  }
+
+  $("histCard").classList.remove("hide");
+
+  $("tHist").innerHTML =
+    '<div class="mut" style="font-size:12px;margin-bottom:6px">' +
+    'Notas de 1 a 5 · nº de avaliações</div>' +
+    histRow("Clareza", dist(r,"clareza")) +
+    histRow("Apoio", dist(r,"apoio")) +
+    histRow("Justiça", dist(r,"justica")) +
+    histRow("Média", dist(r.map(function(x){
+      return { v:(Number(x.clareza) + Number(x.apoio) + Number(x.justica)) / 3 };
+    }), "v"));
+}
+
 document.querySelectorAll("#rateForm .stars").forEach(function(box){
 
   var k = box.dataset.k;
@@ -419,6 +569,17 @@ function selectStar(box,i){
   cur[box.dataset.k] = i;
   paint(box,i);
 }
+
+document.querySelectorAll("#cmSort .sortbtn").forEach(function(b){
+  b.onclick = function(){
+    cmtSort = b.getAttribute("data-csort");
+    document.querySelectorAll("#cmSort .sortbtn").forEach(function(x){
+      x.classList.toggle("on", x === b);
+      x.setAttribute("aria-pressed", String(x === b));
+    });
+    render();
+  };
+});
 
 function paint(box,n){
 
@@ -481,8 +642,19 @@ function render(){
     bar("Apoio",a) +
     bar("Justiça",j);
 
+  renderHist(r);
+
   var withCm = r.filter(function(x){
     return x.comment && x.comment.trim();
+  }).slice();
+
+  withCm.sort(function(a,b){
+    if(cmtSort === "old")
+      return String(a.created_at).localeCompare(String(b.created_at));
+    if(cmtSort === "best")
+      return (Number(b.clareza) + Number(b.apoio) + Number(b.justica)) -
+        (Number(a.clareza) + Number(a.apoio) + Number(a.justica));
+    return String(b.created_at).localeCompare(String(a.created_at));
   });
 
   $("comments").innerHTML = withCm.length

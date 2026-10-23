@@ -614,6 +614,70 @@ for(const [w,h] of widths){
   }));
   log("teacher load", r.content && r.name.length > 0, JSON.stringify(r));
   log("teacher rate gate (anon)", r.rateGate && r.rateFormHidden && r.acctLogin, JSON.stringify(r));
+
+  // M4: rating histogram (visible when ratings exist) + comment sort controls
+  const h = await browserPage.evaluate(() => {
+    const card = document.getElementById("histCard");
+    const rows = document.querySelectorAll("#tHist .hrow");
+    let sum = 0;
+    rows.forEach(row => {
+      row.querySelectorAll(".hcount").forEach(c => { sum += Number(c.textContent) || 0; });
+    });
+    return {
+      hidden: card.classList.contains("hide"),
+      rows: rows.length,
+      sum: sum,
+      labels: Array.from(document.querySelectorAll("#tHist .hlabel")).map(l => l.textContent).join(",")
+    };
+  });
+  log("teacher histogram",
+    h.hidden ? h.rows === 0 : (h.rows === 4 && h.sum >= 1 &&
+      h.labels === "Clareza,Apoio,Justiça,Média"),
+    JSON.stringify(h));
+
+  const cs = await browserPage.evaluate(() => {
+    const btns = Array.from(document.querySelectorAll("#cmSort .sortbtn"));
+    const dates = Array.from(document.querySelectorAll("#comments .cm .meta")).map(m => m.textContent);
+    return {
+      btns: btns.length,
+      on: (btns.find(b => b.classList.contains("on")) || {}).dataset?.csort,
+      pressed: (btns.find(b => b.getAttribute("aria-pressed") === "true") || {}).dataset?.csort,
+      cms: document.querySelectorAll("#comments .cm").length,
+      firstTxt: ((document.querySelector("#comments .cm .txt") || {}).textContent || "").slice(0, 40)
+    };
+  });
+  log("teacher comment sort default",
+    cs.btns === 3 && cs.on === "new" && cs.pressed === "new",
+    JSON.stringify({ btns: cs.btns, on: cs.on, pressed: cs.pressed, cms: cs.cms }));
+
+  await browserPage.click('#cmSort [data-csort="old"]');
+  await new Promise(r2 => setTimeout(r2, 150));
+  const csOld = await browserPage.evaluate(() => {
+    const btns = Array.from(document.querySelectorAll("#cmSort .sortbtn"));
+    return {
+      on: (btns.find(b => b.classList.contains("on")) || {}).dataset?.csort,
+      pressed: (btns.find(b => b.getAttribute("aria-pressed") === "true") || {}).dataset?.csort,
+      firstTxt: ((document.querySelector("#comments .cm .txt") || {}).textContent || "").slice(0, 40)
+    };
+  });
+  log("teacher comment sort antigos",
+    csOld.on === "old" && csOld.pressed === "old" &&
+      (cs.cms < 2 || csOld.firstTxt !== cs.firstTxt),
+    JSON.stringify(csOld));
+
+  await browserPage.click('#cmSort [data-csort="best"]');
+  await new Promise(r2 => setTimeout(r2, 150));
+  const csBest = await browserPage.evaluate(() => {
+    const btns = Array.from(document.querySelectorAll("#cmSort .sortbtn"));
+    return {
+      on: (btns.find(b => b.classList.contains("on")) || {}).dataset?.csort,
+      pressed: (btns.find(b => b.getAttribute("aria-pressed") === "true") || {}).dataset?.csort
+    };
+  });
+  log("teacher comment sort melhores",
+    csBest.on === "best" && csBest.pressed === "best",
+    JSON.stringify(csBest));
+
   log("teacher no page errors", errs.length === 0, errs.join("; "));
 }
 

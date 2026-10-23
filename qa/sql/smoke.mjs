@@ -164,26 +164,34 @@ check("news_count hides admin branch from anon",
   nOwner.count === nAnon.count + 1,
   JSON.stringify({ anon: nAnon.count, owner: nOwner.count }));
 
-// M8: profile tags — catalog, max 2, replace-all, audit, anon read
+// M8: profile tags — owner assigns, max 2, replace-all, audit, anon read
 await db.query("insert into public.tags (label) values ('QA Tag') on conflict (label) do nothing");
 const tagRows = (await db.query("select id, label from public.tags order by id")).rows;
 check("tags catalog seeded", tagRows.length >= 2, JSON.stringify(tagRows));
 
-const st1 = await rpc("set_my_tags", laOk.token, tagRows.map(t => t.id));
-check("set_my_tags up to 2", st1.n === 2, JSON.stringify(st1));
+const plainUid = (await db.query(
+  "select id from private.site_users where username = 'plain1'"
+)).rows[0].id;
+
+await expectErr("admin_tags_set requires owner",
+  () => rpc("admin_tags_set", lb.token, plainUid, [tagRows[0].id]),
+  /permiss|owner/i);
+
+const st1 = await rpc("admin_tags_set", laOk.token, plainUid, tagRows.map(t => t.id));
+check("admin_tags_set up to 2", st1.n === 2, JSON.stringify(st1));
 const mine2 = (await db.query(
-  "select tag_id from public.user_tags where user_id = (select id from private.site_users where username='alice')"
+  "select tag_id from public.user_tags where user_id = (select id from private.site_users where username='plain1')"
 )).rows;
 check("user_tags persisted", mine2.length === 2, JSON.stringify(mine2));
 
-await expectErr("set_my_tags rejects 3",
-  () => rpc("set_my_tags", laOk.token, [...tagRows.map(t => t.id), 99999]),
+await expectErr("admin_tags_set rejects 3",
+  () => rpc("admin_tags_set", laOk.token, plainUid, [...tagRows.map(t => t.id), 99999]),
   /máximo 2/);
 
-const st2 = await rpc("set_my_tags", laOk.token, [tagRows[0].id]);
-check("set_my_tags replace-all", st2.n === 1, JSON.stringify(st2));
+const st2 = await rpc("admin_tags_set", laOk.token, plainUid, [tagRows[0].id]);
+check("admin_tags_set replace-all", st2.n === 1, JSON.stringify(st2));
 const mine1 = (await db.query(
-  "select tag_id from public.user_tags where user_id = (select id from private.site_users where username='alice')"
+  "select tag_id from public.user_tags where user_id = (select id from private.site_users where username='plain1')"
 )).rows;
 check("user_tags replaced", mine1.length === 1 && Number(mine1[0].tag_id) === Number(tagRows[0].id),
   JSON.stringify(mine1));

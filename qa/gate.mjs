@@ -233,7 +233,8 @@ for(const [w,h] of widths){
     few: document.querySelectorAll(".rrow.norank").length,
     fewHdr: (document.getElementById("list").textContent || "").includes("Avaliados poucas vezes"),
     hdr: (document.getElementById("rankHdr")||{}).textContent || "",
-    segOn: !!document.querySelector(".seg .sortbtn.on"),
+    segGone: !document.querySelector(".seg"),
+    avgDefault: /Ordenado por m\u00e9dia/.test((document.getElementById("rankHdr")||{}).textContent || ""),
     chips: document.querySelectorAll("[data-role]").length,
     crits: document.querySelectorAll("[data-crit]").length,
     nota: !!document.getElementById("nota"),
@@ -244,7 +245,7 @@ for(const [w,h] of widths){
     podiumState: (document.getElementById("list").textContent || "").indexOf("Ainda não há professores com 3") >= 0,
     restRank: ((document.querySelector(".rrow:not(.norank) .rrank") || {}).textContent || "").trim()
   }));
-  log("top list", r.rows > 0 && r.segOn && r.chips > 1 && r.crits === 4 && !r.nota, JSON.stringify(r));
+  log("top list (avg-only, no count mode)", r.rows > 0 && r.segGone && r.avgDefault && r.chips > 1 && r.crits === 4 && !r.nota, JSON.stringify(r));
   log("top honesty (n>=3 ranked + few section)",
     r.rows > 0 && r.ranked + r.few === r.rows && /mínimo de 3/.test(r.hdr) && (r.few === 0 || r.fewHdr),
     JSON.stringify({ ranked: r.ranked, few: r.few, fewHdr: r.fewHdr, hdr: r.hdr.slice(0,80) }));
@@ -253,16 +254,7 @@ for(const [w,h] of widths){
       (r.podium < 3 || (r.restRank === "4" && r.podiumOrder === "213" && r.podiumPos === "123")),
     JSON.stringify({ podium: r.podium, pos: r.podiumPos, order: r.podiumOrder, first: r.podiumFirst, restRank: r.restRank }));
 
-  // mode toggle: avg + criterion changes header
-  await browserPage.click("#sortAvg");
-  await new Promise(r2 => setTimeout(r2, 300));
-  const avg = await browserPage.evaluate(() => ({
-    on: !!document.querySelector("#sortAvg.on"),
-    pressed: document.getElementById("sortAvg").getAttribute("aria-pressed"),
-    hdr: (document.getElementById("rankHdr")||{}).textContent || ""
-  }));
-  log("top avg mode", avg.on && avg.pressed === "true" && /Ordenado por média/.test(avg.hdr), JSON.stringify(avg));
-
+  // criterion tab changes header
   await browserPage.click('[data-crit="c"]');
   await new Promise(r2 => setTimeout(r2, 300));
   const cl = await browserPage.evaluate(() => ({
@@ -272,8 +264,6 @@ for(const [w,h] of widths){
   log("top crit clareza", cl.on && /Ordenado por clareza/.test(cl.hdr), JSON.stringify(cl));
 
   // role chip filter
-  await browserPage.click('#sortCount');
-  await new Promise(r2 => setTimeout(r2, 200));
   const chipSel = await browserPage.evaluate(() => {
     const chips = Array.from(document.querySelectorAll("[data-role]"));
     return chips.length > 1 ? chips[1].getAttribute("data-role") : null;
@@ -710,9 +700,11 @@ for(const [w,h] of widths){
   log("teacher load", r.content && r.name.length > 0, JSON.stringify(r));
   log("teacher rate gate (anon)", r.rateGate && r.rateFormHidden && r.acctLogin, JSON.stringify(r));
 
-  // M4: rating histogram (visible when ratings exist) + comment sort controls
+  // M4: collapsible histogram (collapsed by default) + comment sort controls
   const h = await browserPage.evaluate(() => {
     const card = document.getElementById("histCard");
+    const body = document.getElementById("tHist");
+    const tog = document.getElementById("histToggle");
     const rows = document.querySelectorAll("#tHist .hrow");
     let sum = 0;
     rows.forEach(row => {
@@ -720,15 +712,46 @@ for(const [w,h] of widths){
     });
     return {
       hidden: card.classList.contains("hide"),
+      collapsed: body.classList.contains("hide"),
+      expanded: tog.getAttribute("aria-expanded"),
       rows: rows.length,
       sum: sum,
-      labels: Array.from(document.querySelectorAll("#tHist .hlabel")).map(l => l.textContent).join(",")
+      labels: Array.from(document.querySelectorAll("#tHist .hlabel")).map(l => l.textContent).join(","),
+      bars: Array.from(document.querySelectorAll("#tHist .hbar")).map(b => b.style.height).filter(Boolean).length
     };
   });
-  log("teacher histogram",
-    h.hidden ? h.rows === 0 : (h.rows === 4 && h.sum >= 1 &&
-      h.labels === "Clareza,Apoio,Justiça,Média"),
+  log("teacher histogram (collapsed by default)",
+    h.hidden ? h.rows === 0 && h.collapsed : (h.collapsed && h.expanded === "false" && h.bars > 0),
     JSON.stringify(h));
+
+  if(!h.hidden){
+    await browserPage.click("#histToggle");
+    await new Promise(r2 => setTimeout(r2, 200));
+    const h2 = await browserPage.evaluate(() => {
+      const body = document.getElementById("tHist");
+      const tog = document.getElementById("histToggle");
+      const rows = document.querySelectorAll("#tHist .hrow");
+      let sum = 0;
+      rows.forEach(row => {
+        row.querySelectorAll(".hcount").forEach(c => { sum += Number(c.textContent) || 0; });
+      });
+      const bars = Array.from(document.querySelectorAll("#tHist .hbar"));
+      return {
+        collapsed: body.classList.contains("hide"),
+        expanded: tog.getAttribute("aria-expanded"),
+        rows: rows.length,
+        sum: sum,
+        labels: Array.from(document.querySelectorAll("#tHist .hlabel")).map(l => l.textContent).join(","),
+        maxBar: Math.max.apply(null, bars.map(b => parseInt(b.style.height, 10) || 0))
+      };
+    });
+    log("teacher histogram expands on click",
+      !h2.collapsed && h2.expanded === "true" && h2.rows === 4 && h2.sum >= 1 &&
+        h2.labels === "Clareza,Apoio,Justiça,Média" && h2.maxBar >= 40,
+      JSON.stringify(h2));
+  } else {
+    log("teacher histogram expands on click (skipped: no ratings)", true, "");
+  }
 
   const cs = await browserPage.evaluate(() => {
     const btns = Array.from(document.querySelectorAll("#cmSort .sortbtn"));
@@ -996,8 +1019,6 @@ for(const [w,h] of widths){
   let updBody = null;
   let ctvCalled = false;
   let ctvBody = null;
-  let tagsCalled = false;
-  let tagsBody = null;
   const CORS = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "*",
@@ -1031,11 +1052,6 @@ for(const [w,h] of widths){
     } else if(u.includes("/rest/v1/tags")){
       req.respond({ status: 200, headers: CORS, contentType: "application/json",
         body: JSON.stringify([{ id: 1, label: "Aveniggers Clan" }, { id: 2, label: "QA Tag" }]) });
-    } else if(u.includes("/rpc/set_my_tags")){
-      tagsCalled = true;
-      tagsBody = req.postData();
-      req.respond({ status: 200, headers: CORS, contentType: "application/json",
-        body: JSON.stringify({ n: 2 }) });
     } else if(u.includes("/rpc/logout")){
       req.respond({ status: 200, headers: CORS, contentType: "application/json", body: JSON.stringify({}) });
     } else {
@@ -1143,35 +1159,16 @@ for(const [w,h] of widths){
         /flagcdn\.com\/20x15\/fr\.png/.test(ctvSaved.prevSrc),
       JSON.stringify({ ctvCalled, ctvBodyObj, ctvSaved }));
 
-    // M8: tag chips — catalog rendered, preselected, save payload
+    // M8: tags are owner-assigned — conta shows read-only chips, no picker
     const tg = await browserPage.evaluate(() => ({
-      chips: document.querySelectorAll("#tagChips [data-tag]").length,
-      on: Array.from(document.querySelectorAll("#tagChips .chip.on")).map(c => c.textContent).join(","),
-      pressed1: (document.querySelector('#tagChips [data-tag="1"]') || {}).getAttribute ?
-        document.querySelector('#tagChips [data-tag="1"]').getAttribute("aria-pressed") : null
+      chips: document.querySelectorAll("#tagChips .chip").length,
+      chipTxt: (document.getElementById("tagChips") || {}).textContent || "",
+      noPicker: !document.querySelector("#tagChips [data-tag]") && !document.getElementById("tagSave"),
+      ownerNote: /owner atribui/i.test(document.getElementById("tagChips").closest(".card").textContent)
     }));
-    log("conta tag chips",
-      tg.chips === 2 && tg.on === "Aveniggers Clan" && tg.pressed1 === "true",
+    log("conta tags read-only (owner-assigned)",
+      tg.chips === 1 && tg.chipTxt.indexOf("Aveniggers Clan") >= 0 && tg.noPicker && tg.ownerNote,
       JSON.stringify(tg));
-
-    await browserPage.click('#tagChips [data-tag="2"]');
-    await new Promise(r2 => setTimeout(r2, 100));
-    const tgSel = await browserPage.evaluate(() => ({
-      onCount: document.querySelectorAll("#tagChips .chip.on").length
-    }));
-    log("conta tag select second", tgSel.onCount === 2, JSON.stringify(tgSel));
-
-    await browserPage.click("#tagSave");
-    await new Promise(r2 => setTimeout(r2, 400));
-    let tagsBodyObj = null;
-    try { tagsBodyObj = tagsBody ? JSON.parse(tagsBody) : null; } catch(e) {}
-    const tgToast = await browserPage.evaluate(() =>
-      !!document.querySelector("#eclToasts .toast"));
-    log("conta tag save payload",
-      tagsCalled && tagsBodyObj && Array.isArray(tagsBodyObj.p_tag_ids) &&
-        tagsBodyObj.p_tag_ids.length === 2 && tagsBodyObj.p_token === "gate-fake" &&
-        tgToast,
-      JSON.stringify({ tagsCalled, tagsBodyObj, tgToast }));
 
     // profile theme switch (claro/escuro)
     const pth = await browserPage.evaluate(async () => {
@@ -1272,6 +1269,12 @@ for(const [w,h] of widths){
     if(u.includes("/rest/v1/ratings")) return json(JSON.stringify(stubRatings));
     if(u.includes("/rest/v1/forum_posts")) return json(JSON.stringify(stubForum));
     if(u.includes("/rest/v1/profiles")) return json(JSON.stringify(stubProfiles));
+    if(u.includes("/rest/v1/user_tags"))
+      return json(JSON.stringify(u.includes("user_id=eq.u2")
+        ? [{ tag_id: 1, tags: { label: "Aveniggers Clan" } }]
+        : []));
+    if(u.includes("/rest/v1/tags"))
+      return json(JSON.stringify([{ id: 1, label: "Aveniggers Clan" }, { id: 2, label: "QA Tag" }, { id: 3, label: "Terceira" }]));
     if(u.includes("/rest/v1/rpc/")){
       const fn = u.split("/rpc/")[1].split("?")[0];
       if(fn === "session_info" || fn === "login") return json(JSON.stringify(sessionData));
@@ -1555,6 +1558,64 @@ for(const [w,h] of widths){
     const urBody = await rpcArg("user_set_role");
     log("admin role change payload", urBody && urBody.p_id === "u2" && urBody.p_role === "moderator", JSON.stringify(urBody));
 
+    // tags: owner-only picker dialog (max 2) + save payload
+    await browserPage.click('[data-tags="u2"]');
+    await new Promise(r => setTimeout(r, 400));
+    const td = await browserPage.evaluate(() => {
+      const dlg = document.getElementById("tagDlg");
+      const boxes = Array.from(document.querySelectorAll("#tagDlgChips [data-tag]"));
+      return {
+        open: !!dlg && dlg.open,
+        title: (document.getElementById("tagDlgTitle") || {}).textContent || "",
+        boxes: boxes.length,
+        checked: boxes.filter(b => b.checked).length
+      };
+    });
+    log("admin tag dialog opens",
+      td.open && /ana/.test(td.title) && td.boxes === 3 && td.checked === 1,
+      JSON.stringify(td));
+
+    await browserPage.evaluate(() => {
+      const b = document.querySelector('#tagDlgChips [data-tag="2"]');
+      if(b && !b.checked) b.click();
+    });
+    await new Promise(r => setTimeout(r, 100));
+    const td2 = await browserPage.evaluate(() => ({
+      checked: document.querySelectorAll("#tagDlgChips [data-tag]:checked").length
+    }));
+    log("admin tag select second", td2.checked === 2, JSON.stringify(td2));
+
+    await browserPage.evaluate(() => {
+      const b = document.querySelector('#tagDlgChips [data-tag="3"]');
+      if(b && !b.checked) b.click();
+    });
+    await new Promise(r => setTimeout(r, 100));
+    const td3 = await browserPage.evaluate(() => ({
+      checked: document.querySelectorAll("#tagDlgChips [data-tag]:checked").length,
+      msg: (document.getElementById("tagDlgMsg") || {}).textContent || ""
+    }));
+    log("admin tag third rejected",
+      td3.checked === 2 && /m\u00e1ximo 2/.test(td3.msg),
+      JSON.stringify(td3));
+
+    await browserPage.evaluate(() => {
+      const b = document.querySelector('#tagDlgChips [data-tag="2"]');
+      if(b && b.checked) b.click();
+    });
+    await new Promise(r => setTimeout(r, 100));
+    await browserPage.click("#tagDlgSave");
+    await new Promise(r => setTimeout(r, 300));
+    const tagBody = await rpcArg("admin_tags_set");
+    log("admin tag save payload",
+      tagBody && tagBody.p_user_id === "u2" && tagBody.p_token === "gate-fake" &&
+        Array.isArray(tagBody.p_tag_ids) && tagBody.p_tag_ids.length === 1 &&
+        Number(tagBody.p_tag_ids[0]) === 1,
+      JSON.stringify(tagBody));
+    await browserPage.evaluate(() => {
+      const dlg = document.getElementById("tagDlg");
+      if(dlg && dlg.open) dlg.close();
+    });
+
     // audit tab: rows from mod_log_list + CSV builder
     await browserPage.click('[onclick*="openTab(\'auditTab\'"]');
     await new Promise(r => setTimeout(r, 400));
@@ -1685,21 +1746,29 @@ for(const [w,h] of widths){
 
   // M8: tags source wiring
   const setupSrc = fs.readFileSync(path.join(here, "..", "setup.sql"), "utf8");
-  log("m8 sql tags catalog",
+  log("m8 sql tags catalog (owner-only)",
     /create table if not exists public\.tags/.test(setupSrc) &&
       /Aveniggers Clan/.test(setupSrc) &&
-      /create or replace function public\.set_my_tags/.test(setupSrc), "");
+      /create or replace function public\.admin_tags_set/.test(setupSrc) &&
+      /require_min_role\(p_token, 'owner'\)/.test(setupSrc) &&
+      !/set_my_tags/.test(setupSrc), "");
   log("m8 css .tag chip", /\.tag\{/.test(cssSrc), "");
   const contaSrc = fs.readFileSync(path.join(BASE, "conta.html"), "utf8");
-  log("m8 conta set_my_tags wiring",
-    /set_my_tags/.test(contaSrc) && /tagChips/.test(contaSrc) &&
-      /No máximo 2 etiquetas/.test(contaSrc), "");
+  log("m8 conta read-only tags (no picker)",
+    /Sem etiquetas\.|O teu selo/.test(contaSrc) &&
+      !/set_my_tags/.test(contaSrc) &&
+      !/tagSave/.test(contaSrc) &&
+      /tagChips/.test(contaSrc), "");
   const teachSrc = fs.readFileSync(path.join(BASE, "teacher.html"), "utf8");
   log("m8 teacher/perfil tagHtml wiring",
     /tagHtml\(tagMap/.test(teachSrc) &&
       /tagHtml\(tagMap\[p\.user_id\]\)/.test(
         fs.readFileSync(path.join(BASE, "forum.html"), "utf8")) &&
       /tagHtml\(myTags\)/.test(fs.readFileSync(path.join(BASE, "perfil.html"), "utf8")), "");
+  const admTagSrc = fs.readFileSync(path.join(BASE, "admin.html"), "utf8");
+  log("m8 admin owner tag picker wiring",
+    /admin_tags_set/.test(admTagSrc) && /data-tags=/.test(admTagSrc) &&
+      /tagDlg/.test(admTagSrc) && /No m\u00e1ximo 2 etiquetas/.test(admTagSrc), "");
 
   const admSrc = fs.readFileSync(path.join(BASE, "admin.html"), "utf8");
   log("p3 admin tab active dark fix",

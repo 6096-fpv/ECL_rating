@@ -159,19 +159,55 @@ margin-top:4px;
 display:none;
 }
 
-.hrow{
+#tHist.hide{
+display:none;
+}
+
+.htoggle{
 display:flex;
   align-items:center;
-  gap:10px;
+  justify-content:space-between;
+  width:100%;
+  font:inherit;
+  font-size:15px;
+  font-weight:700;
+  color:var(--fg);
+  background:none;
+  border:0;
+  padding:2px 0;
+  cursor:pointer;
+}
+
+.htoggle:focus-visible{
+outline:2px solid var(--ac);
+  outline-offset:2px;
+}
+
+.hchev{
+font-size:14px;
+  color:var(--mut);
+  transition:transform .15s ease;
+}
+
+.htoggle[aria-expanded="true"] .hchev{
+transform:rotate(180deg);
+}
+
+.hrow{
+display:flex;
+  align-items:stretch;
+  gap:8px;
   margin:8px 0;
 }
 
 .hlabel{
-width:56px;
+width:52px;
   font-size:12px;
   font-weight:700;
   color:var(--mut);
   flex:none;
+  display:flex;
+  align-items:center;
 }
 
 .hbars{
@@ -179,7 +215,8 @@ flex:1;
   display:flex;
   gap:6px;
   align-items:flex-end;
-  height:64px;
+  height:96px;
+  border-bottom:1px solid var(--bd);
 }
 
 .hcol{
@@ -194,22 +231,25 @@ flex:1;
 
 .hcount{
 font-size:11px;
-  color:var(--mut);
+  font-weight:700;
+  color:var(--fg);
   line-height:1.2;
+  margin-bottom:2px;
 }
 
 .hbar{
 width:100%;
-  max-width:34px;
+  max-width:38px;
   background:var(--ac);
   border-radius:3px 3px 0 0;
+  min-height:2px;
 }
 
 .hnum{
 font-size:11px;
   color:var(--mut);
   line-height:1.2;
-  margin-top:2px;
+  margin-top:4px;
 }
 
 .sortrow{
@@ -283,9 +323,11 @@ background:var(--ac);
 
     <div class="card hide" id="histCard">
 
-      <h2>Distribuição</h2>
+      <button type="button" id="histToggle" class="htoggle" aria-expanded="false" aria-controls="tHist">
+        <span>Distribuição</span><span class="hchev" aria-hidden="true">▾</span>
+      </button>
 
-      <div id="tHist"></div>
+      <div id="tHist" class="hide"></div>
 
     </div>
 
@@ -491,9 +533,9 @@ function dist(list,k){
   return d;
 }
 
-function histRow(label,counts){
+function histRow(label,counts,maxAll){
 
-  var max = Math.max.apply(null,counts) || 1;
+  var max = maxAll || 1;
 
   return '<div class="hrow">' +
     '<span class="hlabel">' + label + '</span>' +
@@ -502,7 +544,7 @@ function histRow(label,counts){
       return '<span class="hcol">' +
         '<span class="hcount">' + n + '</span>' +
         '<span class="hbar" style="height:' +
-        (n ? Math.round((n / max) * 44) + 3 : 0) +
+        (n ? Math.max(2, Math.round((n / max) * 88)) : 0) +
         'px"></span>' +
         '<span class="hnum">' + (i + 1) + '</span>' +
         '</span>';
@@ -520,16 +562,37 @@ function renderHist(r){
 
   $("histCard").classList.remove("hide");
 
-  $("tHist").innerHTML =
-    '<div class="mut" style="font-size:12px;margin-bottom:6px">' +
-    'Notas de 1 a 5 · nº de avaliações</div>' +
-    histRow("Clareza", dist(r,"clareza")) +
-    histRow("Apoio", dist(r,"apoio")) +
-    histRow("Justiça", dist(r,"justica")) +
-    histRow("Média", dist(r.map(function(x){
+  var rows = [
+    ["Clareza", dist(r,"clareza")],
+    ["Apoio", dist(r,"apoio")],
+    ["Justiça", dist(r,"justica")],
+    ["Média", dist(r.map(function(x){
       return { v:(Number(x.clareza) + Number(x.apoio) + Number(x.justica)) / 3 };
-    }), "v"));
+    }), "v")]
+  ];
+
+  var maxAll = 1;
+
+  rows.forEach(function(row){
+    maxAll = Math.max(maxAll, Math.max.apply(null, row[1]));
+  });
+
+  $("tHist").innerHTML =
+    '<div class="mut" style="font-size:12px;margin-bottom:2px">' +
+    'Notas de 1 a 5 · nº de avaliações</div>' +
+    rows.map(function(row){
+      return histRow(row[0], row[1], maxAll);
+    }).join("");
 }
+
+$("histToggle").onclick = function(){
+
+  var open = !$("tHist").classList.contains("hide");
+
+  $("tHist").classList.toggle("hide", open);
+  this.setAttribute("aria-expanded", String(!open));
+
+};
 
 document.querySelectorAll("#rateForm .stars").forEach(function(box){
 

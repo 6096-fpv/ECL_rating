@@ -18,14 +18,6 @@
 max-width:760px;
 }
 
-.sortrow{
-display:flex;
-  gap:8px;
-  align-items:center;
-  margin:14px 0 0;
-  flex-wrap:wrap;
-}
-
 /* secondary criterion tabs (underline, not pills) */
 .ctabs{
 display:flex;
@@ -291,13 +283,6 @@ color:var(--on-ac);
 
   <h1>Top Professores</h1>
 
-  <div class="sortrow">
-    <div class="seg" role="group" aria-label="Modo de ordenação">
-      <button id="sortCount" class="sortbtn on" data-mode="count" aria-pressed="true">Mais avaliados</button>
-      <button id="sortAvg" class="sortbtn" data-mode="avg" aria-pressed="false">Melhores média</button>
-    </div>
-  </div>
-
   <div class="ctabs" id="critTabs" role="group" aria-label="Critério da pontuação">
     <button class="ctab on" data-crit="m" aria-pressed="true">Média</button>
     <button class="ctab" data-crit="c" aria-pressed="false">Clareza</button>
@@ -342,7 +327,6 @@ var teachers = [];
 var ratings = [];
 var loaded = false;
 
-var sortMode = "count";
 var crit = "m";
 var roleF = "all";
 
@@ -407,12 +391,6 @@ function val(x){
 
 function sortFn(a,b){
 
-  if(sortMode === "count"){
-    return (b.n - a.n) ||
-      (val(b) - val(a)) ||
-      String(a.t.name).localeCompare(String(b.t.name),"pt");
-  }
-
   return (val(b) - val(a)) ||
     (b.n - a.n) ||
     String(a.t.name).localeCompare(String(b.t.name),"pt");
@@ -420,9 +398,6 @@ function sortFn(a,b){
 }
 
 function hdrText(){
-
-  if(sortMode === "count")
-    return "Ordenado por número de avaliações · mínimo de 3 avaliações";
 
   return "Ordenado por " + CRIT_LABEL[crit] +
     " · mínimo de 3 avaliações";
@@ -702,24 +677,6 @@ function setPressed(container,attr,value){
   }
 
 }
-
-function setMode(m){
-
-  sortMode = m;
-
-  setPressed(document.querySelector(".seg"),"data-mode",m);
-
-  render();
-
-}
-
-$("sortAvg").onclick = function(){
-  setMode("avg");
-};
-
-$("sortCount").onclick = function(){
-  setMode("count");
-};
 
 $("critTabs").addEventListener("click",function(e){
 

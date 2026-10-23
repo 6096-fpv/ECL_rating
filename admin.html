@@ -247,6 +247,35 @@ width:56px;
 width:100%;
 }
 
+/* tag dialog (owner-only) */
+dialog#tagDlg{
+border:1px solid var(--bd);
+  border-radius:10px;
+  background:var(--card);
+  color:var(--fg);
+  padding:18px;
+  max-width:420px;
+  width:calc(100% - 32px);
+}
+
+dialog#tagDlg::backdrop{
+background:rgba(0,0,0,.55);
+}
+
+dialog#tagDlg h3{
+margin:0 0 10px;
+  font-size:16px;
+}
+
+.tagchk{
+display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:13px;
+  margin:0 12px 6px 0;
+  cursor:pointer;
+}
+
 @media(max-width:600px){
   .stats{
   grid-template-columns:1fr;
@@ -684,6 +713,21 @@ width:100%;
                 </div>
 
             </div>
+
+            <dialog id="tagDlg" aria-labelledby="tagDlgTitle">
+
+                <h3 id="tagDlgTitle">Etiquetas</h3>
+
+                <div id="tagDlgChips"></div>
+
+                <div id="tagDlgMsg" class="mut" style="font-size:12px;margin:8px 0"></div>
+
+                <div class="actions">
+                    <button id="tagDlgSave">Guardar</button>
+                    <button id="tagDlgClose">Fechar</button>
+                </div>
+
+            </dialog>
 
         </div>
 
@@ -2441,6 +2485,152 @@ function setUserRole(id, role, sel){
 }
 
 
+/* TAGS (owner-only picker) */
+
+var tagDlg = { uid:null, catalog:[], picked:[] };
+
+function openTagDlg(uid){
+
+    var me = getSession();
+
+    if(!me || (ROLE_LEVEL[me.role] || 0) < 3)
+        return;
+
+    var p = profiles.find(function(x){
+        return String(x.id) === String(uid);
+    });
+
+    tagDlg = { uid:uid, catalog:[], picked:[] };
+
+    document.getElementById("tagDlgTitle").textContent =
+        "Etiquetas — " + (p ? p.username : "?");
+    document.getElementById("tagDlgMsg").textContent = "A carregar…";
+    document.getElementById("tagDlgChips").innerHTML = "";
+
+    Promise.all([
+        Promise.resolve(
+            sb.from("tags").select("id,label").order("label")
+        ).then(function(r){ return r.data || []; }).catch(function(){ return []; }),
+        Promise.resolve(
+            sb.from("user_tags").select("tag_id").eq("user_id", uid)
+        ).then(function(r){ return r.data || []; }).catch(function(){ return []; })
+    ]).then(function(res){
+
+        tagDlg.catalog = res[0];
+        tagDlg.picked = (res[1] || []).map(function(x){
+            return Number(x.tag_id);
+        });
+
+        paintTagDlg();
+        document.getElementById("tagDlgMsg").textContent = "";
+        document.getElementById("tagDlg").showModal();
+
+    });
+
+}
+
+function paintTagDlg(){
+
+    var el = document.getElementById("tagDlgChips");
+
+    el.innerHTML = tagDlg.catalog.length
+        ? tagDlg.catalog.map(function(t){
+            var on = tagDlg.picked.indexOf(Number(t.id)) >= 0;
+            return '<label class="tagchk">' +
+                '<input type="checkbox" data-tag="' + Number(t.id) + '"' +
+                (on ? " checked" : "") +
+                '> ' + esc(t.label) +
+                '</label>';
+        }).join("")
+        : '<span class="mut">Catálogo vazio — adiciona etiquetas no setup.sql.</span>';
+
+}
+
+document.getElementById("tagDlgChips").addEventListener("change", function(e){
+
+    var box = e.target.closest("[data-tag]");
+
+    if(!box)
+        return;
+
+    var id = Number(box.getAttribute("data-tag"));
+    var idx = tagDlg.picked.indexOf(id);
+
+    if(box.checked){
+
+        if(tagDlg.picked.length >= 2){
+            box.checked = false;
+            document.getElementById("tagDlgMsg").textContent =
+                "No máximo 2 etiquetas.";
+            return;
+        }
+
+        if(idx < 0)
+            tagDlg.picked.push(id);
+
+    }else if(idx >= 0){
+
+        tagDlg.picked.splice(idx, 1);
+
+    }
+
+    document.getElementById("tagDlgMsg").textContent = "";
+
+});
+
+document.getElementById("tagDlgClose").onclick = function(){
+    document.getElementById("tagDlg").close();
+};
+
+document.getElementById("tagDlgSave").onclick = function(){
+
+    var me = getSession();
+
+    if(!me || !tagDlg.uid)
+        return;
+
+    var btn = this;
+
+    btn.disabled = true;
+
+    Promise.resolve(
+        sb.rpc("admin_tags_set",{
+            p_token:me.token,
+            p_user_id:tagDlg.uid,
+            p_tag_ids: tagDlg.picked.slice().sort(function(a,b){ return a - b; })
+        })
+    ).then(function(result){
+
+        btn.disabled = false;
+
+        if(result.error){
+
+            console.error(result.error);
+
+            if(isAuthErr(result.error)){
+                authFail();
+                return;
+            }
+
+            ECL.toast(result.error.message || "Erro ao guardar etiquetas.","err");
+            return;
+
+        }
+
+        ECL.toast("Etiquetas atualizadas.");
+        document.getElementById("tagDlg").close();
+
+    }).catch(function(err){
+
+        btn.disabled = false;
+        console.error(err);
+        ECL.toast("Erro de rede.","err");
+
+    });
+
+};
+
+
 function renderUsers(){
 
     var list =
@@ -2548,9 +2738,20 @@ function renderUsers(){
 
             var modActions = "";
 
-            if(canMod){
+            if(myLvl >= 3){
 
                 modActions =
+                    '<div class="actions">' +
+                    '<button data-tags="' + escAttr(p.id) + '">' +
+                    'Etiquetas' +
+                    '</button>' +
+                    '</div>';
+
+            }
+
+            if(canMod){
+
+                modActions +=
                     '<div class="actions">' +
 
                     (p.banned
@@ -2627,6 +2828,15 @@ function renderUsers(){
 
         }).join("") +
         '</tbody></table></div>';
+
+
+    list.querySelectorAll("[data-tags]").forEach(function(btn){
+
+        btn.onclick = function(){
+            openTagDlg(btn.getAttribute("data-tags"));
+        };
+
+    });
 
 
     list.querySelectorAll("[data-role-save]").forEach(function(btn){

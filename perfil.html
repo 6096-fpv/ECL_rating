@@ -185,8 +185,15 @@ margin-top:4px;
     <a href="index.html">Ver todos os professores</a>.
   </div>
 
-  <div id="loading" class="card mut">
-    A carregar…
+  <div id="loading" class="card">
+    <div style="display:flex;gap:14px;align-items:flex-start">
+      <div class="sk sk-circle" style="width:56px;height:56px;flex:none"></div>
+      <div style="flex:1;min-width:0">
+        <div class="sk sk-line" style="width:45%"></div>
+        <div class="sk sk-line" style="width:30%;margin-top:10px"></div>
+        <div class="sk sk-line" style="width:60%;margin-top:14px"></div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -329,62 +336,73 @@ margin-top:4px;
     var me = ECL.getSession();
     isOwn = !!(me && String(me.id) === String(uid));
 
-    sb.from("profiles")
-      .select("id,username,role,country,muted_until,banned,created_at")
-      .eq("id", uid)
-      .limit(1)
-      .then(function(prRes){
+    ECL.cached("d-perfil-" + uid, 300000, function(){
 
-        var rows = (prRes && prRes.data) || [];
+      return sb.from("profiles")
+        .select("id,username,role,country,muted_until,banned,created_at")
+        .eq("id", uid)
+        .limit(1)
+        .then(function(prRes){
 
-        profile = rows.find(function(x){
-          return String(x.id) === String(uid);
-        }) || null;
+          var rows = (prRes && prRes.data) || [];
 
-        if(!profile){
-          showMissing();
-          return null;
-        }
+          var found = rows.find(function(x){
+            return String(x.id) === String(uid);
+          }) || null;
 
-        return sb.from("ratings")
-          .select("id,teacher_id,clareza,apoio,justica,comment,created_at")
-          .eq("user_id", uid)
-          .order("created_at",{ ascending:false })
-          .limit(50);
+          if(!found)
+            return { profile: null, ratings: [], teachers: {} };
 
-      })
-      .then(function(rtRes){
+          return sb.from("ratings")
+            .select("id,teacher_id,clareza,apoio,justica,comment,created_at")
+            .eq("user_id", uid)
+            .order("created_at",{ ascending:false })
+            .limit(50)
+            .then(function(rtRes){
 
-        if(!profile)
-          return null;
+              var rt = (rtRes && rtRes.data) || [];
 
-        ratings = (rtRes && rtRes.data) || [];
+              var ids = [];
+              rt.forEach(function(x){
+                if(x.teacher_id != null && ids.indexOf(x.teacher_id) < 0)
+                  ids.push(x.teacher_id);
+              });
 
-        var ids = [];
-        ratings.forEach(function(x){
-          if(x.teacher_id != null && ids.indexOf(x.teacher_id) < 0)
-            ids.push(x.teacher_id);
+              if(!ids.length)
+                return { profile: found, ratings: rt, teachers: {} };
+
+              return sb.from("teachers")
+                .select("id,name,subject")
+                .in("id", ids)
+                .then(function(thRes){
+                  var th = {};
+                  (thRes.data || []).forEach(function(t){
+                    th[t.id] = t;
+                  });
+                  return { profile: found, ratings: rt, teachers: th };
+                });
+
+            });
+
         });
 
-        if(!ids.length){
-          render();
-          return null;
-        }
+    }).then(function(d){
 
-        return sb.from("teachers")
-          .select("id,name,subject")
-          .in("id", ids)
-          .then(function(thRes){
-            (thRes.data || []).forEach(function(t){
-              teachers[t.id] = t;
-            });
-            render();
-          });
-
-      })
-      .catch(function(){
+      if(!d || !d.profile){
         showMissing();
-      });
+        return;
+      }
+
+      profile = d.profile;
+      ratings = d.ratings;
+      teachers = d.teachers;
+
+      render();
+
+    }).catch(function(){
+      showMissing();
+    });
+
   }
 
   loadAll();

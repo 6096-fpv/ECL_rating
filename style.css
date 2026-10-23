@@ -193,6 +193,32 @@ a.who-link:hover{
   text-decoration:underline;
 }
 
+.sk{
+  background:var(--track);
+  border-radius:6px;
+  animation:sk-pulse 1.2s ease-in-out infinite;
+}
+
+.sk-line{
+  height:14px;
+}
+
+.sk-circle{
+  border-radius:50%;
+}
+
+@keyframes sk-pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.45}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .sk{
+    animation:none;
+    opacity:.6;
+  }
+}
+
 .hide{
   display:none!important;
 }

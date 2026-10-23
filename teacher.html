@@ -348,8 +348,17 @@ background:var(--ac);
     <a href="index.html">Ver todos os professores</a>.
   </div>
 
-  <div id="loading" class="card mut">
-    A carregar…
+  <div id="loading" class="card">
+    <div style="display:flex;gap:14px;align-items:flex-start">
+      <div class="sk sk-circle" style="width:56px;height:56px;flex:none"></div>
+      <div style="flex:1;min-width:0">
+        <div class="sk sk-line" style="width:50%"></div>
+        <div class="sk sk-line" style="width:30%;margin-top:10px"></div>
+        <div class="sk sk-line" style="width:75%;margin-top:14px"></div>
+        <div class="sk sk-line" style="width:65%;margin-top:8px"></div>
+        <div class="sk sk-line" style="width:70%;margin-top:8px"></div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -699,43 +708,49 @@ function loadAll(){
     return;
   }
 
-  Promise.all([
+  ECL.cached("d-teacher-" + TEACHER_ID, 300000, function(){
+    return Promise.all([
 
-    sb
-      .from("teachers")
-      .select("*")
-      .eq("id",TEACHER_ID)
-      .maybeSingle(),
+      sb
+        .from("teachers")
+        .select("*")
+        .eq("id",TEACHER_ID)
+        .maybeSingle(),
 
-    sb
-      .from("ratings")
-      .select("*")
-      .eq("teacher_id",TEACHER_ID)
-      .order("id",{ascending:false})
-      .limit(1000),
+      sb
+        .from("ratings")
+        .select("*")
+        .eq("teacher_id",TEACHER_ID)
+        .order("id",{ascending:false})
+        .limit(1000),
 
-    sb
-      .from("profiles")
-      .select("id,username,role")
-      .limit(1000)
+      sb
+        .from("profiles")
+        .select("id,username,role")
+        .limit(1000)
 
-  ]).then(function(res){
+    ]).then(function(res){
 
-    if(res[0].error || res[1].error){
+      if(res[0].error || res[1].error)
+        return Promise.reject(res[0].error || res[1].error);
 
-      console.error(res[0].error);
-      console.error(res[1].error);
+      return {
+        teacher: res[0].data,
+        ratings: res[1].data || [],
+        profiles: res[2].data || []
+      };
 
-      showMissing();
-      return;
-    }
+    });
+  }).then(function(d){
 
-    teacher = res[0].data;
-    ratings = res[1].data || [];
-    profiles = res[2].data || [];
+    teacher = d.teacher;
+    ratings = d.ratings;
+    profiles = d.profiles;
 
     render();
 
+  }).catch(function(){
+    showMissing();
   });
 
 }

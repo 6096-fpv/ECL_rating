@@ -269,6 +269,58 @@ window.ECL = (function(){
     });
   }
 
+  var CACHE_TTL = 300000;
+  var CACHE_MAX = 8;
+
+  function cacheRead(key){
+    try{
+      var raw = localStorage.getItem("ecl-cache");
+      if(!raw) return null;
+      var all = JSON.parse(raw);
+      var e = all && all[key];
+      return e && typeof e.v !== "undefined" ? e : null;
+    }catch(e){
+      return null;
+    }
+  }
+
+  function cacheWrite(key,val){
+    try{
+      var raw = localStorage.getItem("ecl-cache");
+      var all = raw ? JSON.parse(raw) : {};
+      if(!all || typeof all !== "object") all = {};
+      all[key] = { v:val, t:Date.now() };
+      var keys = Object.keys(all);
+      if(keys.length > CACHE_MAX){
+        keys.sort(function(a,b){
+          return (all[a].t || 0) - (all[b].t || 0);
+        });
+        keys.slice(0, keys.length - CACHE_MAX).forEach(function(k){
+          delete all[k];
+        });
+      }
+      localStorage.setItem("ecl-cache", JSON.stringify(all));
+    }catch(e){}
+  }
+
+  function cached(key,ttl,fetchFn){
+    ttl = ttl || CACHE_TTL;
+    var hit = cacheRead(key);
+    var fresh = hit && (Date.now() - hit.t) < ttl;
+
+    if(fresh){
+      Promise.resolve().then(fetchFn).then(function(data){
+        if(data != null) cacheWrite(key,data);
+      }).catch(function(){});
+      return Promise.resolve(hit.v);
+    }
+
+    return Promise.resolve().then(fetchFn).then(function(data){
+      if(data != null) cacheWrite(key,data);
+      return data;
+    });
+  }
+
   var api = {
     SUPABASE_URL: SUPABASE_URL,
     SUPABASE_KEY: SUPABASE_KEY,
@@ -293,7 +345,8 @@ window.ECL = (function(){
     askConfirm: askConfirm,
     paintNews: paintNews,
     getSeen: getSeen,
-    stampSeen: stampSeen
+    stampSeen: stampSeen,
+    cached: cached
   };
 
   Object.defineProperty(api,"onAuthChange",{

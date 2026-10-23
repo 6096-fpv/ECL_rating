@@ -201,8 +201,10 @@ margin-top:18px;
   <div id="rcount" class="rcount" aria-live="polite"></div>
 
   <div id="list" class="grid" style="margin-top:8px">
-    <div class="card mut" style="grid-column:1/-1">
-      A carregar…
+    <div class="card" style="grid-column:1/-1">
+      <div class="sk sk-line" style="width:55%"></div>
+      <div class="sk sk-line" style="width:35%;margin-top:10px"></div>
+      <div class="sk sk-line" style="width:80%;margin-top:10px"></div>
     </div>
   </div>
 
@@ -466,37 +468,36 @@ function loadAll(){
     return;
   }
 
-  Promise.all([
+  ECL.cached("d-index", 300000, function(){
+    return Promise.all([
 
-    sb
-      .from("teachers")
-      .select("*")
-      .order("name")
-      .limit(1000),
+      sb
+        .from("teachers")
+        .select("*")
+        .order("name")
+        .limit(1000),
 
-    sb
-      .from("ratings")
-      .select("*")
-      .order("id",{ascending:false})
-      .limit(1000)
+      sb
+        .from("ratings")
+        .select("*")
+        .order("id",{ascending:false})
+        .limit(1000)
 
-  ]).then(function(res){
+    ]).then(function(res){
 
-    if(res[0].error || res[1].error){
+      if(res[0].error || res[1].error)
+        return Promise.reject(res[0].error || res[1].error);
 
-      console.error("TEACHERS:", res[0].error);
-      console.error("RATINGS:", res[1].error);
+      return {
+        teachers: res[0].data || [],
+        ratings: res[1].data || []
+      };
 
-      $("list").innerHTML =
-        '<div class="card mut" style="grid-column:1/-1">' +
-        'Erro a carregar dados.' +
-        '</div>';
+    });
+  }).then(function(d){
 
-      return;
-    }
-
-    teachers = res[0].data || [];
-    ratings = res[1].data || [];
+    teachers = d.teachers;
+    ratings = d.ratings;
 
     $("truncWarn").classList.toggle(
       "hide",
@@ -505,6 +506,13 @@ function loadAll(){
 
     fillFn();
     render();
+
+  }).catch(function(){
+
+    $("list").innerHTML =
+      '<div class="card mut" style="grid-column:1/-1">' +
+      'Erro a carregar dados.' +
+      '</div>';
 
   });
 

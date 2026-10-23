@@ -139,6 +139,90 @@ for(const [w,h] of widths){
   log("index fn options built", fnOpts.length > 1, fnOpts.slice(0,5).join(" | "));
 }
 
+// 1b. index: loading skeleton + localStorage cache (slow stubs)
+{
+  const CORS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Methods": "*",
+    "Access-Control-Expose-Headers": "*"
+  };
+  const cTeachers = [{ id: 1, name: "Helga Duarte", subject: "Matemática", fn: "Docente" }];
+  for(let i = 2; i <= 30; i++) cTeachers.push({ id: i, name: "Professor " + i, subject: "Disciplina " + (i % 4), fn: "Docente" });
+  const cRatings = [
+    { id: 11, teacher_id: 1, user_id: "u2", clareza: 5, apoio: 5, justica: 3, comment: "", created_at: "2026-10-10T10:00:00Z" }
+  ];
+  let delay = 1200;
+  const onReq = req => {
+    const u = req.url();
+    const json = body => {
+      setTimeout(() => {
+        try { req.respond({ status: 200, headers: CORS, contentType: "application/json", body }); } catch(e){}
+      }, delay);
+    };
+    if(u.includes("/rest/v1/teachers")) return json(JSON.stringify(cTeachers));
+    if(u.includes("/rest/v1/ratings")) return json(JSON.stringify(cRatings));
+    if(u.includes("/rest/v1/rpc/")) return json(JSON.stringify({}));
+    return req.continue();
+  };
+  await browserPage.evaluate(() => {
+    localStorage.removeItem("ecl-cache");
+    localStorage.removeItem("ecl-session");
+  });
+  await browserPage.setRequestInterception(true);
+  browserPage.on("request", onReq);
+  try {
+    await browserPage.setViewport({ width: 1440, height: 900 });
+    await browserPage.goto(
+      "file:///" + path.join(BASE, "index.html").replace(/\\/g, "/"),
+      { waitUntil: "domcontentloaded", timeout: 60000 });
+    await new Promise(r => setTimeout(r, 300));
+    const sk = await browserPage.evaluate(() => ({
+      sk: document.querySelectorAll("#list .sk").length,
+      tcards: document.querySelectorAll(".tcard").length
+    }));
+    log("index skeleton while loading", sk.sk >= 3 && sk.tcards === 0, JSON.stringify(sk));
+
+    await new Promise(r => setTimeout(r, 2500));
+    const done = await browserPage.evaluate(() => ({
+      sk: document.querySelectorAll("#list .sk").length,
+      tcards: document.querySelectorAll(".tcard").length,
+      rcount: (document.getElementById("rcount")||{}).textContent || ""
+    }));
+    log("index skeleton hides after load",
+      done.sk === 0 && done.tcards === 30 && /^30 professores$/.test(done.rcount),
+      JSON.stringify(done));
+
+    // reload with an even slower network — cache must serve instantly
+    delay = 5000;
+    await browserPage.goto(
+      "file:///" + path.join(BASE, "index.html").replace(/\\/g, "/"),
+      { waitUntil: "domcontentloaded", timeout: 60000 });
+    await new Promise(r => setTimeout(r, 600));
+    const cached = await browserPage.evaluate(() => ({
+      tcards: document.querySelectorAll(".tcard").length,
+      sk: document.querySelectorAll("#list .sk").length
+    }));
+    log("index cache serves on reload",
+      cached.tcards === 30 && cached.sk === 0,
+      JSON.stringify(cached));
+
+    // cache stored under ecl-cache with the shared key
+    const ck = await browserPage.evaluate(() => {
+      try {
+        const all = JSON.parse(localStorage.getItem("ecl-cache") || "{}");
+        return { keys: Object.keys(all), has: !!(all["d-index"] && all["d-index"].v) };
+      } catch(e){ return { keys: [], has: false }; }
+    });
+    log("index cache key d-index", ck.has && ck.keys.indexOf("d-index") >= 0, JSON.stringify(ck));
+  } finally {
+    browserPage.off("request", onReq);
+    await browserPage.setRequestInterception(false);
+    // stub data must not leak into the live top/index checks below
+    await browserPage.evaluate(() => localStorage.removeItem("ecl-cache"));
+  }
+}
+
 // 2. top: load list, modes, criteria, chips
 {
   const errs = await open(browserPage, "top.html", 1440, 900);
@@ -1518,6 +1602,9 @@ for(const [w,h] of widths){
   log("p3 css on-ac tokens",
     /--on-ac:#fff/.test(cssSrc) && (cssSrc.match(/--on-ac:#111/g) || []).length >= 2, "");
   log("p3 css reduced motion", /prefers-reduced-motion:reduce/.test(cssSrc), "");
+  log("m6 css skeletons",
+    /\.sk\{/.test(cssSrc) && /sk-pulse/.test(cssSrc) &&
+      /prefers-reduced-motion:reduce\)\{\s*\.sk\{/.test(cssSrc), "");
 
   const admSrc = fs.readFileSync(path.join(BASE, "admin.html"), "utf8");
   log("p3 admin tab active dark fix",

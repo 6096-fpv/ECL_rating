@@ -1502,7 +1502,13 @@ function renderRoute(){
   var g = globalState();
 
   $("vstate").innerHTML = g
-    ? '<div class="state">' + esc(g) + '</div>'
+    ? (g === "A carregar…"
+        ? '<div class="card">' +
+          '<div class="sk sk-line" style="width:60%"></div>' +
+          '<div class="sk sk-line" style="width:40%;margin-top:10px"></div>' +
+          '<div class="sk sk-line" style="width:75%;margin-top:10px"></div>' +
+          '</div>'
+        : '<div class="state">' + esc(g) + '</div>')
     : "";
 
   $("vHome").classList.toggle("hide", !!g || cur.v !== "home");
@@ -1594,40 +1600,39 @@ function loadAll(){
   var s = getSession();
   var token = s ? s.token : null;
 
-  Promise.all([
+  Promise.resolve(sb.rpc("forum_feed",{p_token:token})).catch(function(e){
+    return { error: e, data: null };
+  }).then(function(fr){
 
-    sb.rpc("forum_feed",{p_token:token}),
+    return ECL.cached("d-forum-meta", 300000, function(){
+      return Promise.all([
 
-    sb
-      .from("teachers")
-      .select("*")
-      .order("name")
-      .limit(1000),
+        sb
+          .from("teachers")
+          .select("*")
+          .order("name")
+          .limit(1000),
 
-    sb
-      .from("profiles")
-      .select("*")
-      .limit(1000)
+        sb
+          .from("profiles")
+          .select("*")
+          .limit(1000)
 
-  ]).then(function(res){
+      ]).then(function(res){
 
-    var fr = res[0];
-    var tr = res[1];
-    var pr = res[2];
+        if(res[0].error)
+          return Promise.reject(res[0].error);
 
-    if(tr.error){
+        return {
+          teachers: res[0].data || [],
+          profiles: res[1].data || []
+        };
 
-      console.error(tr.error);
+      });
+    }).then(function(meta){
 
-      if(tr.error.code === "42P01"){
-        showSetup();
-      }else{
-        renderRoute();
-      }
-
-      return;
-
-    }
+      var tr = { error: null, data: meta.teachers };
+      var pr = { error: null, data: meta.profiles };
 
     var feedOk = !fr.error && fr.data;
 
@@ -1730,6 +1735,15 @@ function loadAll(){
       if(cur.v === "thread" && byId(cur.id))
         scrollToPost(cur.id);
 
+    });
+
+    }, function(err){
+      if(err && err.code === "42P01"){
+        showSetup();
+      }else{
+        renderRoute();
+      }
+      return null;
     });
 
   });

@@ -310,7 +310,16 @@ color:var(--on-ac);
   </div>
 
   <div id="list">
-    <div class="state">A carregar…</div>
+    <div class="card">
+      <div class="sk sk-line" style="width:65%"></div>
+      <div class="sk sk-line" style="width:40%;margin-top:10px"></div>
+      <div class="sk sk-line" style="width:75%;margin-top:10px"></div>
+    </div>
+    <div class="card">
+      <div class="sk sk-line" style="width:55%"></div>
+      <div class="sk sk-line" style="width:30%;margin-top:10px"></div>
+      <div class="sk sk-line" style="width:70%;margin-top:10px"></div>
+    </div>
   </div>
 
 </div>
@@ -628,36 +637,36 @@ function loadAll(){
   if(!configured)
     return;
 
-  Promise.all([
+  ECL.cached("d-index", 300000, function(){
+    return Promise.all([
 
-    sb
-      .from("teachers")
-      .select("*")
-      .order("name")
-      .limit(1000),
+      sb
+        .from("teachers")
+        .select("*")
+        .order("name")
+        .limit(1000),
 
-    sb
-      .from("ratings")
-      .select("*")
-      .order("id",{ascending:false})
-      .limit(1000)
+      sb
+        .from("ratings")
+        .select("*")
+        .order("id",{ascending:false})
+        .limit(1000)
 
-  ]).then(function(res){
+    ]).then(function(res){
 
-    if(res[0].error || res[1].error){
+      if(res[0].error || res[1].error)
+        return Promise.reject(res[0].error || res[1].error);
 
-      console.error(res[0].error);
-      console.error(res[1].error);
+      return {
+        teachers: res[0].data || [],
+        ratings: res[1].data || []
+      };
 
-      $("list").innerHTML =
-        stateHtml("Erro a carregar dados.");
+    });
+  }).then(function(d){
 
-      return;
-
-    }
-
-    teachers = res[0].data || [];
-    ratings = res[1].data || [];
+    teachers = d.teachers;
+    ratings = d.ratings;
     loaded = true;
 
     var tw = $("truncWarn");
@@ -670,6 +679,9 @@ function loadAll(){
 
     render();
 
+  }).catch(function(){
+    $("list").innerHTML =
+      stateHtml("Erro a carregar dados.");
   });
 
 }

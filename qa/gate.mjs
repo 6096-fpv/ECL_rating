@@ -921,6 +921,12 @@ for(const [w,h] of widths){
     { id: "u2", username: "ana", role: "user",
       muted_until: "2099-01-01T00:00:00Z", banned: false }
   ];
+  const stubAudit = [
+    { id: 2, ts: "2026-10-13T10:05:00Z", actor: "gate", action: "user_set_role",
+      target: "u2", detail: { username: "ana", role: "moderator" } },
+    { id: 1, ts: "2026-10-12T10:00:00Z", actor: "ana", action: "post_edit",
+      target: "1", detail: { chars: 42 } }
+  ];
   const sessionData = {
     token: "gate-fake", exp: Math.floor(Date.now() / 1000) + 3600,
     username: "gate", role: "owner", id: "u1", created_at: "2026-01-01T00:00:00Z"
@@ -937,6 +943,7 @@ for(const [w,h] of widths){
       const fn = u.split("/rpc/")[1].split("?")[0];
       if(fn === "session_info" || fn === "login") return json(JSON.stringify(sessionData));
       if(fn === "forum_feed") return json(JSON.stringify({ branches: stubBranches, posts: stubForum }));
+      if(fn === "mod_log_list") return json(JSON.stringify({ rows: stubAudit }));
       return json(JSON.stringify({}));
     }
     return req.continue();
@@ -981,7 +988,7 @@ for(const [w,h] of widths){
       ]
     }));
     log("admin panel enters (owner)",
-      panel.admin && panel.loginHidden && panel.noPermsHidden && panel.tabs === 7 && panel.tabsVisible,
+      panel.admin && panel.loginHidden && panel.noPermsHidden && panel.tabs === 8 && panel.tabsVisible,
       JSON.stringify(panel));
     log("admin stats", panel.stats.join(",") === "30,2,1,1", panel.stats.join(","));
 
@@ -1214,6 +1221,33 @@ for(const [w,h] of widths){
     await new Promise(r => setTimeout(r, 400));
     const urBody = await rpcArg("user_set_role");
     log("admin role change payload", urBody && urBody.p_id === "u2" && urBody.p_role === "moderator", JSON.stringify(urBody));
+
+    // audit tab: rows from mod_log_list + CSV builder
+    await browserPage.click('[onclick*="openTab(\'auditTab\'"]');
+    await new Promise(r => setTimeout(r, 400));
+    const au = await browserPage.evaluate(() => {
+      const rows = document.querySelectorAll("#auditList tbody tr");
+      const txt = document.getElementById("auditList").textContent || "";
+      const csv = typeof buildAuditCsv === "function" ? buildAuditCsv() : "";
+      const lines = csv.split("\r\n");
+      return {
+        rows: rows.length,
+        who: /gate/.test(txt),
+        action: /Cargo alterado/.test(txt),
+        detail: /moderator/.test(txt),
+        csvHeader: lines[0] || "",
+        csvLines: lines.length,
+        csvHasEdit: csv.indexOf("post_edit") >= 0,
+        csvBtn: !!document.getElementById("auditCsvBtn")
+      };
+    });
+    log("admin audit tab",
+      au.rows === 2 && au.who && au.action && au.detail && au.csvBtn,
+      JSON.stringify(au));
+    log("admin audit csv",
+      au.csvHeader === "id;data;ator;acao;alvo;detalhe" &&
+        au.csvLines === 3 && au.csvHasEdit,
+      JSON.stringify(au));
 
     // add teacher form
     await browserPage.click('[onclick*="openTab(\'addTeacher\'"]');

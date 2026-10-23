@@ -414,6 +414,14 @@ width:100%;
                 Utilizadores
             </button>
 
+            <button
+                class="tab"
+                data-min="mod"
+                onclick="openTab('auditTab',this)"
+            >
+                Registo
+            </button>
+
         </div>
 
 
@@ -678,6 +686,35 @@ width:100%;
 
         </div>
 
+
+        <!-- REGISTO -->
+
+        <div id="auditTab" class="tab-content">
+
+            <div class="card">
+
+                <h2>Registo de moderação</h2>
+
+                <div style="margin-bottom:10px">
+                    <button id="auditCsvBtn" onclick="exportAuditCsv()">
+                        Exportar CSV
+                    </button>
+                </div>
+
+                <div id="auditList">
+                    A carregar...
+                </div>
+
+                <div class="message">
+                    As 100 ações de moderação mais recentes.
+                    O CSV exporta exatamente estas linhas
+                    (separador ponto e vírgula, com BOM para Excel).
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
@@ -926,6 +963,155 @@ function openTab(id,button){
 
 
     button.classList.add("active");
+
+    if(id === "auditTab")
+        loadAudit();
+
+}
+
+
+/* REGISTO DE MODERAÇÃO */
+
+var auditRows = [];
+
+var AUDIT_LABEL = {
+    rating_delete: "Avaliação apagada",
+    branch_create: "Comunidade criada",
+    branch_access_update: "Permissões da comunidade",
+    post_pin: "Tópico fixado/desafixado",
+    post_edit: "Mensagem editada",
+    forum_delete: "Mensagem apagada",
+    user_set_role: "Cargo alterado",
+    user_mute: "Utilizador silenciado",
+    user_unmute: "Silêncio levantado",
+    user_ban: "Banimento"
+};
+
+async function loadAudit(){
+
+    var el = document.getElementById("auditList");
+    var s = getSession();
+
+    if(!configured || !sb || !s){
+        el.innerHTML =
+            '<div class="cellmut">Inicia sessão para ver o registo.</div>';
+        return;
+    }
+
+    el.textContent = "A carregar...";
+
+    var r = await sb.rpc("mod_log_list",{ p_token:s.token });
+
+    if(r.error){
+
+        console.error(r.error);
+
+        if(isAuthErr(r.error)){
+            authFail();
+            return;
+        }
+
+        auditRows = [];
+
+        el.innerHTML = '<div class="cellmut">' +
+            esc(r.error.message || "Erro ao carregar o registo.") +
+            '</div>';
+
+        return;
+    }
+
+    auditRows = (r.data && r.data.rows) || [];
+
+    renderAudit();
+
+}
+
+function renderAudit(){
+
+    var list = document.getElementById("auditList");
+
+    if(!auditRows.length){
+        list.innerHTML =
+            '<div class="cellmut">Ainda não há registos.</div>';
+        return;
+    }
+
+    list.innerHTML =
+        '<div class="twrap">' +
+        '<table class="tbl">' +
+        '<thead><tr>' +
+        '<th>Quando</th>' +
+        '<th>Quem</th>' +
+        '<th>Ação</th>' +
+        '<th>Alvo</th>' +
+        '<th>Detalhe</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
+        auditRows.map(function(rw){
+            return '<tr>' +
+                '<td>' + esc(ECL.fmtDateTime(rw.ts)) + '</td>' +
+                '<td>' + esc(rw.actor || "—") + '</td>' +
+                '<td>' +
+                    esc(AUDIT_LABEL[rw.action] || rw.action || "") +
+                    '<div class="cellmut">' + esc(rw.action || "") + '</div>' +
+                '</td>' +
+                '<td>' + esc(rw.target == null ? "" : "#" + rw.target) + '</td>' +
+                '<td class="cellmut">' +
+                    esc(rw.detail ? JSON.stringify(rw.detail) : "") +
+                '</td>' +
+            '</tr>';
+        }).join("") +
+        '</tbody></table></div>';
+
+}
+
+function csvCell(v){
+    v = String(v == null ? "" : v);
+    if(/[;\n\r"]/.test(v))
+        v = '"' + v.replace(/"/g,'""') + '"';
+    return v;
+}
+
+function buildAuditCsv(){
+
+    var lines = ["id;data;ator;acao;alvo;detalhe"];
+
+    auditRows.forEach(function(rw){
+        lines.push([
+            rw.id,
+            rw.ts,
+            rw.actor,
+            rw.action,
+            rw.target == null ? "" : rw.target,
+            rw.detail == null ? "" : JSON.stringify(rw.detail)
+        ].map(csvCell).join(";"));
+    });
+
+    return lines.join("\r\n");
+
+}
+
+function exportAuditCsv(){
+
+    if(!auditRows.length){
+        ECL.toast("Sem registos para exportar.","err");
+        return;
+    }
+
+    var blob = new Blob(["\uFEFF" + buildAuditCsv()],{
+        type:"text/csv;charset=utf-8"
+    });
+
+    var a = document.createElement("a");
+
+    a.href = URL.createObjectURL(blob);
+    a.download = "registo-moderacao.csv";
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    ECL.toast("CSV exportado.");
 
 }
 

@@ -524,6 +524,7 @@ var flagHtml = ECL.flagHtml || function(){ return ""; };
 var posts = [];
 var teachers = [];
 var profiles = [];
+var tagMap = {};
 var replyTo = {};
 var setupNeeded = false;
 var loaded = false;
@@ -558,7 +559,8 @@ function authorHtml(p){
     return flagHtml(pr.country) +
       '<a class="who-link" href="perfil.html?id=' +
       encodeURIComponent(pr.id) + '">' + esc(pr.username) +
-      '</a> ' + badgeHtml(pr.role);
+      '</a> ' + badgeHtml(pr.role) +
+      ECL.tagHtml(tagMap[p.user_id]);
 
   if(p.author_name && p.author_name !== "Anónimo")
     return esc(p.author_name);
@@ -580,7 +582,8 @@ function shortAuthor(p){
   if(pr)
     return flagHtml(pr.country) +
       '<a class="who-link" href="perfil.html?id=' +
-      encodeURIComponent(pr.id) + '">' + esc(pr.username) + '</a>';
+      encodeURIComponent(pr.id) + '">' + esc(pr.username) + '</a>' +
+      ECL.tagHtml(tagMap[p.user_id]);
 
   if(p.author_name && p.author_name !== "Anónimo")
     return esc(p.author_name);
@@ -1617,7 +1620,16 @@ function loadAll(){
         sb
           .from("profiles")
           .select("*")
-          .limit(1000)
+          .limit(1000),
+
+        Promise.resolve(sb
+          .from("user_tags")
+          .select("user_id,tags(label)")
+        ).then(function(r){
+          return (r && r.data) || [];
+        }).catch(function(){
+          return [];
+        })
 
       ]).then(function(res){
 
@@ -1626,7 +1638,8 @@ function loadAll(){
 
         return {
           teachers: res[0].data || [],
-          profiles: res[1].data || []
+          profiles: res[1].data || [],
+          userTags: res[2] || []
         };
 
       });
@@ -1634,6 +1647,13 @@ function loadAll(){
 
       var tr = { error: null, data: meta.teachers };
       var pr = { error: null, data: meta.profiles };
+
+      tagMap = {};
+      (meta.userTags || []).forEach(function(row){
+        if(!row || !row.user_id || !row.tags)
+          return;
+        (tagMap[row.user_id] = tagMap[row.user_id] || []).push(row.tags.label);
+      });
 
     var feedOk = !fr.error && fr.data;
 

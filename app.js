@@ -272,6 +272,14 @@ window.ECL = (function(){
   var CACHE_TTL = 300000;
   var CACHE_MAX = 8;
 
+  function tagHtml(labels){
+    if(!labels || !labels.length)
+      return "";
+    return labels.map(function(t){
+      return '<span class="tag">' + esc(t) + "</span>";
+    }).join("");
+  }
+
   function cacheRead(key){
     try{
       var raw = localStorage.getItem("ecl-cache");
@@ -346,7 +354,8 @@ window.ECL = (function(){
     paintNews: paintNews,
     getSeen: getSeen,
     stampSeen: stampSeen,
-    cached: cached
+    cached: cached,
+    tagHtml: tagHtml
   };
 
   Object.defineProperty(api,"onAuthChange",{

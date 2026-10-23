@@ -164,6 +164,38 @@ check("news_count hides admin branch from anon",
   nOwner.count === nAnon.count + 1,
   JSON.stringify({ anon: nAnon.count, owner: nOwner.count }));
 
+// M8: profile tags — catalog, max 2, replace-all, audit, anon read
+await db.query("insert into public.tags (label) values ('QA Tag') on conflict (label) do nothing");
+const tagRows = (await db.query("select id, label from public.tags order by id")).rows;
+check("tags catalog seeded", tagRows.length >= 2, JSON.stringify(tagRows));
+
+const st1 = await rpc("set_my_tags", laOk.token, tagRows.map(t => t.id));
+check("set_my_tags up to 2", st1.n === 2, JSON.stringify(st1));
+const mine2 = (await db.query(
+  "select tag_id from public.user_tags where user_id = (select id from private.site_users where username='alice')"
+)).rows;
+check("user_tags persisted", mine2.length === 2, JSON.stringify(mine2));
+
+await expectErr("set_my_tags rejects 3",
+  () => rpc("set_my_tags", laOk.token, [...tagRows.map(t => t.id), 99999]),
+  /máximo 2/);
+
+const st2 = await rpc("set_my_tags", laOk.token, [tagRows[0].id]);
+check("set_my_tags replace-all", st2.n === 1, JSON.stringify(st2));
+const mine1 = (await db.query(
+  "select tag_id from public.user_tags where user_id = (select id from private.site_users where username='alice')"
+)).rows;
+check("user_tags replaced", mine1.length === 1 && Number(mine1[0].tag_id) === Number(tagRows[0].id),
+  JSON.stringify(mine1));
+
+const log2 = await rpc("mod_log_list", lb.token);
+check("mod_log has tags_set",
+  (log2.rows || []).some(r => r.action === "tags_set"),
+  (log2.rows || []).map(r => r.action).join(","));
+
+const gt = await db.query("select has_table_privilege('anon', 'public.user_tags', 'select') as ok");
+check("anon can read user_tags", gt.rows[0].ok === true, JSON.stringify(gt.rows[0]));
+
 await db.end();
 await ep.stop();
 

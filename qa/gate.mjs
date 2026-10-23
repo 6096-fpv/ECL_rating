@@ -70,9 +70,10 @@ async function open(p, file, w, h){
     const t = m.text();
     // pre-migration noise: forum_feed (and later news_count) RPCs not
     // yet applied on the live DB (client falls back / skips). Remove
-    // after running setup.sql.
+    // after running setup.sql. user_tags: M8 table, same story.
     const u = (m.location() && m.location().url) || "";
     if(/\/rpc\/(forum_feed|news_count)/.test(u) && /404/.test(t)) return;
+    if(/\/rest\/v1\/user_tags/.test(u) && /404/.test(t)) return;
     errs.push(t);
   });
   p.on("pageerror", e => errs.push(String(e)));
@@ -336,6 +337,9 @@ for(const [w,h] of widths){
     if(u.includes("/rest/v1/teachers")) return json(JSON.stringify(fTeachers));
     if(u.includes("/rest/v1/forum_posts")) return json(JSON.stringify(fPosts));
     if(u.includes("/rest/v1/profiles")) return json(JSON.stringify(fProfiles));
+    if(u.includes("/rest/v1/user_tags")) return json(JSON.stringify([
+      { user_id: "u2", tag_id: 1, tags: { label: "Aveniggers Clan" } }
+    ]));
     if(u.includes("/rest/v1/rpc/")){
       const fn = u.split("/rpc/")[1].split("?")[0];
       if(fn === "session_info" || fn === "login") return json(JSON.stringify(fSession));
@@ -392,6 +396,13 @@ for(const [w,h] of widths){
   log("forum composer gated (anon)", r.ntCardHidden && r.ntOpenHidden && r.ntAnonShown,
     JSON.stringify({ ntCardHidden: r.ntCardHidden, ntOpenHidden: r.ntOpenHidden, ntAnonShown: r.ntAnonShown }));
   log("forum counts (no emoji)", !r.emoji && r.counts, JSON.stringify({ emoji: r.emoji, counts: r.counts }));
+
+  // M8: author tag chips from stubbed user_tags
+  const ftag = await browserPage.evaluate(() => ({
+    tags: Array.from(document.querySelectorAll(".tag")).map(t => t.textContent).slice(0, 3)
+  }));
+  log("forum author tag chip", ftag.tags.some(t => t === "Aveniggers Clan"), JSON.stringify(ftag));
+
   log("forum no page errors", errs.length === 0, errs.join("; "));
 
   // M2: unread nav badge (stubbed news_count) + dots since last visit
@@ -797,6 +808,10 @@ for(const [w,h] of widths){
     if(u.includes("/rest/v1/ratings"))
       return json(JSON.stringify(u.includes("user_id=eq.u2") ? [] : pRatings));
     if(u.includes("/rest/v1/teachers")) return json(JSON.stringify(pTeachers));
+    if(u.includes("/rest/v1/user_tags"))
+      return json(JSON.stringify(u.includes("user_id=eq.u2")
+        ? [{ tag_id: 1, tags: { label: "Aveniggers Clan" } }]
+        : []));
     if(u.includes("/rest/v1/rpc/")) return json(JSON.stringify({ count: 0 }));
     return req.continue();
   };
@@ -845,6 +860,12 @@ for(const [w,h] of widths){
       own.name === "ana" && own.ownShown && own.manage &&
         own.chipsShown && own.muted && own.empty,
       JSON.stringify(own));
+
+    // M8: tag chips in profile hero
+    const ptag = await browserPage.evaluate(() =>
+      Array.from(document.querySelectorAll("#pfTags .tag")).map(t => t.textContent));
+    log("perfil hero tag chip",
+      ptag.some(t => t === "Aveniggers Clan"), JSON.stringify(ptag));
     log("perfil own no page errors", errs2.length === 0, errs2.join("; "));
 
     // missing profile
@@ -975,6 +996,8 @@ for(const [w,h] of widths){
   let updBody = null;
   let ctvCalled = false;
   let ctvBody = null;
+  let tagsCalled = false;
+  let tagsBody = null;
   const CORS = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "*",
@@ -1002,6 +1025,17 @@ for(const [w,h] of widths){
       ctvBody = req.postData();
       req.respond({ status: 200, headers: CORS, contentType: "application/json",
         body: JSON.stringify({ country: "FR" }) });
+    } else if(u.includes("/rest/v1/user_tags")){
+      req.respond({ status: 200, headers: CORS, contentType: "application/json",
+        body: JSON.stringify([{ user_id: "u1", tag_id: 1, tags: { label: "Aveniggers Clan" } }]) });
+    } else if(u.includes("/rest/v1/tags")){
+      req.respond({ status: 200, headers: CORS, contentType: "application/json",
+        body: JSON.stringify([{ id: 1, label: "Aveniggers Clan" }, { id: 2, label: "QA Tag" }]) });
+    } else if(u.includes("/rpc/set_my_tags")){
+      tagsCalled = true;
+      tagsBody = req.postData();
+      req.respond({ status: 200, headers: CORS, contentType: "application/json",
+        body: JSON.stringify({ n: 2 }) });
     } else if(u.includes("/rpc/logout")){
       req.respond({ status: 200, headers: CORS, contentType: "application/json", body: JSON.stringify({}) });
     } else {
@@ -1108,6 +1142,36 @@ for(const [w,h] of widths){
         ctvBodyObj.p_token === "gate-fake" && ctvSaved.toast &&
         /flagcdn\.com\/20x15\/fr\.png/.test(ctvSaved.prevSrc),
       JSON.stringify({ ctvCalled, ctvBodyObj, ctvSaved }));
+
+    // M8: tag chips — catalog rendered, preselected, save payload
+    const tg = await browserPage.evaluate(() => ({
+      chips: document.querySelectorAll("#tagChips [data-tag]").length,
+      on: Array.from(document.querySelectorAll("#tagChips .chip.on")).map(c => c.textContent).join(","),
+      pressed1: (document.querySelector('#tagChips [data-tag="1"]') || {}).getAttribute ?
+        document.querySelector('#tagChips [data-tag="1"]').getAttribute("aria-pressed") : null
+    }));
+    log("conta tag chips",
+      tg.chips === 2 && tg.on === "Aveniggers Clan" && tg.pressed1 === "true",
+      JSON.stringify(tg));
+
+    await browserPage.click('#tagChips [data-tag="2"]');
+    await new Promise(r2 => setTimeout(r2, 100));
+    const tgSel = await browserPage.evaluate(() => ({
+      onCount: document.querySelectorAll("#tagChips .chip.on").length
+    }));
+    log("conta tag select second", tgSel.onCount === 2, JSON.stringify(tgSel));
+
+    await browserPage.click("#tagSave");
+    await new Promise(r2 => setTimeout(r2, 400));
+    let tagsBodyObj = null;
+    try { tagsBodyObj = tagsBody ? JSON.parse(tagsBody) : null; } catch(e) {}
+    const tgToast = await browserPage.evaluate(() =>
+      !!document.querySelector("#eclToasts .toast"));
+    log("conta tag save payload",
+      tagsCalled && tagsBodyObj && Array.isArray(tagsBodyObj.p_tag_ids) &&
+        tagsBodyObj.p_tag_ids.length === 2 && tagsBodyObj.p_token === "gate-fake" &&
+        tgToast,
+      JSON.stringify({ tagsCalled, tagsBodyObj, tgToast }));
 
     // profile theme switch (claro/escuro)
     const pth = await browserPage.evaluate(async () => {
@@ -1618,6 +1682,24 @@ for(const [w,h] of widths){
   log("m7 404 page",
     /404/.test(nfSrc) && /Página não encontrada/.test(nfSrc) &&
       /index\.html/.test(nfSrc), "");
+
+  // M8: tags source wiring
+  const setupSrc = fs.readFileSync(path.join(here, "..", "setup.sql"), "utf8");
+  log("m8 sql tags catalog",
+    /create table if not exists public\.tags/.test(setupSrc) &&
+      /Aveniggers Clan/.test(setupSrc) &&
+      /create or replace function public\.set_my_tags/.test(setupSrc), "");
+  log("m8 css .tag chip", /\.tag\{/.test(cssSrc), "");
+  const contaSrc = fs.readFileSync(path.join(BASE, "conta.html"), "utf8");
+  log("m8 conta set_my_tags wiring",
+    /set_my_tags/.test(contaSrc) && /tagChips/.test(contaSrc) &&
+      /No máximo 2 etiquetas/.test(contaSrc), "");
+  const teachSrc = fs.readFileSync(path.join(BASE, "teacher.html"), "utf8");
+  log("m8 teacher/perfil tagHtml wiring",
+    /tagHtml\(tagMap/.test(teachSrc) &&
+      /tagHtml\(tagMap\[p\.user_id\]\)/.test(
+        fs.readFileSync(path.join(BASE, "forum.html"), "utf8")) &&
+      /tagHtml\(myTags\)/.test(fs.readFileSync(path.join(BASE, "perfil.html"), "utf8")), "");
 
   const admSrc = fs.readFileSync(path.join(BASE, "admin.html"), "utf8");
   log("p3 admin tab active dark fix",

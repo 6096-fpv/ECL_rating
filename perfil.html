@@ -154,6 +154,7 @@ margin-top:4px;
         <h1>
           <span id="pfName">…</span>
           <span id="pfBadge"></span>
+          <span id="pfTags"></span>
         </h1>
         <div class="mut" id="pfSince"></div>
         <div class="chiprow hide" id="pfChips"></div>
@@ -223,6 +224,7 @@ margin-top:4px;
   var profile = null;
   var ratings = [];
   var teachers = {};
+  var myTags = [];
   var isOwn = false;
 
   function initials(name){
@@ -255,6 +257,7 @@ margin-top:4px;
     $("pfAvatar").textContent = initials(profile.username);
     $("pfName").textContent = profile.username;
     $("pfBadge").innerHTML = flagHtml(profile.country) + " " + badgeHtml(profile.role);
+    $("pfTags").innerHTML = ECL.tagHtml(myTags);
 
     $("pfSince").textContent = profile.created_at
       ? "Membro desde " + fmtDate(profile.created_at)
@@ -352,38 +355,58 @@ margin-top:4px;
           }) || null;
 
           if(!found)
-            return { profile: null, ratings: [], teachers: {} };
+            return { profile: null, ratings: [], teachers: {}, tags: [] };
 
-          return sb.from("ratings")
-            .select("id,teacher_id,clareza,apoio,justica,comment,created_at")
-            .eq("user_id", uid)
-            .order("created_at",{ ascending:false })
-            .limit(50)
-            .then(function(rtRes){
+          return Promise.all([
 
-              var rt = (rtRes && rtRes.data) || [];
+            sb.from("ratings")
+              .select("id,teacher_id,clareza,apoio,justica,comment,created_at")
+              .eq("user_id", uid)
+              .order("created_at",{ ascending:false })
+              .limit(50),
 
-              var ids = [];
-              rt.forEach(function(x){
-                if(x.teacher_id != null && ids.indexOf(x.teacher_id) < 0)
-                  ids.push(x.teacher_id);
+            Promise.resolve(sb
+              .from("user_tags")
+              .select("tag_id,tags(label)")
+              .eq("user_id", uid)
+            ).then(function(r){
+              return (r && r.data) || [];
+            }).catch(function(){
+              return [];
+            })
+
+          ]).then(function(both){
+
+            var rt = (both[0] && both[0].data) || [];
+            var tg = both[1] || [];
+
+            var labels = [];
+            tg.forEach(function(row){
+              if(row && row.tags && row.tags.label)
+                labels.push(row.tags.label);
+            });
+
+            var ids = [];
+            rt.forEach(function(x){
+              if(x.teacher_id != null && ids.indexOf(x.teacher_id) < 0)
+                ids.push(x.teacher_id);
+            });
+
+            if(!ids.length)
+              return { profile: found, ratings: rt, teachers: {}, tags: labels };
+
+            return sb.from("teachers")
+              .select("id,name,subject")
+              .in("id", ids)
+              .then(function(thRes){
+                var th = {};
+                (thRes.data || []).forEach(function(t){
+                  th[t.id] = t;
+                });
+                return { profile: found, ratings: rt, teachers: th, tags: labels };
               });
 
-              if(!ids.length)
-                return { profile: found, ratings: rt, teachers: {} };
-
-              return sb.from("teachers")
-                .select("id,name,subject")
-                .in("id", ids)
-                .then(function(thRes){
-                  var th = {};
-                  (thRes.data || []).forEach(function(t){
-                    th[t.id] = t;
-                  });
-                  return { profile: found, ratings: rt, teachers: th };
-                });
-
-            });
+        });
 
         });
 
@@ -397,6 +420,7 @@ margin-top:4px;
       profile = d.profile;
       ratings = d.ratings;
       teachers = d.teachers;
+      myTags = d.tags || [];
 
       render();
 

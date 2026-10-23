@@ -193,6 +193,18 @@ a.who-link:hover{
   text-decoration:underline;
 }
 
+.tag{
+  display:inline-block;
+  font-size:11px;
+  font-weight:700;
+  padding:1px 8px;
+  border-radius:6px;
+  background:var(--ac-soft);
+  color:var(--ac);
+  margin-left:6px;
+  vertical-align:middle;
+}
+
 .sk{
   background:var(--track);
   border-radius:6px;

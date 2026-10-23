@@ -364,6 +364,7 @@ function submit(){
 
       m.textContent =
         (r.error && r.error.message) ||
+        (r.data && r.data.error) ||
         "Erro ao entrar. Tenta novamente.";
 
       return;

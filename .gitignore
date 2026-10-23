@@ -2,3 +2,6 @@ setup.sql
 qa/node_modules
 qa/fixtures
 qa/shots
+qa/sql/node_modules
+qa/sql/data
+qa/sql/smoke.log

@@ -819,7 +819,9 @@ async function login(){
 
     if(r.error || !r.data || !r.data.token){
         message.textContent =
-            (r.error && r.error.message) || "Credenciais incorretas.";
+            (r.error && r.error.message) ||
+            (r.data && r.data.error) ||
+            "Credenciais incorretas.";
         return;
     }
 

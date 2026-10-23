@@ -20,6 +20,13 @@ Last audit: 2026-10-21 (static client + Supabase backend).
 - Login errors are generic; a dummy bcrypt comparison runs when the
   username does not exist to keep response timing uniform
   (anti-enumeration).
+- Login brute-force throttle: `private.login_throttle` counts failures
+  per username (sliding 15-minute window; 5 failures block further
+  attempts with *Tenta mais tarde.*; counter cleared on success, stale
+  rows purged after 1 day). Credential/throttle/ban failures are
+  **returned as `{"error": ...}` instead of raising**, because an
+  exception would roll back the counter insert in the same
+  transaction; the client shows `data.error` and stores no session.
 
 ## Authorization
 
@@ -45,6 +52,20 @@ Last audit: 2026-10-21 (static client + Supabase backend).
   via `user_set_country` (own profile only, token-authenticated,
   `^[A-Z]{2}$` enforced in SQL + check constraint); the value is
   exposed through the `profiles` view and rendered from flagcdn.com.
+- Post editing: `post_edit` allows authors to edit **their own**
+  forum posts only (`user_id is distinct from v` rejects everyone
+  else, including admins; anonymous posts are untouchable), with
+  1–2000 chars and no time limit; sessions must be valid,
+  unmuted and unbanned.
+- Audit log: `private.mod_log` records every moderation action
+  (`rating_delete`, `branch_create`, `branch_access_update`,
+  `post_pin`, `post_edit`, `forum_delete`, `user_set_role`,
+  `user_mute`, `user_unmute`, `user_ban`) with actor id, target and
+  a `jsonb` detail via `private.log_mod` (security definer, no
+  grants). Readable only by moderators+ through `mod_log_list`
+  (`require_min_role('mod')`, last 100 entries, actor username
+  resolved server-side); the table itself is RLS-locked with no
+  policies and the `private` schema has no USAGE for API roles.
 - Tables `forum_posts`, `forum_branches`, `forum_votes`, `teachers`,
   `ratings`: RLS on; REST writes revoked; forum reads only via
   `forum_feed` (no public-read policy).
@@ -65,7 +86,8 @@ Last audit: 2026-10-21 (static client + Supabase backend).
   site); an XSS flaw could expose them — mitigated by the XSS posture
   above and server-side logout revocation.
 - Tokens are stored plaintext in the DB (DB access = session theft).
-- No rate limiting on login/register/RPCs beyond what Supabase applies.
+- No rate limiting on register/RPCs beyond what Supabase applies
+  (login itself has the per-username brute-force throttle above).
 - Users may vote on their own forum posts.
 - No CSP headers (depends on the static host); meta-CSP is a possible
   future hardening.
@@ -75,6 +97,10 @@ Last audit: 2026-10-21 (static client + Supabase backend).
 - Functional/visual gate suite (puppeteer, dark + light fixtures) runs
   on every change: console-clean, overflow, a11y, theme, and role-gated
   UI checks.
+- `setup.sql` is validated end-to-end against a local PostgreSQL:
+  the full idempotent file runs clean, then RPC smoke tests exercise
+  register/login, throttle counting, forum CRUD, moderation and the
+  audit log.
 - `setup.sql` is gitignored; schema changes are applied manually in the
   Supabase SQL Editor (migration block at the bottom of that file).
 

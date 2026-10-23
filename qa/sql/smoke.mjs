@@ -148,6 +148,22 @@ check("mod_log forum_delete detail",
 await expectErr("mod_log_list requires mod",
   () => rpc("mod_log_list", lp.token), /permissões/);
 
+// news_count: since filter + branch visibility (admin branch hidden from anon)
+const nAll = await rpc("news_count", null, null);
+const nFuture = await rpc("news_count", null, "2100-01-01T00:00:00Z");
+check("news_count since filter",
+  nAll.count >= 1 && nFuture.count === 0,
+  JSON.stringify({ nAll: nAll.count, nFuture: nFuture.count }));
+
+const bAdmin = await rpc("branch_create", laOk.token, "Staff only", "admin", "admin", "admin");
+const tStaff = await rpc("forum_create", laOk.token, "Topico staff", "segredo", null, bAdmin.id);
+check("admin-branch topic created", !!tStaff.id, JSON.stringify(tStaff));
+const nAnon = await rpc("news_count", null, null);
+const nOwner = await rpc("news_count", laOk.token, null);
+check("news_count hides admin branch from anon",
+  nOwner.count === nAnon.count + 1,
+  JSON.stringify({ anon: nAnon.count, owner: nOwner.count }));
+
 await db.end();
 await ep.stop();
 

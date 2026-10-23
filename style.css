@@ -115,6 +115,27 @@ body{
   color:#fff;
 }
 
+/* unread forum counter on the Fórum nav link */
+.top a .navdot{
+  display:inline-block;
+  min-width:18px;
+  padding:0 5px;
+  margin-left:6px;
+  background:var(--danger);
+  color:#fff;
+  border-radius:var(--r-ctl);
+  font-size:11px;
+  font-weight:700;
+  line-height:17px;
+  text-align:center;
+  vertical-align:1px;
+}
+
+.top a.on .navdot{
+  background:#fff;
+  color:var(--danger);
+}
+
 .acct{
   font-weight:400;
 }

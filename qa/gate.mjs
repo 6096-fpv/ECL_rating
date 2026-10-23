@@ -68,10 +68,11 @@ async function open(p, file, w, h){
   p.on("console", m => {
     if(m.type() !== "error") return;
     const t = m.text();
-    // pre-migration noise: forum_feed RPC not yet applied on the live
-    // DB (client falls back to REST). Remove after running setup.sql.
+    // pre-migration noise: forum_feed (and later news_count) RPCs not
+    // yet applied on the live DB (client falls back / skips). Remove
+    // after running setup.sql.
     const u = (m.location() && m.location().url) || "";
-    if(/\/rpc\/forum_feed/.test(u) && /404/.test(t)) return;
+    if(/\/rpc\/(forum_feed|news_count)/.test(u) && /404/.test(t)) return;
     errs.push(t);
   });
   p.on("pageerror", e => errs.push(String(e)));
@@ -255,6 +256,12 @@ for(const [w,h] of widths){
       const fn = u.split("/rpc/")[1].split("?")[0];
       if(fn === "session_info" || fn === "login") return json(JSON.stringify(fSession));
       if(fn === "forum_feed") return json(JSON.stringify({ branches: fBranches, posts: fPosts }));
+      if(fn === "news_count") return json(JSON.stringify({ count: 2 }));
+      if(fn === "post_edit"){
+        let body = {};
+        try{ body = JSON.parse(req.postData() || "{}"); }catch(e){}
+        return json(JSON.stringify({ id: body.p_id, content: body.p_content }));
+      }
       return json(JSON.stringify({}));
     }
     return req.continue();
@@ -265,7 +272,11 @@ for(const [w,h] of widths){
   try {
   // ensure anonymous baseline (clear any stub session from a prior run)
   await open(browserPage, "forum.html", 1440, 900);
-  await browserPage.evaluate(() => localStorage.removeItem("ecl-session"));
+  await browserPage.evaluate(() => {
+    localStorage.removeItem("ecl-session");
+    // last visit "before" the fixture posts (2026-10-12/13) → newdots
+    localStorage.setItem("ecl-seen", "2026-10-11T00:00:00.000Z");
+  });
   const errs = await open(browserPage, "forum.html", 1440, 900);
   const r = await browserPage.evaluate(() => {
     const vHome = document.getElementById("vHome");
@@ -298,6 +309,78 @@ for(const [w,h] of widths){
     JSON.stringify({ ntCardHidden: r.ntCardHidden, ntOpenHidden: r.ntOpenHidden, ntAnonShown: r.ntAnonShown }));
   log("forum counts (no emoji)", !r.emoji && r.counts, JSON.stringify({ emoji: r.emoji, counts: r.counts }));
   log("forum no page errors", errs.length === 0, errs.join("; "));
+
+  // M2: unread nav badge (stubbed news_count) + dots since last visit
+  const news = await browserPage.evaluate(() => {
+    const dot = document.querySelector('nav a[href="forum.html"] .navdot');
+    return {
+      newdots: document.querySelectorAll("#recentRows .newdot").length,
+      badge: dot ? dot.textContent.trim() : null,
+      badgeHidden: dot ? dot.classList.contains("hide") : true
+    };
+  });
+  log("forum unread badge (stub news_count)",
+    news.badge === "2" && !news.badgeHidden, JSON.stringify(news));
+  log("forum newdot since last visit",
+    news.newdots >= 2, JSON.stringify(news));
+
+  // M2: grouped global search (topics / branches / teachers / people)
+  await browserPage.type("#gq", "sala");
+  await new Promise(r2 => setTimeout(r2, 300));
+  const gs1 = await browserPage.evaluate(() => ({
+    resultsShown: !document.getElementById("gResults").classList.contains("hide"),
+    homeHidden: document.getElementById("gHome").classList.contains("hide"),
+    topics: Array.from(document.querySelectorAll("#gTopics .tlink")).map(a => a.textContent),
+    branches: Array.from(document.querySelectorAll("#gBranches .tlink")).map(a => a.textContent)
+  }));
+  log("forum global search topics+branches",
+    gs1.resultsShown && gs1.homeHidden &&
+      gs1.topics.some(t => t.indexOf("Tópico na sala") >= 0) &&
+      gs1.branches.some(b => b.indexOf("Sala dos Professores") >= 0),
+    JSON.stringify(gs1));
+
+  await browserPage.evaluate(() => { document.getElementById("gq").value = ""; });
+  await browserPage.type("#gq", "helga");
+  await new Promise(r2 => setTimeout(r2, 300));
+  const gs2 = await browserPage.evaluate(() => ({
+    teachers: Array.from(document.querySelectorAll("#gTeachers .tlink")).map(a => a.textContent),
+    peopleHidden: document.getElementById("gSecPeople").classList.contains("hide")
+  }));
+  log("forum global search teachers",
+    gs2.teachers.some(t => t.indexOf("Helga Duarte") >= 0) && gs2.peopleHidden,
+    JSON.stringify(gs2));
+
+  await browserPage.evaluate(() => { document.getElementById("gq").value = ""; });
+  await browserPage.type("#gq", "ana");
+  await new Promise(r2 => setTimeout(r2, 300));
+  const gs3 = await browserPage.evaluate(() => ({
+    people: Array.from(document.querySelectorAll("#gPeople td")).map(td => td.textContent.trim())
+  }));
+  log("forum global search people",
+    gs3.people.some(p => p.indexOf("ana") >= 0), JSON.stringify(gs3));
+
+  await browserPage.evaluate(() => { document.getElementById("gq").value = ""; });
+  await browserPage.type("#gq", "zzzzzqq");
+  await new Promise(r2 => setTimeout(r2, 300));
+  const gs4 = await browserPage.evaluate(() => ({
+    state: (document.getElementById("gState").textContent || "").trim(),
+    topicsHidden: document.getElementById("gSheetTopics").classList.contains("hide")
+  }));
+  log("forum global search empty state",
+    /Nada corresponde/.test(gs4.state) && gs4.topicsHidden, JSON.stringify(gs4));
+
+  await browserPage.evaluate(() => {
+    const g = document.getElementById("gq");
+    g.value = "";
+    g.dispatchEvent(new Event("input"));
+  });
+  await new Promise(r2 => setTimeout(r2, 200));
+  const gs5 = await browserPage.evaluate(() => ({
+    homeVisible: !document.getElementById("gHome").classList.contains("hide"),
+    resultsHidden: document.getElementById("gResults").classList.contains("hide")
+  }));
+  log("forum global search clears",
+    gs5.homeVisible && gs5.resultsHidden, JSON.stringify(gs5));
 
   // navigation: home → community list
   await browserPage.click('#homeRows a.tlink');
@@ -447,6 +530,54 @@ for(const [w,h] of widths){
   });
   log("forum owner pin controls",
     ow.threadVisible && ow.pin === "fixar" && ow.del, JSON.stringify(ow));
+
+  // M2: edit is author-only — the owner did not write topic 1 (u2 did)
+  const noEd = await browserPage.evaluate(() => ({
+    opEdit: !!document.querySelector("#threadMount .op [data-edit]"),
+    anyEdit: document.querySelectorAll("#threadMount [data-edit]").length
+  }));
+  log("forum edit button only for author",
+    !noEd.opEdit && noEd.anyEdit === 0, JSON.stringify(noEd));
+
+  // topic 2 is authored by the stub session (u1) → inline editor flow
+  await browserPage.evaluate(() => { location.hash = "#topico-2"; });
+  await new Promise(r2 => setTimeout(r2, 400));
+  const own = await browserPage.evaluate(() => ({
+    edit: !!document.querySelector("#threadMount .op [data-edit]"),
+    del: !!document.querySelector("#threadMount [data-del]")
+  }));
+  log("forum edit button on own topic", own.edit && own.del, JSON.stringify(own));
+
+  await browserPage.click("#threadMount .op [data-edit]");
+  await new Promise(r2 => setTimeout(r2, 300));
+  const ed0 = await browserPage.evaluate(() => {
+    const ta = document.querySelector("#threadMount .op [data-editta]");
+    return {
+      ta: !!ta,
+      val: ta ? ta.value : "",
+      save: !!document.querySelector("[data-editsave]"),
+      cancel: !!document.querySelector("[data-editcancel]")
+    };
+  });
+  log("forum edit opens textarea with content",
+    ed0.ta && ed0.val.indexOf("Lê antes de publicar") === 0, JSON.stringify(ed0));
+
+  await browserPage.evaluate(() => {
+    const ta = document.querySelector("#threadMount .op [data-editta]");
+    ta.value = "Conteudo editado pelo gate";
+    ta.dispatchEvent(new Event("input"));
+  });
+  await browserPage.click("#threadMount [data-editsave]");
+  await new Promise(r2 => setTimeout(r2, 500));
+  const ed1 = await browserPage.evaluate(() => ({
+    body: (document.querySelector("#threadMount .op .pbody") || {}).textContent || "",
+    taGone: !document.querySelector("#threadMount [data-editta]"),
+    toast: (document.getElementById("eclToasts") || {}).textContent || ""
+  }));
+  log("forum edit saves (stub post_edit)",
+    ed1.body === "Conteudo editado pelo gate" && ed1.taGone &&
+      /editada/.test(ed1.toast),
+    JSON.stringify(ed1));
 
   // create form moved out of the forum (admin panel only)
   await open(browserPage, "forum.html", 1440, 900);

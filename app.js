@@ -110,9 +110,62 @@ window.ECL = (function(){
   var onAuthChange = null;
   var lastNext = null;
 
+  var SEEN_KEY = "ecl-seen";
+
+  function getSeen(){
+    try{ return localStorage.getItem(SEEN_KEY) || null; }catch(e){ return null; }
+    return null;
+  }
+
+  function stampSeen(){
+    try{ localStorage.setItem(SEEN_KEY, new Date().toISOString()); }catch(e){}
+  }
+
+  /* nav badge: new forum messages since the last forum visit
+     (polled — realtime postgres_changes never delivers forum_posts
+     rows to the anon role: the table has no SELECT policy) */
+  function paintNews(){
+
+    var link = document.querySelector('nav a[href="forum.html"]');
+
+    if(!link)
+      return;
+
+    var dot = link.querySelector(".navdot");
+
+    if(!dot){
+      dot = document.createElement("span");
+      dot.className = "navdot hide";
+      link.appendChild(dot);
+    }
+
+    var since = getSeen();
+
+    if(!configured || !sb || !since){
+      dot.classList.add("hide");
+      dot.textContent = "";
+      return;
+    }
+
+    var s = getSession();
+
+    sb.rpc("news_count",{
+      p_token: s ? s.token : null,
+      p_since: since
+    }).then(function(r){
+      var n = r && !r.error && r.data ? Number(r.data.count) || 0 : 0;
+      dot.textContent = n > 0 ? (n > 99 ? "99+" : String(n)) : "";
+      dot.classList.toggle("hide", !(n > 0));
+    }).catch(function(){
+      dot.classList.add("hide");
+    });
+
+  }
+
   function fireAuthChange(){
     if(onAuthChange)
       onAuthChange();
+    paintNews();
   }
 
   function paintAcct(next){
@@ -237,7 +290,10 @@ window.ECL = (function(){
     doLogout: doLogout,
     fireAuthChange: fireAuthChange,
     toast: toast,
-    askConfirm: askConfirm
+    askConfirm: askConfirm,
+    paintNews: paintNews,
+    getSeen: getSeen,
+    stampSeen: stampSeen
   };
 
   Object.defineProperty(api,"onAuthChange",{
@@ -301,6 +357,11 @@ window.ECL = (function(){
   }
 
   initThemeToggle();
+
+  if(configured){
+    paintNews();
+    setInterval(paintNews, 60000);
+  }
 
   return api;
 

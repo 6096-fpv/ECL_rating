@@ -46,6 +46,47 @@ margin-bottom:0;
   max-width:260px;
 }
 
+.sortrow input#gq{
+  max-width:520px;
+  flex:1 1 280px;
+}
+
+/* unread dot on topic rows (new since last forum visit) */
+.newdot{
+display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--danger);
+  margin-right:6px;
+  vertical-align:1px;
+}
+
+/* grouped global search results */
+.gsec{
+font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:var(--mut);
+  font-weight:700;
+  margin:18px 0 0;
+}
+
+/* inline message editor (own posts only) */
+.editbox{
+margin-top:6px;
+}
+
+.editbox textarea{
+  width:100%;
+}
+
+.editbox .counter{
+font-size:12px;
+  color:var(--mut);
+  margin:4px 0;
+}
+
 /* composer entry points */
 .ntbar{
 margin-top:14px;
@@ -350,6 +391,43 @@ margin-bottom:6px;
 
   <section id="vHome" aria-label="Comunidades">
 
+    <div class="sortrow">
+      <input
+        id="gq"
+        placeholder="Pesquisar no fórum: tópicos, comunidades, docentes, pessoas"
+        aria-label="Pesquisa global no fórum"
+        autocomplete="off"
+        maxlength="80"
+      >
+    </div>
+
+    <div id="gState"></div>
+
+    <div id="gResults" class="hide">
+
+      <div class="gsec" id="gSecTopics">Tópicos</div>
+      <div class="sheet" id="gSheetTopics">
+        <table class="ftbl"><tbody id="gTopics"></tbody></table>
+      </div>
+
+      <div class="gsec" id="gSecBranches">Comunidades</div>
+      <div class="sheet" id="gSheetBranches">
+        <table class="ftbl"><tbody id="gBranches"></tbody></table>
+      </div>
+
+      <div class="gsec" id="gSecTeachers">Docentes</div>
+      <div class="sheet" id="gSheetTeachers">
+        <table class="ftbl"><tbody id="gTeachers"></tbody></table>
+      </div>
+
+      <div class="gsec" id="gSecPeople">Pessoas</div>
+      <div class="sheet" id="gSheetPeople">
+        <table class="ftbl"><tbody id="gPeople"></tbody></table>
+      </div>
+
+    </div>
+
+    <div id="gHome">
     <h2>Comunidades</h2>
 
     <div class="sheet">
@@ -377,6 +455,8 @@ margin-bottom:6px;
         </tbody>
       </table>
     </div>
+
+    </div><!-- /gHome -->
 
   </section>
 
@@ -448,6 +528,10 @@ var setupNeeded = false;
 var loaded = false;
 var branches = [];
 var composerOpen = false;
+var editId = null;
+/* frozen at load: forum stamps the baseline right away (badge), but the
+   dots must keep using the pre-visit value even after async renders */
+var seenAt = ECL.getSeen();
 var cur = { v:"home", id:0 };
 
 function paintAcct(){
@@ -586,6 +670,16 @@ function canDel(p){
     return mx === 0;
 
   return mx < 3;
+
+}
+
+/* edição: só o próprio autor (o SQL rejeita mais; anónimos intocáveis) */
+function canEdit(p){
+
+  var s = getSession();
+
+  return !!(s && p && p.user_id &&
+    String(p.user_id) === String(s.id));
 
 }
 
@@ -795,6 +889,23 @@ function authFail(msg){
 
 }
 
+/* ponto vermelho: houve atividade depois da última visita ao fórum */
+function newDot(when){
+
+  if(!seenAt || !when)
+    return "";
+
+  var a = Date.parse(when);
+  var b = Date.parse(seenAt);
+
+  if(!isFinite(a) || !isFinite(b) || a <= b)
+    return "";
+
+  return '<span class="newdot" title="Novo desde a última visita"' +
+    ' aria-hidden="true"></span>';
+
+}
+
 function globalState(){
 
   if(!configured)
@@ -840,6 +951,126 @@ function renderForms(){
   $("ntAnon").classList.toggle("hide", hideBar || s);
   $("ntOpen").classList.toggle("hide", hideBar || !s || !pub || composerOpen);
   $("ntCard").classList.toggle("hide", hideBar || !s || !composerOpen);
+
+}
+
+function renderGlobal(){
+
+  var q = ($("gq").value || "").trim().toLowerCase();
+
+  if(q.length === 1){
+    $("gState").innerHTML =
+      '<div class="state">Escreve pelo menos 2 letras.</div>';
+    $("gResults").classList.add("hide");
+    $("gHome").classList.remove("hide");
+    return;
+  }
+
+  var has = q.length >= 2;
+
+  $("gResults").classList.toggle("hide", !has);
+  $("gHome").classList.toggle("hide", has);
+
+  if(!has){
+    $("gState").innerHTML = "";
+    return;
+  }
+
+  var stat = buildStats();
+
+  var topics = posts.filter(function(t){
+    return !t.parent_id;
+  }).filter(function(t){
+
+    var nm = teacherById(t.teacher_id);
+
+    var hay = (t.title || "") + " " + (t.content || "") +
+      (nm ? " " + nm.name + " " + nm.subject : "");
+
+    return hay.toLowerCase().indexOf(q) >= 0;
+
+  }).sort(function(a,b){
+
+    var pa = a.pinned ? 1 : 0;
+    var pb = b.pinned ? 1 : 0;
+
+    if(pa !== pb)
+      return pb - pa;
+
+    var la = stat.roots[Number(a.id)] ? stat.roots[Number(a.id)].last : a.created_at;
+    var lb = stat.roots[Number(b.id)] ? stat.roots[Number(b.id)].last : b.created_at;
+
+    return String(lb).localeCompare(String(la));
+
+  }).slice(0, 20);
+
+  var brs = branches.filter(function(b){
+    return (b.name || "").toLowerCase().indexOf(q) >= 0;
+  });
+
+  var tcs = teachers.filter(function(t){
+    return ((t.name || "") + " " + (t.subject || ""))
+      .toLowerCase().indexOf(q) >= 0;
+  }).slice(0, 20);
+
+  var ppl = profiles.filter(function(p){
+    return (p.username || "").toLowerCase().indexOf(q) >= 0;
+  }).slice(0, 20);
+
+  function fill(tbId, secId, sheetId, rows){
+    $(secId).classList.toggle("hide", !rows.length);
+    $(sheetId).classList.toggle("hide", !rows.length);
+    $(tbId).innerHTML = rows.join("");
+    return rows.length;
+  }
+
+  var n1 = fill("gTopics","gSecTopics","gSheetTopics", topics.map(function(t){
+
+    var n = descendants(t.id);
+    var tid = Number(t.branch_id) || 0;
+    var rs = stat.roots[Number(t.id)] || { last:t.created_at };
+
+    return '<tr data-open="#topico-' + t.id + '">' +
+      '<td>' +
+        newDot(rs.last) +
+        (t.pinned ? '<span class="pinchip">fixado</span> ' : "") +
+        '<a class="tlink" href="#topico-' + t.id + '">' +
+          esc(t.title) +
+        '</a> ' +
+        '<span class="tag">' + esc(branchName(tid)) + '</span> ' +
+        '<span class="fsub">· ' + n + ' resposta' +
+          (n === 1 ? "" : "s") + ' · ' + esc(fmtWhen(rs.last)) + '</span>' +
+      '</td>' +
+    '</tr>';
+
+  }));
+
+  var n2 = fill("gBranches","gSecBranches","gSheetBranches", brs.map(function(b){
+    return '<tr data-open="#comunidade-' + b.id + '">' +
+      '<td><a class="tlink" href="#comunidade-' + b.id + '">' +
+        esc(b.name) +
+      '</a></td>' +
+    '</tr>';
+  }));
+
+  var n3 = fill("gTeachers","gSecTeachers","gSheetTeachers", tcs.map(function(t){
+    return '<tr>' +
+      '<td><a class="tlink" href="teacher.html?id=' + t.id + '">' +
+        esc(t.name) +
+      '</a> <span class="tag">' + esc(t.subject) + '</span></td>' +
+    '</tr>';
+  }));
+
+  var n4 = fill("gPeople","gSecPeople","gSheetPeople", ppl.map(function(p){
+    return '<tr>' +
+      '<td>' + flagHtml(p.country) + esc(p.username) + ' ' +
+        badgeHtml(p.role) + '</td>' +
+    '</tr>';
+  }));
+
+  $("gState").innerHTML = (n1 + n2 + n3 + n4)
+    ? ""
+    : '<div class="state">Nada corresponde à pesquisa.</div>';
 
 }
 
@@ -896,6 +1127,7 @@ function renderHome(){
 
     return '<tr data-open="#topico-' + t.id + '">' +
       '<td>' +
+        newDot(x.last) +
         (t.pinned ? '<span class="pinchip">fixado</span> ' : "") +
         '<a class="tlink" href="#topico-' + t.id + '">' +
           esc(t.title) +
@@ -911,6 +1143,8 @@ function renderHome(){
     '</tr>';
 
   }).join("");
+
+  renderGlobal();
 
 }
 
@@ -1007,6 +1241,7 @@ function renderList(){
 
     return '<tr data-open="#topico-' + t.id + '">' +
       '<td>' +
+        newDot(rs.last) +
         (t.pinned ? '<span class="pinchip">fixado</span> ' : "") +
         '<a class="tlink" href="#topico-' + t.id + '">' +
           esc(t.title) +
@@ -1042,6 +1277,24 @@ function topicCount(bid){
 
 }
 
+function editorHtml(p){
+
+  var txt = String(p.content || "");
+
+  return '<div class="editbox">' +
+      '<textarea data-editta="' + p.id + '" rows="4" maxlength="2000">' +
+        esc(txt) +
+      '</textarea>' +
+      '<div class="counter"><span data-editlen="' + p.id + '">' +
+        txt.length +
+      '</span>/2000</div>' +
+      '<button class="mini" data-editsave="' + p.id + '">Guardar</button> ' +
+      '<button class="mini" data-editcancel="' + p.id + '">Cancelar</button> ' +
+      '<span class="msg" data-editmsg="' + p.id + '"></span>' +
+    '</div>';
+
+}
+
 function cmtRow(c, tid){
 
   var parent = c.parent_id ? byId(c.parent_id) : null;
@@ -1056,7 +1309,11 @@ function cmtRow(c, tid){
     ? ' · <button class="delete mini" data-del="' + c.id + '">apagar</button>'
     : "";
 
-  return '<div class="cmt">' +
+  var edit = canEdit(c)
+    ? ' · <button class="abtn mini" data-edit="' + c.id + '">editar</button>'
+    : "";
+
+  return '<div class="cmt" data-post="' + c.id + '">' +
     ref +
     '<div class="pmeta">' +
       authorHtml(c) +
@@ -1066,11 +1323,14 @@ function cmtRow(c, tid){
         ? ' · <button class="abtn mini" data-reply="' + c.id +
             '" data-topic="' + tid + '">responder</button>'
         : "") +
+      edit +
       del +
     '</div>' +
-    '<div class="cbody">' +
-      esc(c.content) +
-    '</div>' +
+    (editId === Number(c.id)
+      ? editorHtml(c)
+      : '<div class="cbody">' +
+          esc(c.content) +
+        '</div>') +
   '</div>';
 
 }
@@ -1153,6 +1413,10 @@ function renderThread(){
       '</button>'
     : "";
 
+  var edit = canEdit(t)
+    ? ' · <button class="abtn mini" data-edit="' + t.id + '">editar</button>'
+    : "";
+
   var kids = descList(t.id).sort(function(a,b){
     return String(b.created_at).localeCompare(String(a.created_at));
   });
@@ -1202,11 +1466,14 @@ function renderThread(){
 
         del +
         pin +
+        edit +
       '</div>' +
 
-      '<div class="pbody" style="margin-top:8px">' +
-        esc(t.content) +
-      '</div>' +
+      (editId === Number(t.id)
+        ? editorHtml(t)
+        : '<div class="pbody" style="margin-top:8px">' +
+            esc(t.content) +
+          '</div>') +
 
     '</div>' +
 
@@ -1466,6 +1733,8 @@ function loadAll(){
 
 paintAcct();
 renderRoute();
+ECL.stampSeen();
+ECL.paintNews();
 
 $("ntOpen").onclick = function(){
   composerOpen = true;
@@ -1541,6 +1810,10 @@ $("ntSend").onclick = function(){
 $("q").oninput = function(){
   if(cur.v === "list")
     renderList();
+};
+
+$("gq").oninput = function(){
+  renderGlobal();
 };
 
 ECL.onAuthChange = function(){
@@ -1630,6 +1903,121 @@ $("main").addEventListener("click", function(e){
     );
 
     return;
+  }
+
+  var ed = e.target.closest("[data-edit]");
+
+  if(ed){
+
+    var edId = Number(ed.getAttribute("data-edit"));
+    var ep = byId(edId);
+
+    if(!ep)
+      return;
+
+    if(!canEdit(ep)){
+      ECL.toast("Só podes editar as tuas próprias mensagens.","err");
+      return;
+    }
+
+    editId = edId;
+    renderThread();
+
+    var ta = document.querySelector('[data-editta="' + edId + '"]');
+
+    if(ta){
+      ta.focus();
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+      ta.oninput = function(){
+        var len = document.querySelector('[data-editlen="' + edId + '"]');
+        if(len)
+          len.textContent = ta.value.length;
+      };
+    }
+
+    return;
+
+  }
+
+  var ec = e.target.closest("[data-editcancel]");
+
+  if(ec){
+    editId = null;
+    renderThread();
+    return;
+  }
+
+  var es = e.target.closest("[data-editsave]");
+
+  if(es){
+
+    var esId = Number(es.getAttribute("data-editsave"));
+    var ta2 = document.querySelector('[data-editta="' + esId + '"]');
+    var me2 = document.querySelector('[data-editmsg="' + esId + '"]');
+
+    if(!ta2 || !me2)
+      return;
+
+    var etxt = ta2.value.trim();
+
+    if(!etxt){
+      me2.textContent = "Escreve uma mensagem.";
+      return;
+    }
+
+    if(etxt.length > 2000){
+      me2.textContent = "A mensagem pode ter no máximo 2000 caracteres.";
+      return;
+    }
+
+    var sEd = getSession();
+
+    if(!sEd){
+      location.href =
+        "auth.html?next=" + encodeURIComponent("forum.html");
+      return;
+    }
+
+    me2.textContent = "";
+    es.disabled = true;
+
+    sb.rpc("post_edit",{
+      p_token:sEd.token,
+      p_id:esId,
+      p_content:etxt
+    }).then(function(r){
+
+      es.disabled = false;
+
+      if(r.error){
+
+        console.error(r.error);
+
+        var em = r.error.message || "Erro ao editar.";
+
+        if(/sess.o/i.test(em)){
+          ECL.toast(authFail(),"err");
+          return;
+        }
+
+        me2.textContent = em;
+        return;
+
+      }
+
+      var pp = byId(esId);
+
+      if(pp)
+        pp.content = r.data && r.data.content ? r.data.content : etxt;
+
+      editId = null;
+      renderThread();
+      ECL.toast("Mensagem editada.");
+
+    });
+
+    return;
+
   }
 
   var d = e.target.closest("[data-del]");
@@ -1742,6 +2130,9 @@ $("main").addEventListener("click", function(e){
 window.addEventListener("hashchange", function(){
 
   $("q").value = "";
+  $("gq").value = "";
+  editId = null;
+  renderGlobal();
 
   renderRoute();
 

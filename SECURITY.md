@@ -66,6 +66,12 @@ Last audit: 2026-10-21 (static client + Supabase backend).
   (`require_min_role('mod')`, last 100 entries, actor username
   resolved server-side); the table itself is RLS-locked with no
   policies and the `private` schema has no USAGE for API roles.
+- Notifications: a badge on the Fórum nav link plus `.newdot` marks on
+  forum lists count messages newer than the `ecl-seen` localStorage
+  baseline (stamped on every forum visit) through the `news_count`
+  RPC, whose visibility rule mirrors `forum_feed`. Realtime
+  `postgres_changes` is deliberately not relied on for `forum_posts`:
+  with no SELECT policy the anon role would receive no events.
 - Tables `forum_posts`, `forum_branches`, `forum_votes`, `teachers`,
   `ratings`: RLS on; REST writes revoked; forum reads only via
   `forum_feed` (no public-read policy).

@@ -426,6 +426,7 @@ option{
   letter-spacing:.5px;
   text-transform:uppercase;
   vertical-align:middle;
+  white-space:nowrap;
 }
 
 .b-owner{

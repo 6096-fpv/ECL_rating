@@ -380,7 +380,7 @@ display:inline-flex;
 
             <div class="mut">
                 A tua conta não tem permissões de administrador.
-                Fala com o owner do site.
+                Fala com o CEO do site.
             </div>
 
         </div>
@@ -707,7 +707,7 @@ display:inline-flex;
 
                 <div class="message">
                     Admins alteram apenas users e moderadores.
-                    Owners alteram todos, exceto o owner.
+                    CEOs alteram todos, exceto o CEO.
                     Não podes alterar o teu próprio cargo.
                     Remover contas é feito no painel do Supabase.
                 </div>
@@ -2688,8 +2688,8 @@ function renderUsers(){
             var note = isMe
                 ? "Não podes alterar o teu próprio cargo."
                 : (isOwnerRow
-                    ? "Ninguém altera o cargo do owner."
-                    : "Só o owner altera cargos avançados.");
+                    ? "Ninguém altera o cargo do CEO."
+                    : "Só o CEO altera cargos avançados.");
 
             var options =
                 roles.map(function(r){

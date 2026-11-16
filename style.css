@@ -378,6 +378,7 @@ input,
 select,
 textarea{
   width:100%;
+  max-width:100%;
   padding:11px 14px;
   border:1px solid var(--bd);
   border-radius:var(--r-ctl);
@@ -386,6 +387,10 @@ textarea{
   font:inherit;
   margin-bottom:10px;
   transition:border-color .15s ease,box-shadow .15s ease;
+}
+
+textarea{
+  resize:vertical;
 }
 
 input:focus,

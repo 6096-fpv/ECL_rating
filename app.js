@@ -83,7 +83,7 @@ window.ECL = (function(){
     vip:"VIP",
     moderator:"MODERATOR",
     admin:"ADMIN",
-    owner:"OWNER"
+    owner:"CEO"
   };
 
   function badgeHtml(role){

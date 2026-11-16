@@ -847,7 +847,7 @@ for(const [w,h] of widths){
     const pf = await browserPage.evaluate(() => ({
       content: !document.getElementById("content").classList.contains("hide"),
       name: (document.getElementById("pfName")||{}).textContent || "",
-      badge: /OWNER/.test((document.getElementById("pfBadge")||{}).textContent || ""),
+      badge: /CEO/.test((document.getElementById("pfBadge")||{}).textContent || ""),
       since: /Membro desde/.test((document.getElementById("pfSince")||{}).textContent || ""),
       stats: (document.getElementById("pfStats")||{}).textContent || "",
       rows: document.querySelectorAll("#pfList .cm").length,
@@ -1164,7 +1164,7 @@ for(const [w,h] of widths){
       chips: document.querySelectorAll("#tagChips .chip").length,
       chipTxt: (document.getElementById("tagChips") || {}).textContent || "",
       noPicker: !document.querySelector("#tagChips [data-tag]") && !document.getElementById("tagSave"),
-      ownerNote: /owner atribui/i.test(document.getElementById("tagChips").closest(".card").textContent)
+      ownerNote: /CEO atribui/i.test(document.getElementById("tagChips").closest(".card").textContent)
     }));
     log("conta tags read-only (owner-assigned)",
       tg.chips === 1 && tg.chipTxt.indexOf("Aveniggers Clan") >= 0 && tg.noPicker && tg.ownerNote,
@@ -1707,6 +1707,17 @@ for(const [w,h] of widths){
   log("css no top blur", !css.topFilter || css.topFilter === "none", css.topFilter);
   log("css card radius 10px", css.cardRadius === "10px", css.cardRadius);
   log("css tabular nums", css.bodyFontVariant === "tabular-nums", css.bodyFontVariant);
+
+  const ta = await browserPage.evaluate(() => {
+    const t = document.createElement("textarea");
+    document.body.appendChild(t);
+    const s = getComputedStyle(t);
+    const out = { resize: s.resize, maxWidth: s.maxWidth, width: s.width };
+    t.remove();
+    return out;
+  });
+  log("css textarea resize vertical", ta.resize === "vertical", JSON.stringify(ta));
+  log("css textarea max-width 100%", ta.maxWidth === "100%", ta.maxWidth);
 }
 
 // 8b. P3: a11y + theme toggle + contrast + motion + meta/favicon
